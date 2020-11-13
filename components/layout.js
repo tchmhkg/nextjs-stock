@@ -6,7 +6,7 @@ import Link from "next/link";
 const name = "Truman";
 export const siteTitle = "Next.js Sample Website";
 
-const Layout = ({ children, home }) => {
+const Layout = ({ children, home, showAvatar = true }) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -24,6 +24,7 @@ const Layout = ({ children, home }) => {
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
+      {showAvatar && (
       <header className={styles.header}>
         {home ? (
           <>
@@ -53,6 +54,7 @@ const Layout = ({ children, home }) => {
           </>
         )}
       </header>
+      )}
       <main>{children}</main>
       {!home && (
         <div className={styles.backToHome}>

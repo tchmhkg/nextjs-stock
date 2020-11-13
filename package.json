@@ -9,6 +9,7 @@
     "export": "next export"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "date-fns": "^2.16.1",
     "gray-matter": "^4.0.2",
     "next": "^10.0.0",
@@ -16,7 +17,12 @@
     "react-dom": "16.13.1",
     "remark": "^13.0.0",
     "remark-html": "^13.0.1",
+    "rss-parser": "^3.9.0",
     "sass": "^1.29.0",
+    "styled-components": "^5.2.1",
     "swr": "^0.3.8"
+  },
+  "resolutions": {
+    "styled-components": "^5"
   }
 }
