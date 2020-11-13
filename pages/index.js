@@ -5,7 +5,7 @@ import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
 import { getSortedPostsData } from '../lib/posts'
 
-export default function Home({allPostsData}) {
+const Home = ({allPostsData}) => {
   return (
     <Layout home>
       <Head>
@@ -61,3 +61,5 @@ export async function getStaticProps() {
 //   // Pass data to the page via props
 //   return { props: { articles: data.articles } }
 // }
+
+export default Home;
