@@ -6,7 +6,7 @@ import utilStyles from "../../styles/utils.module.css";
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
 export default function Tech() {
-    const { data, error } = useSWR('https://newsapi.org/v2/top-headlines?category=technology&apiKey=ea895a2c55974e828916ed2c2aab1fc5', fetcher);
+    const { data, error } = useSWR('https://newsapi.org/v2/top-headlines?country=hk&category=technology&apiKey=608bf565c67f4d99994c08d74db82f54', fetcher);
 
     if (error) return <div>failed to load</div>
     if (!data) return <div>loading...</div>

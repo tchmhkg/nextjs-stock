@@ -15,6 +15,7 @@ body {
 a {
   color: #0070f3;
   text-decoration: none;
+  word-break: break-word;
 }
 
 a:hover {
