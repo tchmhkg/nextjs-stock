@@ -1,6 +1,8 @@
 .button {
   padding: 10px 30px;
   font-size: 16px;
+  background-color: #ededed;
+  color: #575c66;
 }
 
 .selectedButton {

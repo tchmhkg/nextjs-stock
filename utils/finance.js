@@ -4,7 +4,7 @@ let Parser = require('rss-parser');
 let rssParser = new Parser();
 let cancelToken;
 
-exports.getStock = function getStock(opts, type) {
+export const getStock = (opts, type) => {
     const defs = {
       baseURL: 'https://query.yahooapis.com/v1/public/yql?q=',
       query: {
@@ -40,7 +40,7 @@ exports.getStock = function getStock(opts, type) {
     return fetch(url);  // eslint-disable-line no-undef
   };
   
-  exports.properties = [
+  export const properties = [
     'AfterHoursChangeRealtime',
     'AnnualizedGain',
     'Ask',
@@ -125,16 +125,24 @@ exports.getStock = function getStock(opts, type) {
     'YearRange',
   ];
   
-  exports.getNews = async (symbol) => {
+  export const getNews = async (symbol) => {
     if (typeof cancelToken != typeof undefined) {
       cancelToken.cancel("Operation canceled due to new request.");
     }
     cancelToken = axios.CancelToken.source();
-
+    console.log('symbol => ',symbol);
     const url = `https://feeds.finance.yahoo.com/rss/2.0/headline?s=${symbol}&region=US&lang=en-US`;
     console.log(url);
     try {
-      const res = await axios.get(url, { cancelToken: cancelToken.token });
+      const res = await axios.get(url, { 
+        cancelToken: cancelToken.token,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS,POST,PUT"
+      },
+      });
         if(res?.data) {
           console.log(res?.data)
           return [];
@@ -148,7 +156,7 @@ exports.getStock = function getStock(opts, type) {
     }
   };
   
-  exports.symbolSuggest = async (query) => {
+  const symbolSuggest = async (query) => {
     //Check if there are any previous pending requests
     if (typeof cancelToken != typeof undefined) {
       cancelToken.cancel("Operation canceled due to new request.");

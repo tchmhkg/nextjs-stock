@@ -2,11 +2,12 @@ import Head from "next/head";
 import styles from "./layout.module.css";
 import utilStyles from "../styles/utils.module.css";
 import Link from "next/link";
+import BackButton from "./back";
 
 const name = "Truman";
 export const siteTitle = "Next.js Sample Website";
 
-const Layout = ({ children, home, showAvatar = true }) => {
+const Layout = ({ children, home, showAvatar = true, back = false }) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -55,6 +56,7 @@ const Layout = ({ children, home, showAvatar = true }) => {
         )}
       </header>
       )}
+      {back && <BackButton />}
       <main>{children}</main>
       {!home && (
         <div className={styles.backToHome}>

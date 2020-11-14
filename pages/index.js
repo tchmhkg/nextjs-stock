@@ -11,7 +11,7 @@ const Home = ({allPostsData}) => {
       <Head>
         <title>{siteTitle}</title>
       </Head>
-      <Link href="/market/indices">Click here for Market</Link>
+      <Link href="/market">Click here for Market</Link>
       <br />
       <Link href="/news/tech">Click here for Technology news</Link>
       {/* <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>

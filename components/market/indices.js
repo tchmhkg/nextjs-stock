@@ -4,9 +4,8 @@ import axios from "axios";
 import styled from "styled-components";
 import { TDA_QUOTES_API } from "../../utils/apiUrls";
 // import {useTheme} from '~/Theme';
-import IndexPrice from "../../components/market-indices/index-price";
+import IndexPrice from "../market-indices/index-price";
 import styles from "./indices.module.css";
-import Layout from "../../components/layout";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
@@ -85,7 +84,6 @@ const MarketIndices = () => {
   const onClickView = (index) => setViewIndex(index);
 
   return (
-    <Layout showAvatar={false}>
       <div>
         <ButtonWrapper>
           <button
@@ -105,13 +103,12 @@ const MarketIndices = () => {
             Future
           </button>
         </ButtonWrapper>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: 'wrap' }}>
           {viewIndex === 0
             ? prices?.slice(0, 3).map(renderIndexContent)
             : prices?.slice(3, 6).map(renderFutureContent)}
         </div>
       </div>
-    </Layout>
   );
 };
 

@@ -11,8 +11,8 @@ const Tech = () => {
     fetcher
   );
 
-  if (error) return <div>failed to load</div>;
-  if (!data) return <div>loading...</div>;
+  if (error) return <Layout>failed to load</Layout>;
+  if (!data) return <Layout>loading...</Layout>;
 
   return (
     <Layout>
@@ -21,7 +21,7 @@ const Tech = () => {
       </Head>
       <h1>Tech</h1>
       <ul className={utilStyles.list}>
-        {data.articles.map(({ title, url, description }, index) => (
+        {data?.articles?.map(({ title, url, description }, index) => (
           <li className={utilStyles.listItem} key={`${title}_${index}`}>
             <h4>{title}</h4>
             <p>{description}</p>

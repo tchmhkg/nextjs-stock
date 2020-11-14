@@ -1,0 +1,26 @@
+.wrapper {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 10px;
+  border-bottom: 1px solid #f4f4f4;
+}
+.row {
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.thumbnailWrapper {
+  flex: 1;
+  margin-right: 10px;
+}
+.thumbnail {
+  width: 100%;
+  height: 100%;
+}
+.contentWrapper {
+  flex: 2;
+}
+.metadataRow {
+  margin-top: 10px;
+}
