@@ -13,7 +13,8 @@ const Home = ({allPostsData}) => {
       </Head>
       <Link href="/market">Click here for Market</Link>
       <br />
-      <Link href="/news/tech">Click here for Technology news</Link>
+      {/* Hide tech news because api only for localhost */}
+      {/* <Link href="/news/tech">Click here for Technology news</Link> */}
       {/* <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>News</h2>
         <ul className={utilStyles.list}>
