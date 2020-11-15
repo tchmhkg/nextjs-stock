@@ -19,6 +19,9 @@ const Suggestion = ({ symbol, ...props }) => {
 
   const getSuggestion = React.useCallback(async () => {
     // const results = await symbolSuggest(symbol);
+    if(!symbol) {
+      return;
+    }
     const results = await axios.get("/api/market/getSuggestion", {
       params: {
         symbol,
@@ -30,6 +33,7 @@ const Suggestion = ({ symbol, ...props }) => {
 
   useEffect(() => {
     if (!symbol) {
+      setSuggestion([]);
       return;
     }
     getSuggestion();

@@ -22,6 +22,7 @@ const Input = styled.input`
   padding: 5px;
   font-size: 16px;
   width: 100%;
+  background-color: ${props => props.theme.background};
   color: ${props => props.theme.text};
   border: 1px solid ${props => props.theme.borderAlt};
 `;
@@ -35,7 +36,7 @@ const SearchInput = (props) => {
       props?.onChange(e);
     },
     [props?.onChange]
-  );
+  , [props?.value]);
 
   return (
     <Container>
