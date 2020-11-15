@@ -48,7 +48,8 @@ const Stock = () => {
       <Head>
         <title>{ticker}</title>
       </Head>
-      {ticker}
+      <h2>{ticker}</h2>
+      {`TODO: Display candlestick chart, historical data and company info`}
       <h3>{t("news")}</h3>
       {news?.map((item) => (
         <NewsItem key={item.guid} item={item} />

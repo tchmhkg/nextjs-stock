@@ -11,7 +11,8 @@ const strings = {
     "$SPX.X":"S&P 500",
     "/YM":"Dow (Future)",
     "/NQ":"Nasdap (Future)",
-    "/ES":"S&P 500 (Future)"
+    "/ES":"S&P 500 (Future)",
+    "Search": "Search",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -25,7 +26,8 @@ const strings = {
     "$SPX.X":"標普500",
     "/YM":"道瓊斯 (期貨)",
     "/NQ":"納斯達克 (期貨)",
-    "/ES":"標普500 (期貨)"
+    "/ES":"標普500 (期貨)",
+    "Search": "搜尋",
   },
 };
 

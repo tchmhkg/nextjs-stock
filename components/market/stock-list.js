@@ -7,6 +7,7 @@ import { TDA_CLIENT_ID } from "~/utils/config";
 import useTranslation from "~/hooks/useTranslation";
 
 import StockItem from "~/components/market/item";
+import SearchInput from '~/components/market/input';
 
 const dummyData = [
   { symbol: "AAPL", name: "Apple" },
@@ -43,6 +44,14 @@ const StockList = () => {
 
   let isCancelled = useRef(false);
   const [ticker, setTicker] = useState("");
+
+  const onChangeTicker = (e) => {
+    setTicker(e.target.value);
+  }
+
+  const resetTicker = () => {
+    setTicker('');
+  }
 
   useEffect(() => {
     try {
@@ -119,6 +128,11 @@ const StockList = () => {
 
   return (
     <div>
+      <SearchInput 
+        value={ticker}
+        onChange={onChangeTicker}
+        onSearchClear={resetTicker}
+      />
       {t('Saved Stock List')}
       {stocks?.map((stock) => (
         <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} />

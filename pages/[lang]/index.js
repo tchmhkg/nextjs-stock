@@ -4,8 +4,11 @@ import { getLocalizationProps } from "~/context/LanguageContext";
 import {locales} from '~/translations/config';
 
 import Home from "~/components/home";
+import { useTheme } from "~/theme";
 
 const IndexPage = ({ allPostsData = [] }) => {
+  const theme = useTheme();
+  console.log(theme);
   return (
     <Layout home>
       <Home allPostsData={allPostsData} />

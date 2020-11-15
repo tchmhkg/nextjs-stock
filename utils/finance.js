@@ -3,6 +3,7 @@ import axios from 'axios';
 let Parser = require('rss-parser');
 let rssParser = new Parser();
 let cancelToken;
+// below will move to api folder
 
 export const getStock = (opts, type) => {
     const defs = {
@@ -156,7 +157,7 @@ export const getStock = (opts, type) => {
     }
   };
   
-  const symbolSuggest = async (query) => {
+  export const   = async (query) => {
     //Check if there are any previous pending requests
     if (typeof cancelToken != typeof undefined) {
       cancelToken.cancel("Operation canceled due to new request.");
