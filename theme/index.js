@@ -14,7 +14,7 @@ const ThemeContext = createContext({
 export const useTheme = () => useContext(ThemeContext);
 
 const ManageThemeProvider = ({children}) => {
-  const [modeFromStorage, setModeToStorage] = useLocalStorage('mode');
+  const [modeFromStorage, setModeToStorage] = useLocalStorage('mode', 'light');
   const [themeState, setThemeState] = useState('light');
 
   useEffect(() => {
@@ -27,7 +27,9 @@ const ManageThemeProvider = ({children}) => {
   }, [themeState])
 
   useEffect(() => {
-    setThemeState(modeFromStorage);
+    if(modeFromStorage) {
+      setThemeState(modeFromStorage);
+    }
   }, []);
 
   return (
