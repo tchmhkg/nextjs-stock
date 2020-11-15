@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import styled from 'styled-components';
 import useTranslation from "~/hooks/useTranslation";
 
-const Button = styled.span`
+const Button = styled.a`
   cursor: pointer;
+  color: ${props => props.theme.text};
 `;
 
 const BackButton = ({backUrl = ''}) => {

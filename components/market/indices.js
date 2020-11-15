@@ -6,6 +6,7 @@ import { TDA_QUOTES_API } from "~/utils/apiUrls";
 // import {useTheme} from '~/Theme';
 import IndexPrice from "~/components/market-indices/index-price";
 import Carousel from "~/components/market/carousel";
+import useTranslation from "~/hooks/useTranslation";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
@@ -16,13 +17,18 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   min-width: 150px;
+  height: 50px;
+  @media (max-width: 768px) {
+    height: 70px;
+  }
 `;
 
 const Label = styled.span`
-  color: #0b0b0b;
+  color: ${props => props.theme.text};
 `;
 
 const MarketIndices = () => {
+  const { t } = useTranslation();
   const [prices, setPrices] = useState([]);
   let isCancelled = useRef(false);
   // const {t} = useLocale();
@@ -64,10 +70,10 @@ const MarketIndices = () => {
 
   const renderIndexContent = (priceObj) => {
     // Temp
-    priceObj.lastPrice = Math.floor(Math.random() * 1000);
+    // priceObj.lastPrice = Math.floor(Math.random() * 1000);
     return (
       <Wrapper key={priceObj?.symbol}>
-        <Label numberOfLines={2}>{priceObj?.description}</Label>
+        <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>
         <IndexPrice priceObj={priceObj} />
       </Wrapper>
     );
@@ -75,10 +81,10 @@ const MarketIndices = () => {
 
   const renderFutureContent = (priceObj) => {
     // Temp
-    priceObj.lastPriceInDouble = Math.floor(Math.random() * 1000);
+    // priceObj.lastPriceInDouble = Math.floor(Math.random() * 1000);
     return (
       <Wrapper key={priceObj?.symbol}>
-        <Label numberOfLines={2}>{priceObj?.description}</Label>
+        <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>
         <IndexPrice priceObj={priceObj} isFuture />
       </Wrapper>
     );

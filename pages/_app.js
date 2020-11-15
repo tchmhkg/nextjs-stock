@@ -1,4 +1,4 @@
-import "~/styles/global.css";
+import "~/styles/global.scss";
 import { LanguageProvider } from "~/context/LanguageContext";
 import ThemeManager from "~/theme";
 

@@ -1,16 +1,21 @@
 import Link from "next/link";
-import utilStyles from "~/styles/utils.module.css";
+import utilStyles from "~/styles/utils.module.scss";
 import useTranslation from "~/hooks/useTranslation";
+import styled from 'styled-components';
+
+const Heading = styled.h2`
+  color: ${props => props.theme.text};
+`;
 
 const Home = ({ allPostsData = [] }) => {
   const { locale, t } = useTranslation();
 
   return (
   <div>
-      <Link href="/[lang]/market" as={`/${locale}/market`}>Click here for Market</Link>
+      <Link href="/[lang]/market" as={`/${locale}/market`}>{t('Click here to market list')}</Link>
       <br />
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <h2 className={utilStyles.headingLg}>{t('news')}</h2>
+        <Heading className={utilStyles.headingLg}>{t('Articles')}</Heading>
         <ul className={utilStyles.list}>
           {allPostsData.map(({ id, title, date }) => (
             <li className={utilStyles.listItem} key={id}>

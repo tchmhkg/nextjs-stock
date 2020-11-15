@@ -12,6 +12,7 @@ const dark = {
     inactiveLegend: '#777777',
     tooltipLabel: '#2E3440',
     chartDataZoomBackground: '#8392A5',
+    toggleBackground: '#8392A5',
   },
 };
 

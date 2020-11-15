@@ -1,0 +1,90 @@
+$label-colour: #bbb;
+$disabled-colour: #ddd;
+$toggle-colour: #2f855a;
+$white: #fff;
+
+.toggleSwitch {
+  margin: 0 10px;
+  position: relative;
+  width: 60px;
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  text-align: left;
+  &Checkbox {
+    display: none;
+  }
+  &Label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 0 solid $label-colour;
+    border-radius: 20px;
+    margin: 0;
+  }
+  &Inner {
+    display: block;
+    width: 200%;
+    margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+    &:before,
+    &:after {
+      display: block;
+      float: left;
+      width: 50%;
+      height: 30px;
+      padding: 0;
+      line-height: 30px;
+      font-size: 20px;
+      color: $white;
+      font-weight: bold;
+      box-sizing: border-box;
+    }
+    &:before {
+      content: attr(data-on);
+      text-transform: uppercase;
+      padding-left: 5px;
+      background-color: $disabled-colour;
+      color: $white;
+    }
+  }
+  &Disabled {
+    background-color: $disabled-colour;
+    cursor: not-allowed;
+    &:before {
+      background-color: $disabled-colour;
+      cursor: not-allowed;
+    }
+  }
+  &Inner:after {
+    content: attr(data-off);
+    text-transform: uppercase;
+    padding-right: 8px;
+    background-color: $label-colour;
+    color: $white;
+    text-align: right;
+  }
+  &Switch {
+    display: block;
+    width: 20px;
+    margin: 5px;
+    background: $white;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 30px;
+    border: 0 solid $label-colour;
+    border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+  }
+  &Checkbox:checked + &Label {
+    .toggleSwitchInner {
+      margin-left: 0;
+    }
+    .toggleSwitchSwitch {
+      right: 0px;
+    }
+  }
+}

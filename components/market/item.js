@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 
 import styled from "styled-components";
-import styles from "~/components/market/item.module.css";
+import styles from "~/components/market/item.module.scss";
 import useTranslation from "~/hooks/useTranslation";
 
 const Container = styled.div`

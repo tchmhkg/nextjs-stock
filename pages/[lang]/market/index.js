@@ -4,7 +4,6 @@ import { getLocalizationProps } from "~/context/LanguageContext";
 import {locales} from '~/translations/config';
 
 import Layout from "~/components/layout";
-// import utilStyles from "~/styles/utils.module.css";
 import MarketIndices from "~/components/market/indices";
 import StockList from "~/components/market/stock-list";
 

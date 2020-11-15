@@ -12,6 +12,7 @@ const light = {
     inactiveLegend: '#777777',
     tooltipLabel: '#fafafa',
     chartDataZoomBackground: '#8392A5',
+    toggleBackground: '#8392A5',
   },
 };
 

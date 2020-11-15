@@ -1,10 +1,14 @@
 import React, {useCallback, memo} from 'react';
 import styled from 'styled-components';
-import styles from "~/components/market-indices/index-price.module.css";
+import styles from "~/components/market-indices/index-price.module.scss";
 
 const Price = styled.span`
   font-size: 20px;
   font-weight: bold;
+`;
+
+const PriceDiff = styled.span`
+  font-size: 13px;
 `;
 
 const IndexPrice = ({priceObj, isFuture = false}) => {
@@ -57,14 +61,14 @@ const IndexPrice = ({priceObj, isFuture = false}) => {
   const renderPriceDiff = useCallback(() => {
     return (
       <Price className={getPriceColor()}>
-        <span className={styles.priceDiff}>{getPriceDiff()}</span>
+        <PriceDiff>{getPriceDiff()}</PriceDiff>
       </Price>
     );
   }, [priceObj?.lastPriceInDouble, priceObj?.lastPrice]);
 
   return (
     <div style={{justifyContent: 'flex-end'}}>
-      {renderLastPrice()}
+      {renderLastPrice()}{" "}
       {renderPriceDiff()}
     </div>
   );

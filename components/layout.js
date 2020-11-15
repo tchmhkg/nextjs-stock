@@ -1,72 +1,60 @@
 import Head from "next/head";
 import Link from "next/link";
 import styled from 'styled-components';
-import styles from "~/components/layout.module.css";
-import utilStyles from "~/styles/utils.module.css";
+import styles from "~/components/layout.module.scss";
+import utilStyles from "~/styles/utils.module.scss";
 import useTranslation from '~/hooks/useTranslation'
-import LanguageSwitcher from '~/components/language-switcher';
 
+import Header from "~/components/header";
 import BackButton from "~/components/back";
-import { useTheme } from "~/theme";
-import ThemeSwitcher from "./theme-switcher";
 
 const name = "Truman";
 export const siteTitle = "Next.js Sample Website";
 
 const Container = styled.div`
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
   padding: 15px;
   position: relative;
+  color: ${props => props.theme.text};
+  a {
+    color: ${props => props.theme.text};
+  }
 `;
 
 const Layout = ({ children, home, showAvatar = true, back = false, ...props }) => {
-  const { locale, t } = useTranslation()
-  const theme = useTheme();
-  console.log('theme',theme);
+  const { locale, t } = useTranslation();
 
   return (
+    <>
+    <Header />
     <Container>
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        <meta
-          name="description"
-          content="Learn how to build a personal website using Next.js"
-        />
-        <meta
-          property="og:image"
-          content={`https://og-image.now.sh/${encodeURI(
-            siteTitle
-          )}.png?theme=light&md=0&fontSize=75px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svg`}
-        />
-        <meta name="og:title" content={siteTitle} />
-        <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <LanguageSwitcher />  
-      <ThemeSwitcher />
       {showAvatar && (
       <header className={styles.header}>
         {home ? (
           <>
             <img
-              src="/images/profile.jpg"
+              src="/images/profile.png"
               className={`${styles.headerHomeImage} ${utilStyles.borderCircle}`}
               alt={name}
             />
-            <h1 className={utilStyles.heading2Xl}>{name}</h1>
+            <h1 className={utilStyles.headingXl}>{name}</h1>
           </>
         ) : (
           <>
           <Link href="/[lang]" as={`/${locale}`}>
               <a>
                 <img
-                  src="/images/profile.jpg"
+                  src="/images/profile.png"
                   className={`${styles.headerImage} ${utilStyles.borderCircle}`}
                   alt={name}
                 />
               </a>
             </Link>
             <h2 className={utilStyles.headingLg}>
-            <Link href="/[lang]" as={`/${locale}`}>
+              <Link href="/[lang]" as={`/${locale}`}>
                 <a className={utilStyles.colorInherit}>{name}</a>
               </Link>
             </h2>
@@ -84,6 +72,7 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
         </div>
       )}
     </Container>
+    </>
   );
 };
 

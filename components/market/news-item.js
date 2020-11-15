@@ -1,11 +1,14 @@
 import React, { useCallback } from "react";
 import moment from "moment";
 import styled from "styled-components";
-import styles from "~/components/market/news-item.module.css";
+import styles from "~/components/market/news-item.module.scss";
 
 const Container = styled.div`
   padding: 10px;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid ${props => props.theme.border};
+  a {
+    color: ${props => props.theme.text}
+  }
 `;
 
 const Title = styled.span`
@@ -14,7 +17,7 @@ const Title = styled.span`
 `;
 
 const Text = styled.span`
-  color: #000;
+  color: ${props => props.theme.text};
 `;
 
 const NewsItem = ({ item }) => {
