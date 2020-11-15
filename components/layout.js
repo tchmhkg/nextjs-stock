@@ -1,13 +1,18 @@
 import Head from "next/head";
+import Link from "next/link";
 import styles from "~/components/layout.module.css";
 import utilStyles from "~/styles/utils.module.css";
-import Link from "next/link";
+import useTranslation from '~/hooks/useTranslation'
+import LanguageSwitcher from '~/components/LanguageSwitcher';
+
 import BackButton from "~/components/back";
 
 const name = "Truman";
 export const siteTitle = "Next.js Sample Website";
 
 const Layout = ({ children, home, showAvatar = true, back = false }) => {
+  const { locale, t } = useTranslation()
+
   return (
     <div className={styles.container}>
       <Head>
@@ -25,6 +30,7 @@ const Layout = ({ children, home, showAvatar = true, back = false }) => {
         <meta name="og:title" content={siteTitle} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
+      <LanguageSwitcher />  
       {showAvatar && (
       <header className={styles.header}>
         {home ? (
@@ -38,7 +44,7 @@ const Layout = ({ children, home, showAvatar = true, back = false }) => {
           </>
         ) : (
           <>
-            <Link href="/">
+          <Link href="/[lang]" as={`/${locale}`}>
               <a>
                 <img
                   src="/images/profile.jpg"
@@ -48,7 +54,7 @@ const Layout = ({ children, home, showAvatar = true, back = false }) => {
               </a>
             </Link>
             <h2 className={utilStyles.headingLg}>
-              <Link href="/">
+            <Link href="/[lang]" as={`/${locale}`}>
                 <a className={utilStyles.colorInherit}>{name}</a>
               </Link>
             </h2>
@@ -60,8 +66,8 @@ const Layout = ({ children, home, showAvatar = true, back = false }) => {
       <main>{children}</main>
       {!home && (
         <div className={styles.backToHome}>
-          <Link href="/">
-            <a>← Back to home</a>
+          <Link href="/[lang]" as={`/${locale}`}>
+            <a>← {t('Back to home')}</a>
           </Link>
         </div>
       )}

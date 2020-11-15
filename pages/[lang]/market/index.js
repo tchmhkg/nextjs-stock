@@ -1,9 +1,10 @@
 import Head from "next/head";
 // import useSWR from "swr";
+import { getLocalizationProps } from "~/context/LanguageContext";
 
 import Layout from "~/components/layout";
 // import utilStyles from "~/styles/utils.module.css";
-import MarketIndices from '~/components/market/indices';
+import MarketIndices from "~/components/market/indices";
 import StockList from "~/components/market/stock-list";
 
 // const fetcher = (...args) => fetch(...args).then((res) => res.json());
@@ -28,5 +29,19 @@ const Market = () => {
     </Layout>
   );
 };
+
+export const getStaticProps = async (ctx) => {
+  const localization = getLocalizationProps(ctx);
+  return {
+    props: {
+      localization,
+    },
+  };
+};
+
+export const getStaticPaths = async () => ({
+  paths: ["en", "zh"].map((lang) => ({ params: { lang } })),
+  fallback: false,
+});
 
 export default Market;

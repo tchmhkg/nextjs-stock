@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { TDA_QUOTES_API } from "~/utils/apiUrls";
 import { TDA_CLIENT_ID } from "~/utils/config";
+import useTranslation from "~/hooks/useTranslation";
 
 import StockItem from "~/components/market/item";
 
@@ -35,6 +36,8 @@ const EmptyDataText = styled.span`
 `;
 
 const StockList = () => {
+  const { locale, t } = useTranslation();
+
   const [stocks, setStocks] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -116,7 +119,7 @@ const StockList = () => {
 
   return (
     <div>
-      Saved Stock List
+      {t('Saved Stock List')}
       {stocks?.map((stock) => (
         <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} />
       ))}

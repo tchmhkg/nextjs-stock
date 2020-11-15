@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import styled from "styled-components";
 import styles from "~/components/market/item.module.css";
+import useTranslation from "~/hooks/useTranslation";
 
 const Container = styled.div`
   display: flex;
@@ -33,6 +34,7 @@ const Diff = styled.span`
 `;
 
 const StockItem = ({ item, refreshing }) => {
+  const { locale } = useTranslation();
   const { lastPrice = item.lastPriceInDouble, closePrice } = item;
 
   const getPriceColor = () => {
@@ -60,7 +62,10 @@ const StockItem = ({ item, refreshing }) => {
   };
 
   return (
-    <Link href={`/market/${item.symbol}`}>
+    <Link
+      href={`/[lang]/market/stock?id=${item.symbol}`}
+      as={`/${locale}/market/stock?id=${item.symbol}`}
+    >
       <Container>
         <div className={styles.stockInfo}>
           <Symbol>{item.symbol}</Symbol>

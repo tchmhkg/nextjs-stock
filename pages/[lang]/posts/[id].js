@@ -1,8 +1,10 @@
 import Head from "next/head";
 import Layout from "~/components/layout";
 import Date from "~/components/date";
+import { getLocalizationProps } from "~/context/LanguageContext";
 import { getAllPostIds, getPostData } from "~/lib/posts";
 import utilStyles from "~/styles/utils.module.css";
+import { locales } from '~/translations/config'
 
 const Post = ({ postData }) => {
   return (
@@ -22,19 +24,33 @@ const Post = ({ postData }) => {
 };
 
 export async function getStaticPaths() {
-  // Return a list of possible value for id
-  const paths = getAllPostIds();
+  // Correct format
+  // [
+  //   { params: { lang: 'en', pid: 'i18n-ssg-nextjs-app' } },
+  //   { params: { lang: 'fr', pid: 'i18n-ssg-nextjs-app' } }
+  // ]
+  
+  const posts = getAllPostIds();
+  const paths = posts.flatMap(post =>
+    locales.flatMap((locale) =>
+      Object.keys(post).map((postLang) => ({
+        params: { lang: locale, id: post[postLang].id },
+      }))
+    )
+  )
   return {
     paths,
     fallback: false,
   };
 }
-export async function getStaticProps({ params }) {
+export async function getStaticProps(ctx) {
   // Fetch necessary data for the blog post using params.id
-  const postData = await getPostData(params.id);
+  const localization = getLocalizationProps(ctx);
+  const postData = await getPostData(ctx.params.id);
   return {
     props: {
       postData,
+      localization
     },
   };
 }
