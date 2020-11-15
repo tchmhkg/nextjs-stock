@@ -24,12 +24,6 @@ const Post = ({ postData }) => {
 };
 
 export async function getStaticPaths() {
-  // Correct format
-  // [
-  //   { params: { lang: 'en', pid: 'i18n-ssg-nextjs-app' } },
-  //   { params: { lang: 'fr', pid: 'i18n-ssg-nextjs-app' } }
-  // ]
-  
   const posts = getAllPostIds();
   const paths = posts.flatMap(post =>
     locales.flatMap((locale) =>

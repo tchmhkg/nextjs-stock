@@ -31,5 +31,5 @@ const Home = ({ allPostsData = [] }) => {
     </div>
   );
 };
-export default Home
+export default React.memo(Home);
 

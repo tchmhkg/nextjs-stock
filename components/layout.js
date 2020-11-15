@@ -1,10 +1,10 @@
-import Head from "next/head";
 import Link from "next/link";
 import styled from 'styled-components';
 import styles from "~/components/layout.module.scss";
 import utilStyles from "~/styles/utils.module.scss";
 import useTranslation from '~/hooks/useTranslation'
 
+import Head from "~/components/head";
 import Header from "~/components/header";
 import BackButton from "~/components/back";
 
@@ -28,9 +28,7 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
     <>
     <Header />
     <Container>
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Head />
       {showAvatar && (
       <header className={styles.header}>
         {home ? (

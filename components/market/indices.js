@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { TDA_CLIENT_ID } from "~/utils/config";
 import axios from "axios";
 import styled from "styled-components";
+
 import { TDA_QUOTES_API } from "~/utils/apiUrls";
-// import {useTheme} from '~/Theme';
+import { TDA_CLIENT_ID } from "~/utils/config";
+import useTranslation from "~/hooks/useTranslation";
 import IndexPrice from "~/components/market-indices/index-price";
 import Carousel from "~/components/market/carousel";
-import useTranslation from "~/hooks/useTranslation";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
@@ -31,8 +31,6 @@ const MarketIndices = () => {
   const { t } = useTranslation();
   const [prices, setPrices] = useState([]);
   let isCancelled = useRef(false);
-  // const {t} = useLocale();
-  // const {colors, mode} = useTheme();
 
   useEffect(() => {
     const interval = setInterval(() => {
