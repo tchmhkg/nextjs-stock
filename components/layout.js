@@ -10,7 +10,7 @@ import BackButton from "~/components/back";
 const name = "Truman";
 export const siteTitle = "Next.js Sample Website";
 
-const Layout = ({ children, home, showAvatar = true, back = false }) => {
+const Layout = ({ children, home, showAvatar = true, back = false, ...props }) => {
   const { locale, t } = useTranslation()
 
   return (
@@ -62,7 +62,7 @@ const Layout = ({ children, home, showAvatar = true, back = false }) => {
         )}
       </header>
       )}
-      {back && <BackButton />}
+      {back && <BackButton backUrl={props.backUrl}/>}
       <main>{children}</main>
       {!home && (
         <div className={styles.backToHome}>

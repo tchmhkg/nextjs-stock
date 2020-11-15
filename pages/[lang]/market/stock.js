@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import Head from "next/head";
 import axios from "axios";
+import queryString from "query-string";
+import Head from "next/head";
 import { useRouter } from "next/router";
+
 import { getLocalizationProps } from "~/context/LanguageContext";
 import useTranslation from "~/hooks/useTranslation";
 
@@ -9,13 +11,22 @@ import Layout from "~/components/layout";
 import NewsItem from "~/components/market/news-item";
 
 const Stock = () => {
-  const { locale, t } = useTranslation();
+  const { t } = useTranslation();
   const router = useRouter();
-  const { id: ticker } = router.query;
   const [news, setNews] = useState([]);
+  const [ticker, setTicker] = useState(null);
 
   useEffect(() => {
-    // known issue: ticker will be lost after refresh
+    const { id } = router.query;
+    const queryFromUrl = queryString.parseUrl(router.asPath);
+    if (id) {
+      setTicker(id);
+    } else if (queryFromUrl?.query?.id) {
+      setTicker(queryFromUrl?.query?.id);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!ticker) {
       return;
     }
@@ -29,15 +40,15 @@ const Stock = () => {
       setNews(news);
     };
     getNews();
-  }, []);
+  }, [ticker]);
 
   return (
-    <Layout showAvatar={false} back>
+    <Layout showAvatar={false} back backUrl="/market">
       <Head>
         <title>{ticker}</title>
       </Head>
       {ticker}
-      <h3>{t('news')}</h3>
+      <h3>{t("news")}</h3>
       {news?.map((item) => (
         <NewsItem key={item.guid} item={item} />
       ))}
@@ -47,7 +58,6 @@ const Stock = () => {
 
 export const getStaticProps = async ({ ...ctx }) => {
   const localization = getLocalizationProps(ctx);
-  console.log('props ctx ->',ctx)
 
   return {
     props: {
@@ -57,7 +67,6 @@ export const getStaticProps = async ({ ...ctx }) => {
 };
 
 export const getStaticPaths = async (ctx) => {
-  console.log('ctx ->',ctx);
   return {
     paths: ["en", "zh"].map((lang) => ({ params: { lang } })),
     fallback: false,
