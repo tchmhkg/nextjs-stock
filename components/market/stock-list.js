@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { TDA_QUOTES_API } from "../../utils/apiUrls";
-import { TDA_CLIENT_ID } from "../../utils/config";
-
-import StockItem from "./item";
-import styled from "styled-components";
 import axios from "axios";
+import styled from "styled-components";
+
+import { TDA_QUOTES_API } from "~/utils/apiUrls";
+import { TDA_CLIENT_ID } from "~/utils/config";
+
+import StockItem from "~/components/market/item";
 
 const dummyData = [
   { symbol: "AAPL", name: "Apple" },

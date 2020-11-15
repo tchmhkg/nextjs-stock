@@ -1,6 +1,6 @@
 import Cors from 'cors'
 // import axios from 'axios';
-import initMiddleware from '../../../lib/init-middleware'
+import initMiddleware from '~/lib/init-middleware'
 let Parser = require('rss-parser');
 let parser = new Parser();
 

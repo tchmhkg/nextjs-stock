@@ -1,8 +1,8 @@
 import Head from "next/head";
-import styles from "./layout.module.css";
-import utilStyles from "../styles/utils.module.css";
+import styles from "~/components/layout.module.css";
+import utilStyles from "~/styles/utils.module.css";
 import Link from "next/link";
-import BackButton from "./back";
+import BackButton from "~/components/back";
 
 const name = "Truman";
 export const siteTitle = "Next.js Sample Website";

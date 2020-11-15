@@ -1,12 +1,12 @@
 import Head from "next/head";
-import useSWR from "swr";
+// import useSWR from "swr";
 
-import Layout from "../../components/layout";
-import utilStyles from "../../styles/utils.module.css";
-import MarketIndices from '../../components/market/indices';
-import StockList from "../../components/market/stock-list";
+import Layout from "~/components/layout";
+// import utilStyles from "~/styles/utils.module.css";
+import MarketIndices from '~/components/market/indices';
+import StockList from "~/components/market/stock-list";
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
+// const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 const Market = () => {
   // const { data, error } = useSWR(

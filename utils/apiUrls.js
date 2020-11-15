@@ -7,7 +7,7 @@ import {
   IEX_SANDBOX_BASE_URL,
   TDA_BASE_URL,
   TDA_CLIENT_ID,
-} from './config';
+} from '~/utils/config';
 
 export const LOGIN_API = API_BASE_URL + '/login';
 

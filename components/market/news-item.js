@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import moment from "moment";
 import styled from "styled-components";
-import styles from "./news-item.module.css";
+import styles from "~/components/market/news-item.module.css";
 
 const Container = styled.div`
   padding: 10px;

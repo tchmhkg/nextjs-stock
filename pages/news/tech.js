@@ -1,8 +1,8 @@
 import Head from "next/head";
 import useSWR from "swr";
 
-import Layout from "../../components/layout";
-import utilStyles from "../../styles/utils.module.css";
+import Layout from "~/components/layout";
+import utilStyles from "~/styles/utils.module.css";
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 const Tech = () => {
