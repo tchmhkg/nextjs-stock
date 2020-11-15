@@ -3,8 +3,8 @@ import Head from "next/head";
 import axios from 'axios';
 import { useRouter } from 'next/router'
 
-import Layout from "../../components/layout";
-import NewsItem from '../../components/market/news-item';
+import Layout from "~/components/layout";
+import NewsItem from '~/components/market/news-item';
 
 const Stock = () => {
   const router = useRouter()

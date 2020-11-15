@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { TDA_CLIENT_ID } from "../../utils/config";
+import { TDA_CLIENT_ID } from "~/utils/config";
 import axios from "axios";
 import styled from "styled-components";
-import { TDA_QUOTES_API } from "../../utils/apiUrls";
+import { TDA_QUOTES_API } from "~/utils/apiUrls";
 // import {useTheme} from '~/Theme';
-import IndexPrice from "../market-indices/index-price";
-import Carousel from "./Carosel";
+import IndexPrice from "~/components/market-indices/index-price";
+import Carousel from "~/components/market/carousel";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();

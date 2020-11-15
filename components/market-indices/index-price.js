@@ -1,6 +1,6 @@
 import React, {useCallback, memo} from 'react';
 import styled from 'styled-components';
-import styles from "./index-price.module.css";
+import styles from "~/components/market-indices/index-price.module.css";
 
 const Price = styled.span`
   font-size: 20px;
