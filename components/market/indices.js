@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { TDA_QUOTES_API } from "../../utils/apiUrls";
 // import {useTheme} from '~/Theme';
 import IndexPrice from "../market-indices/index-price";
-import styles from "./indices.module.css";
+import Carousel from "./Carosel";
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
@@ -15,15 +15,11 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 150px;
 `;
 
 const Label = styled.span`
   color: #0b0b0b;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: center;
 `;
 
 const MarketIndices = () => {
@@ -36,7 +32,7 @@ const MarketIndices = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       getQuotes();
-    }, 1000);
+    }, 1500);
     return () => clearInterval(interval);
   }, []);
 
@@ -67,48 +63,38 @@ const MarketIndices = () => {
       });
   };
 
-  const renderIndexContent = (priceObj) => (
-    <Wrapper key={priceObj?.symbol}>
-      <Label numberOfLines={2}>{priceObj?.description}</Label>
-      <IndexPrice priceObj={priceObj} />
-    </Wrapper>
-  );
+  const renderIndexContent = (priceObj) => {
+    // Temp
+    priceObj.lastPrice = Math.floor(Math.random() * 1000);
+    return (
+      <Wrapper key={priceObj?.symbol}>
+        <Label numberOfLines={2}>{priceObj?.description}</Label>
+        <IndexPrice priceObj={priceObj} />
+      </Wrapper>
+    );
+  };
 
-  const renderFutureContent = (priceObj) => (
-    <Wrapper key={priceObj?.symbol}>
-      <Label numberOfLines={2}>{priceObj?.description}</Label>
-      <IndexPrice priceObj={priceObj} isFuture />
-    </Wrapper>
-  );
-
-  const onClickView = (index) => setViewIndex(index);
+  const renderFutureContent = (priceObj) => {
+    // Temp
+    priceObj.lastPriceInDouble = Math.floor(Math.random() * 1000);
+    return (
+      <Wrapper key={priceObj?.symbol}>
+        <Label numberOfLines={2}>{priceObj?.description}</Label>
+        <IndexPrice priceObj={priceObj} isFuture />
+      </Wrapper>
+    );
+  };
 
   return (
-      <div>
-        <ButtonWrapper>
-          <button
-            className={`${styles.button} ${
-              viewIndex === 0 ? styles.selectedButton : ""
-            }`}
-            onClick={() => onClickView(0)}
-          >
-            Index
-          </button>
-          <button
-            className={`${styles.button} ${
-              viewIndex === 1 ? styles.selectedButton : ""
-            }`}
-            onClick={() => onClickView(1)}
-          >
-            Future
-          </button>
-        </ButtonWrapper>
-        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: 'wrap' }}>
-          {viewIndex === 0
-            ? prices?.slice(0, 3).map(renderIndexContent)
-            : prices?.slice(3, 6).map(renderFutureContent)}
-        </div>
-      </div>
+    <Carousel>
+      {prices?.map((priceObj) => {
+        if (priceObj.assetType === "INDEX") {
+          return renderIndexContent(priceObj);
+        } else {
+          return renderFutureContent(priceObj);
+        }
+      })}
+    </Carousel>
   );
 };
 

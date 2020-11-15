@@ -11,10 +11,10 @@ const IndexPrice = ({priceObj, isFuture = false}) => {
   const getPriceColor = () => {
     const lastPrice = (isFuture
       ? priceObj?.lastPriceInDouble
-      : priceObj?.lastPrice).toFixed(2);
+      : priceObj?.lastPrice)?.toFixed(2);
     const closePrice = (isFuture
       ? priceObj?.closePriceInDouble
-      : priceObj?.closePrice).toFixed(2);
+      : priceObj?.closePrice)?.toFixed(2);
     if (lastPrice > closePrice) {
       return styles.positive;
     } else if (lastPrice < closePrice) {
@@ -27,16 +27,16 @@ const IndexPrice = ({priceObj, isFuture = false}) => {
   const getPriceDiff = () => {
     const lastPrice = (isFuture
       ? priceObj?.lastPriceInDouble
-      : priceObj?.lastPrice).toFixed(2);
+      : priceObj?.lastPrice)?.toFixed(2);
     const closePrice = (isFuture
       ? priceObj?.closePriceInDouble
-      : priceObj?.closePrice).toFixed(2);
+      : priceObj?.closePrice)?.toFixed(2);
     const diff = lastPrice - closePrice;
     const diffPercent = (diff / closePrice) * 100;
     if (diff > 0) {
-      return `+${diff.toFixed(2)}(+${diffPercent.toFixed(2)}%)`;
+      return `+${diff?.toFixed(2)}(+${diffPercent?.toFixed(2)}%)`;
     } else if (diff < 0) {
-      return `${diff.toFixed(2)}(${diffPercent.toFixed(2)}%)`;
+      return `${diff?.toFixed(2)}(${diffPercent?.toFixed(2)}%)`;
     } else if (diff === 0) {
       return '0(+0%)';
     } else {
