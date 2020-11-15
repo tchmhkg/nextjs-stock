@@ -1,20 +1,31 @@
 import Head from "next/head";
 import Link from "next/link";
+import styled from 'styled-components';
 import styles from "~/components/layout.module.css";
 import utilStyles from "~/styles/utils.module.css";
 import useTranslation from '~/hooks/useTranslation'
-import LanguageSwitcher from '~/components/LanguageSwitcher';
+import LanguageSwitcher from '~/components/language-switcher';
 
 import BackButton from "~/components/back";
+import { useTheme } from "~/theme";
+import ThemeSwitcher from "./theme-switcher";
 
 const name = "Truman";
 export const siteTitle = "Next.js Sample Website";
 
+const Container = styled.div`
+  min-height: 100vh;
+  padding: 15px;
+  position: relative;
+`;
+
 const Layout = ({ children, home, showAvatar = true, back = false, ...props }) => {
   const { locale, t } = useTranslation()
+  const theme = useTheme();
+  console.log('theme',theme);
 
   return (
-    <div className={styles.container}>
+    <Container>
       <Head>
         <link rel="icon" href="/favicon.ico" />
         <meta
@@ -31,6 +42,7 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <LanguageSwitcher />  
+      <ThemeSwitcher />
       {showAvatar && (
       <header className={styles.header}>
         {home ? (
@@ -71,7 +83,7 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
           </Link>
         </div>
       )}
-    </div>
+    </Container>
   );
 };
 

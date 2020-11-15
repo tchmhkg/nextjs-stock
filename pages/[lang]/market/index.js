@@ -1,6 +1,7 @@
 import Head from "next/head";
 // import useSWR from "swr";
 import { getLocalizationProps } from "~/context/LanguageContext";
+import {locales} from '~/translations/config';
 
 import Layout from "~/components/layout";
 // import utilStyles from "~/styles/utils.module.css";
@@ -40,7 +41,7 @@ export const getStaticProps = async (ctx) => {
 };
 
 export const getStaticPaths = async () => ({
-  paths: ["en", "zh"].map((lang) => ({ params: { lang } })),
+  paths: locales.map((lang) => ({ params: { lang } })),
   fallback: false,
 });
 

@@ -1,6 +1,7 @@
 import Layout from "~/components/layout";
 import { getSortedPostsData } from "~/lib/posts";
 import { getLocalizationProps } from "~/context/LanguageContext";
+import {locales} from '~/translations/config';
 
 import Home from "~/components/home";
 
@@ -25,7 +26,7 @@ export const getStaticProps = async (ctx) => {
 };
 
 export const getStaticPaths = async () => ({
-  paths: ["en", "zh"].map((lang) => ({ params: { lang } })),
+  paths: locales.map((lang) => ({ params: { lang } })),
   fallback: false,
 });
 

@@ -1,16 +1,16 @@
-import { defaultLocale } from './config'
-import { isLocale } from './types'
+import { defaultLocale } from "./config";
+import { isLocale } from "./types";
 
 export function getInitialLocale() {
-  const localSetting = localStorage.getItem('locale')
+  const localSetting = window.localStorage.getItem("locale");
   if (localSetting && isLocale(localSetting)) {
-    return localSetting
+    return localSetting;
   }
 
-  const [browserSetting] = navigator.language.split('-')
+  const [browserSetting] = navigator.language.split("-");
   if (isLocale(browserSetting)) {
-    return browserSetting
+    return browserSetting;
   }
 
-  return defaultLocale
+  return defaultLocale;
 }

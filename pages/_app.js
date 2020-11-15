@@ -1,13 +1,15 @@
-import '~/styles/global.css'
-import { LanguageProvider } from '~/context/LanguageContext'
+import "~/styles/global.css";
+import { LanguageProvider } from "~/context/LanguageContext";
+import ThemeManager from "~/theme";
 
 const App = ({ Component, pageProps }) => {
-  console.log('pageProps => ',pageProps);
   return (
-    <LanguageProvider lang={pageProps.localization?.locale}>
-      <Component {...pageProps} />
-    </LanguageProvider>
-  )
-}
+    <ThemeManager>
+      <LanguageProvider lang={pageProps.localization?.locale}>
+        <Component {...pageProps} />
+      </LanguageProvider>
+    </ThemeManager>
+  );
+};
 
 export default App;

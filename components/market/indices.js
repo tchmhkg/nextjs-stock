@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 150px;
+  min-width: 150px;
 `;
 
 const Label = styled.span`
@@ -24,7 +24,6 @@ const Label = styled.span`
 
 const MarketIndices = () => {
   const [prices, setPrices] = useState([]);
-  const [viewIndex, setViewIndex] = useState(0);
   let isCancelled = useRef(false);
   // const {t} = useLocale();
   // const {colors, mode} = useTheme();

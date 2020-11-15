@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import { getLocalizationProps } from "~/context/LanguageContext";
+import {locales} from '~/translations/config';
 import useTranslation from "~/hooks/useTranslation";
 
 import Layout from "~/components/layout";
@@ -68,7 +69,7 @@ export const getStaticProps = async ({ ...ctx }) => {
 
 export const getStaticPaths = async (ctx) => {
   return {
-    paths: ["en", "zh"].map((lang) => ({ params: { lang } })),
+    paths: locales.map((lang) => ({ params: { lang } })),
     fallback: false,
   };
 };

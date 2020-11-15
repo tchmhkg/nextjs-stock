@@ -8,7 +8,7 @@ const Button = styled.span`
 `;
 
 const BackButton = ({backUrl = ''}) => {
-  const {locale} = useTranslation();
+  const {locale, t} = useTranslation();
   const router = useRouter();
   const onClickBack = useCallback(() => {
     if(backUrl) {
@@ -20,7 +20,7 @@ const BackButton = ({backUrl = ''}) => {
 
   return (
     <div>
-      <Button onClick={onClickBack}>← Back</Button>
+      <Button onClick={onClickBack}>← {t('Back')}</Button>
     </div>
   );
 };
