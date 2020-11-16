@@ -1,5 +1,13 @@
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
+import styled from "styled-components";
+
+const Container = styled.div`
+  height: 60px;
+  @media (max-width: 768px) {
+    height: 80px;
+  }
+`;
 
 const responsive = {
   0: {
@@ -12,7 +20,7 @@ const responsive = {
 
 const Carousel = ({ children }) => {
   return (
-    <div>
+    <Container>
       <AliceCarousel
         mouseTracking
         autoPlay
@@ -25,7 +33,7 @@ const Carousel = ({ children }) => {
       >
         {children}
       </AliceCarousel>
-    </div>
+    </Container>
   );
 };
 

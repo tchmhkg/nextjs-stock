@@ -9,10 +9,13 @@
     "export": "next export"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "axios": "^0.21.0",
     "cors": "^2.8.5",
     "date-fns": "^2.16.1",
     "gray-matter": "^4.0.2",
+    "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "next": "^10.0.0",
     "query-string": "^6.13.7",

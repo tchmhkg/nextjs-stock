@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import SuggestionItem from "~/components/market/suggestion-item";
-// import {symbolSuggest} from '~/utils/finance';
 
 const Container = styled.div`
   background-color: ${(props) => props.theme.backgroundAlt};
@@ -17,8 +16,7 @@ const Container = styled.div`
 const Suggestion = ({ symbol, ...props }) => {
   const [suggestion, setSuggestion] = useState([]);
 
-  const getSuggestion = React.useCallback(async () => {
-    // const results = await symbolSuggest(symbol);
+  const getSuggestion = useCallback(async () => {
     if(!symbol) {
       return;
     }
@@ -27,7 +25,6 @@ const Suggestion = ({ symbol, ...props }) => {
         symbol,
       },
     });
-    console.log("result => ", results?.data?.data);
     setSuggestion(results?.data?.data);
   }, [symbol]);
 
@@ -41,9 +38,7 @@ const Suggestion = ({ symbol, ...props }) => {
 
   return (
     <Container>
-      {suggestion.map((item) => {
-        return <SuggestionItem item={item} />;
-      })}
+      {suggestion.map((item) => <SuggestionItem key={item.symbol} item={item} />)}
     </Container>
   );
 };

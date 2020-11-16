@@ -13,6 +13,7 @@ const strings = {
     "/NQ":"Nasdap (Future)",
     "/ES":"S&P 500 (Future)",
     "Search": "Search",
+    "Your list is empty!": "Your list is empty!",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -28,6 +29,7 @@ const strings = {
     "/NQ":"納斯達克 (期貨)",
     "/ES":"標普500 (期貨)",
     "Search": "搜尋",
+    "Your list is empty!": "你的列表為空"
   },
 };
 

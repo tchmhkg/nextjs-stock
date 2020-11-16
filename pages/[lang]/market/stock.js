@@ -3,6 +3,7 @@ import axios from "axios";
 import queryString from "query-string";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import styled from 'styled-components';
 
 import { getLocalizationProps } from "~/context/LanguageContext";
 import {locales} from '~/translations/config';
@@ -10,6 +11,13 @@ import useTranslation from "~/hooks/useTranslation";
 
 import Layout from "~/components/layout";
 import NewsItem from "~/components/market/news-item";
+import Bookmark from "~/components/market/bookmark";
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 const Stock = () => {
   const { t } = useTranslation();
@@ -48,8 +56,11 @@ const Stock = () => {
       <Head>
         <title>{ticker}</title>
       </Head>
-      <h2>{ticker}</h2>
-      {`TODO: Display candlestick chart, historical data and company info`}
+      <Header>
+        <h2>{ticker}</h2>
+        <Bookmark ticker={ticker}/>
+      </Header>
+      {`!! TODO: Display candlestick chart, historical data and company info`}
       <h3>{t("news")}</h3>
       {news?.map((item) => (
         <NewsItem key={item.guid} item={item} />

@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 150px;
+  min-width: 160px;
   height: 50px;
   @media (max-width: 768px) {
     height: 70px;
@@ -25,6 +25,8 @@ const Wrapper = styled.div`
 
 const Label = styled.span`
   color: ${props => props.theme.text};
+  font-size: 18px;
+  text-transform: uppercase;
 `;
 
 const MarketIndices = () => {

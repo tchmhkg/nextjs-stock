@@ -9,20 +9,15 @@ import useTranslation from "~/hooks/useTranslation";
 import StockItem from "~/components/market/item";
 import SearchInput from '~/components/market/input';
 
-const dummyData = [
-  { symbol: "AAPL", name: "Apple" },
-  { symbol: "GOOG", name: "Google" },
-  { symbol: "AMD", name: "AMD Inc." },
-  { symbol: "TSLA", name: "Tesla" },
-];
+// const dummyData = [
+//   { symbol: "AAPL", name: "Apple" },
+//   { symbol: "GOOG", name: "Google" },
+//   { symbol: "AMD", name: "AMD Inc." },
+//   { symbol: "TSLA", name: "Tesla" },
+// ];
 
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
-
-const Container = styled.div`
-  display: flex;
-  flex: 1;
-`;
 
 const EmptyContainer = styled.div`
   display: flex;
@@ -33,7 +28,7 @@ const EmptyContainer = styled.div`
 
 const EmptyDataText = styled.span`
   font-size: 24px;
-  color: #000;
+  color: ${props => props.theme.text};
 `;
 
 const StockList = () => {
@@ -54,47 +49,49 @@ const StockList = () => {
   }
 
   useEffect(() => {
-    try {
-      // const data = await localStorage.getItem('symbols');
-      // if (data !== null) {
-      // console.log(JSON.parse(data));
-      const jsonData = dummyData; //JSON.parse(data);
-      if (jsonData?.length) {
-        console.log(jsonData);
-        setStocks(jsonData);
-        const symbolsString = jsonData.map(({ symbol }) => symbol).join(",");
-        getQuotes(symbolsString);
+    const getFromStorage = async() => {
+      try {
+        let data = await window.localStorage.getItem('symbols');
+        let jsonData = [];
+        if(data !== null) {
+          jsonData = JSON.parse(data);
+          if (jsonData?.length) {
+            setStocks(jsonData);
+            const symbolsString = jsonData.map(({ symbol }) => symbol).join(",");
+            getQuotes(symbolsString);
+          }
+        }
+      } catch (e) {
+        console.log(e);
       }
-      // }
-    } catch (e) {
-      console.log(e);
     }
+    getFromStorage();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchStocks = async () => {
-  //     try {
-  //       const data = await localStorage.getItem('symbols');
-  //       if (data !== null) {
-  //         // console.log(JSON.parse(data));
-  //         const jsonData = JSON.parse(data);
-  //         if (jsonData?.length) {
-  //           const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
-  //           getQuotes(symbolsString);
-  //         } else {
-  //           setIsRefreshing(false);
-  //         }
-  //         // setStocks(JSON.parse(data));
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //       setIsRefreshing(false);
-  //     }
-  //   };
-  //   if (isRefreshing) {
-  //     fetchStocks();
-  //   }
-  // }, [isRefreshing])
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        const data = await window.localStorage.getItem('symbols');
+        if (data !== null) {
+          // console.log(JSON.parse(data));
+          const jsonData = JSON.parse(data);
+          if (jsonData?.length) {
+            const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
+            getQuotes(symbolsString);
+          } else {
+            setIsRefreshing(false);
+          }
+          // setStocks(JSON.parse(data));
+        }
+      } catch (e) {
+        console.log(e);
+        setIsRefreshing(false);
+      }
+    };
+    if (isRefreshing) {
+      fetchStocks();
+    }
+  }, [isRefreshing])
 
   const getQuotes = (symbols) => {
     axios
@@ -133,10 +130,18 @@ const StockList = () => {
         onChange={onChangeTicker}
         onSearchClear={resetTicker}
       />
-      {t('Saved Stock List')}
-      {stocks?.map((stock) => (
-        <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} />
-      ))}
+      {stocks && stocks.length ? (
+      <>
+        {t('Saved Stock List')}
+        {stocks?.map((stock) => (
+          <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} />
+        ))}
+      </>
+      ) : (
+        <EmptyContainer>
+          <EmptyDataText>{t('Your list is empty!')}</EmptyDataText>
+        </EmptyContainer>
+      )}
     </div>
   );
 };
