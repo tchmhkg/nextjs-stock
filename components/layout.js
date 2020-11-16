@@ -5,7 +5,7 @@ import utilStyles from "~/styles/utils.module.scss";
 import useTranslation from '~/hooks/useTranslation'
 
 import Head from "~/components/head";
-import Header from "~/components/header";
+import Navbar from "~/components/navbar";
 import BackButton from "~/components/back";
 
 const name = "Truman";
@@ -26,7 +26,7 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
 
   return (
     <>
-    <Header />
+    <Navbar />
     <Container>
       <Head />
       {showAvatar && (
