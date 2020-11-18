@@ -3,6 +3,7 @@ export const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 export const IEX_BASE_URL = 'https://cloud.iexapis.com/v1';
 export const IEX_SANDBOX_BASE_URL = 'https://sandbox.iexapis.com/stable';
 export const TDA_BASE_URL = 'https://api.tdameritrade.com/v1';
+export const TIINGO_BASE_URL = 'https://api.tiingo.com/iex';
 
 export const NEWS_API_KEY = 'cf74bbcf13fb4c998cc9c487c6acfc85';
 export const FINNHUB_API_KEY = 'bsdev0vrh5r8dht9873g';
@@ -12,3 +13,5 @@ export const TDA_CLIENT_ID = '1AQTLQTIRXA05MXOGHCE96NC5BFRTQFH';
 
 export const TDA_LOGIN_URL =
   'https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=https%3A%2F%2Fchmtdsapi.herokuapp.com%2Fauth&client_id=1AQTLQTIRXA05MXOGHCE96NC5BFRTQFH%40AMER.OAUTHAP';
+
+export const TIINGO_API_KEY = "45a7c1bfaff6a70f9ed2ee2f3b9a10ecb4759a42";

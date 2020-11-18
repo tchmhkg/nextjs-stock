@@ -7,6 +7,8 @@ import {
   IEX_SANDBOX_BASE_URL,
   TDA_BASE_URL,
   TDA_CLIENT_ID,
+  TIINGO_API_KEY,
+  TIINGO_BASE_URL,
 } from '~/utils/config';
 
 export const LOGIN_API = API_BASE_URL + '/login';
@@ -30,6 +32,9 @@ export const getAdvancedStatsApi = (symbol) =>
 export const TDA_REFRESH_TOKEN_API = TDA_BASE_URL + '/oauth2/token';
 
 export const TDA_QUOTES_API = TDA_BASE_URL + '/marketdata/quotes';
+
+export const getHistPrices = (symbol) => TIINGO_BASE_URL + `/${symbol}/prices?token=${TIINGO_API_KEY}`;
+
 
 // export const getTDARefreshTokenUrl = (token) => {
 //   return (
