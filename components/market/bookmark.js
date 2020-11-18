@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { BookmarkBorder as BookmarkBorderIcon, Bookmark as BookmarkIcon } from '@material-ui/icons';
 import _ from 'lodash';
 
-const Bookmark = ({ticker}) => {
+const Bookmark = ({symbol}) => {
   const [saved, setSaved] = useState(null);
 
   const onPressSaveSymbol = useCallback(async () => {
@@ -10,13 +10,13 @@ const Bookmark = ({ticker}) => {
       const existing = await window.localStorage.getItem('symbols');
 
       const existingJson = existing ? JSON.parse(existing) : [];
-      const isExisted = _.find(existingJson, ['symbol', ticker]);
+      const isExisted = _.find(existingJson, ['symbol', symbol]);
       if (isExisted) {
         return;
       }
       const newList = [
         ...existingJson,
-        {symbol: ticker},
+        {symbol: symbol},
       ];
 
       await window.localStorage.setItem('symbols', JSON.stringify(newList));
@@ -24,7 +24,7 @@ const Bookmark = ({ticker}) => {
     } catch (e) {
       console.log(e);
     }
-  }, [ticker, saved]);
+  }, [symbol, saved]);
 
   const onPressRemoveSymbol = useCallback(async () => {
     try {
@@ -33,7 +33,7 @@ const Bookmark = ({ticker}) => {
       const existingJson = existing ? JSON.parse(existing) : [];
       const newList = _.filter(
         existingJson,
-        (stock) => stock.symbol !== ticker,
+        (stock) => stock.symbol !== symbol,
       );
 
       await window.localStorage.setItem('symbols', JSON.stringify(newList));
@@ -41,17 +41,17 @@ const Bookmark = ({ticker}) => {
     } catch (e) {
       console.log(e);
     }
-  }, [ticker, saved]);
+  }, [symbol, saved]);
 
   useEffect(() => {
     const getStatusFromStorage = async () => {
       const existing = await window.localStorage.getItem('symbols');
       const existingJson = existing ? JSON.parse(existing) : [];
-      const isExisted = existingJson.find(item => item.symbol === ticker);
+      const isExisted = existingJson.find(item => item.symbol === symbol);
       setSaved(isExisted ? true : false);
     };
     getStatusFromStorage();
-  }, [ticker]);
+  }, [symbol]);
 
   // TODO: merge to single function
   return (

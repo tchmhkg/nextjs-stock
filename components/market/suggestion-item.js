@@ -27,8 +27,8 @@ const SuggestionItem = ({item}) => {
 
   return (
     <Link
-      href={`/[lang]/market/stock?id=${item.symbol}`}
-      as={`/${locale}/market/stock?id=${item.symbol}`}
+      href={`/[lang]/market/[symbol]`}
+      as={`/${locale}/market/${item.symbol}`}
     >
       <Container>
         <div>

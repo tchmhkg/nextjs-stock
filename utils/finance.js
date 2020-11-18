@@ -157,7 +157,7 @@ export const getStock = (opts, type) => {
     }
   };
   
-  export const   = async (query) => {
+  export const getNews = async (query) => {
     //Check if there are any previous pending requests
     if (typeof cancelToken != typeof undefined) {
       cancelToken.cancel("Operation canceled due to new request.");

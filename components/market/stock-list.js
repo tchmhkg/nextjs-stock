@@ -38,14 +38,14 @@ const StockList = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   let isCancelled = useRef(false);
-  const [ticker, setTicker] = useState("");
+  const [symbol, setSymbol] = useState("");
 
-  const onChangeTicker = (e) => {
-    setTicker(e.target.value);
+  const onChangeSymbol = (e) => {
+    setSymbol(e.target.value?.toUpperCase());
   }
 
-  const resetTicker = () => {
-    setTicker('');
+  const resetSymbol = () => {
+    setSymbol('');
   }
 
   useEffect(() => {
@@ -126,9 +126,9 @@ const StockList = () => {
   return (
     <div>
       <SearchInput 
-        value={ticker}
-        onChange={onChangeTicker}
-        onSearchClear={resetTicker}
+        value={symbol}
+        onChange={onChangeSymbol}
+        onSearchClear={resetSymbol}
       />
       {stocks && stocks.length ? (
       <>

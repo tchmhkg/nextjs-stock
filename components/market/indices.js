@@ -69,8 +69,6 @@ const MarketIndices = () => {
   };
 
   const renderIndexContent = (priceObj) => {
-    // Temp
-    // priceObj.lastPrice = Math.floor(Math.random() * 1000);
     return (
       <Wrapper key={priceObj?.symbol}>
         <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>
@@ -80,8 +78,6 @@ const MarketIndices = () => {
   };
 
   const renderFutureContent = (priceObj) => {
-    // Temp
-    // priceObj.lastPriceInDouble = Math.floor(Math.random() * 1000);
     return (
       <Wrapper key={priceObj?.symbol}>
         <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>

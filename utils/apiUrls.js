@@ -20,12 +20,12 @@ export const getNewsApiByCategory = (category, page) => {
 export const CANDLES_API = FINNHUB_BASE_URL + '/stock/candle';
 export const QUOTE_API = FINNHUB_BASE_URL + '/quote';
 
-export const getIntradayPriceApi = (ticker) =>
-  IEX_BASE_URL + `/stock/${ticker}/intraday-prices`;
-export const getYearPriceApi = (ticker) =>
-  IEX_BASE_URL + `/stock/${ticker}/chart/1y`;
-export const getAdvancedStatsApi = (ticker) =>
-  IEX_SANDBOX_BASE_URL + `/stock/${ticker}/advanced-stats`;
+export const getIntradayPriceApi = (symbol) =>
+  IEX_BASE_URL + `/stock/${symbol}/intraday-prices`;
+export const getYearPriceApi = (symbol) =>
+  IEX_BASE_URL + `/stock/${symbol}/chart/1y`;
+export const getAdvancedStatsApi = (symbol) =>
+  IEX_SANDBOX_BASE_URL + `/stock/${symbol}/advanced-stats`;
 
 export const TDA_REFRESH_TOKEN_API = TDA_BASE_URL + '/oauth2/token';
 
