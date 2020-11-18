@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -41,7 +41,7 @@ const MarketIndices = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getQuotes = () => {
+  const getQuotes = useCallback(() => {
     axios
       .get(TDA_QUOTES_API, {
         cancelToken: source.token,
@@ -66,25 +66,25 @@ const MarketIndices = () => {
         }
         // setIsRefreshing(false);
       });
-  };
+  }, [prices]);
 
-  const renderIndexContent = (priceObj) => {
+  const renderIndexContent = useCallback((priceObj) => {
     return (
       <Wrapper key={priceObj?.symbol}>
         <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>
         <IndexPrice priceObj={priceObj} />
       </Wrapper>
     );
-  };
+  }, [prices]);
 
-  const renderFutureContent = (priceObj) => {
+  const renderFutureContent = useCallback((priceObj) => {
     return (
       <Wrapper key={priceObj?.symbol}>
         <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>
         <IndexPrice priceObj={priceObj} isFuture />
       </Wrapper>
     );
-  };
+  }, [prices]);
 
   return (
     <Carousel>

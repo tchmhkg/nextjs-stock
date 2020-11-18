@@ -12,7 +12,7 @@ const PriceDiff = styled.span`
 `;
 
 const IndexPrice = ({priceObj, isFuture = false}) => {
-  const getPriceColor = () => {
+  const getPriceColor = useCallback(() => {
     const lastPrice = (isFuture
       ? priceObj?.lastPriceInDouble
       : priceObj?.lastPrice)?.toFixed(2);
@@ -26,9 +26,9 @@ const IndexPrice = ({priceObj, isFuture = false}) => {
     } else {
       return {};
     }
-  };
+  }, [priceObj?.lastPriceInDouble, priceObj?.lastPrice, priceObj?.closePriceInDouble, priceObj?.closePrice]);
 
-  const getPriceDiff = () => {
+  const getPriceDiff = useCallback(() => {
     const lastPrice = (isFuture
       ? priceObj?.lastPriceInDouble
       : priceObj?.lastPrice)?.toFixed(2);
@@ -46,7 +46,7 @@ const IndexPrice = ({priceObj, isFuture = false}) => {
     } else {
       return '';
     }
-  };
+  }, [priceObj?.lastPriceInDouble, priceObj?.lastPrice, priceObj?.closePriceInDouble, priceObj?.closePrice]);
 
   const renderLastPrice = useCallback(() => {
     return (
@@ -56,7 +56,7 @@ const IndexPrice = ({priceObj, isFuture = false}) => {
           : priceObj?.lastPrice?.toFixed(2)}
       </Price>
     );
-  }, [priceObj?.lastPriceInDouble, priceObj?.lastPrice]);
+  }, [priceObj?.lastPriceInDouble, priceObj?.lastPrice, priceObj?.closePriceInDouble, priceObj?.closePrice]);
 
   const renderPriceDiff = useCallback(() => {
     return (
@@ -64,7 +64,7 @@ const IndexPrice = ({priceObj, isFuture = false}) => {
         <PriceDiff>{getPriceDiff()}</PriceDiff>
       </Price>
     );
-  }, [priceObj?.lastPriceInDouble, priceObj?.lastPrice]);
+  }, [priceObj?.lastPriceInDouble, priceObj?.lastPrice, priceObj?.closePriceInDouble, priceObj?.closePrice]);
 
   return (
     <div style={{justifyContent: 'flex-end'}}>

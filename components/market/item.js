@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 
 import styled from "styled-components";
@@ -13,6 +13,9 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  &:not(:last-child) {
+    border-bottom: 1px solid ${props => props.theme.border};
+  }
 `;
 
 const Name = styled.span`
@@ -37,7 +40,7 @@ const StockItem = ({ item, refreshing }) => {
   const { locale } = useTranslation();
   const { lastPrice = item.lastPriceInDouble, closePrice } = item;
 
-  const getPriceColor = () => {
+  const getPriceColor = useCallback(() => {
     if (lastPrice > closePrice) {
       return styles.positive;
     } else if (lastPrice < closePrice) {
@@ -45,9 +48,9 @@ const StockItem = ({ item, refreshing }) => {
     } else {
       return {};
     }
-  };
+  }, [lastPrice, closePrice]);
 
-  const getPriceDiff = () => {
+  const getPriceDiff = useCallback(() => {
     const diff = lastPrice - closePrice;
     const diffPercent = (diff / closePrice) * 100;
     if (diff > 0) {
@@ -59,7 +62,7 @@ const StockItem = ({ item, refreshing }) => {
     } else {
       return "-";
     }
-  };
+  }, [lastPrice, closePrice]);
 
   return (
     <Link

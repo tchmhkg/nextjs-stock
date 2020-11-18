@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
 import styled from "styled-components";
@@ -37,4 +38,4 @@ const Carousel = ({ children }) => {
   );
 };
 
-export default Carousel;
+export default memo(Carousel);
