@@ -10,6 +10,7 @@ import Layout from "~/components/layout";
 import NewsItem from "~/components/market/news-item";
 import Bookmark from "~/components/market/bookmark";
 import CandleStickChart from "~/components/market/candlestick-chart";
+import LatestPrice from "~/components/market/latest-price";
 
 const Header = styled.div`
   display: flex;
@@ -29,6 +30,7 @@ const Stock = ({news = [], symbol}) => {
         <h2>{symbol}</h2>
         <Bookmark symbol={symbol}/>
       </Header>
+      <LatestPrice symbol={symbol}/>
       <CandleStickChart symbol={symbol}/>
       {`!! TODO: Display candlestick chart, historical data and company info`}
       <h3>{t("news")}</h3>

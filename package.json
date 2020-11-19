@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
     "start": "next start",
     "export": "next export"
@@ -14,6 +14,7 @@
     "axios": "^0.21.0",
     "cors": "^2.8.5",
     "date-fns": "^2.16.1",
+    "express": "^4.17.1",
     "gray-matter": "^4.0.2",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
@@ -27,8 +28,11 @@
     "remark-html": "^13.0.1",
     "rss-parser": "^3.9.0",
     "sass": "^1.29.0",
+    "socket.io": "^3.0.3",
+    "socket.io-client": "^3.0.3",
     "styled-components": "^5.2.1",
-    "swr": "^0.3.8"
+    "swr": "^0.3.8",
+    "ws": "^7.4.0"
   },
   "resolutions": {
     "styled-components": "^5"

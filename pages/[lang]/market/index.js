@@ -6,6 +6,7 @@ import {locales} from '~/translations/config';
 import Layout from "~/components/layout";
 import MarketIndices from "~/components/market/indices";
 import StockList from "~/components/market/stock-list";
+import Crypto from "~/components/market/crypto";
 
 // const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
@@ -25,6 +26,7 @@ const Market = () => {
       </Head>
       <MarketIndices />
       <hr />
+      <Crypto />
       <StockList />
     </Layout>
   );
