@@ -40,5 +40,9 @@
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.11.1"
+  },
+  "engines": {
+    "node": "12.1.0",
+    "npm": "6.9.0"
   }
 }

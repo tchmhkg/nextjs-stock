@@ -4,16 +4,16 @@ const io = require('socket.io')(server);
 const next = require('next');
 const WebSocket = require('ws');
 
-const dev = process.env.NODE_NOV !== 'production';
+const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({dev});
 const nextHandler = nextApp.getRequestHandler();
-
+console.log('environment =',process.env.NODE_ENV);
 let port = process.env.PORT || 3000;
 let host = process.env.HOST || 'http://localhost';
 
 subscribe = {
     'eventName':'subscribe',
-    'authorization':'45a7c1bfaff6a70f9ed2ee2f3b9a10ecb4759a42',
+    'authorization':process.env.TIINGO_API_KEY,
     'eventData': {
         'thresholdLevel': 2,
     }
