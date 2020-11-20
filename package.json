@@ -1,11 +1,11 @@
 {
-  "name": "learn-starter",
-  "version": "0.1.0",
+  "name": "nextjs-app",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "start": "node server.js",
+    "start": "NODE_ENV=production node server.js",
     "next-start": "next start",
     "export": "next export"
   },
