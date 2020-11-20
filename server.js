@@ -8,7 +8,9 @@ const dev = process.env.NODE_NOV !== 'production';
 const nextApp = next({dev});
 const nextHandler = nextApp.getRequestHandler();
 
-let port = 3000;
+let port = process.env.PORT || 3000;
+let host = process.env.HOST || 'http://localhost';
+
 subscribe = {
     'eventName':'subscribe',
     'authorization':'45a7c1bfaff6a70f9ed2ee2f3b9a10ecb4759a42',
@@ -57,6 +59,6 @@ nextApp.prepare().then(() => {
 
     server.listen(port, err => {
         if(err) throw err;
-        console.log(`> Ready on http://localhost:${port}`);
+        console.log(`> Ready on ${host}:${port}`);
     })
 })
