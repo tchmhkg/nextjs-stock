@@ -1,1 +1,1 @@
-Demo link: http://truman-nextjs-app.herokuapp.com
+Demo link: https://truman-nextjs-app.herokuapp.com
