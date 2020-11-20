@@ -19,8 +19,7 @@ subscribe = {
     }
 }
 
-io.on('connection', socket => {
-    console.log('connected');
+function connect(socket) {
     var ws = new WebSocket('wss://api.tiingo.com/crypto');
     console.log('query params => ',socket.handshake.query['symbol']);
 
@@ -41,7 +40,7 @@ io.on('connection', socket => {
     });
     
     ws.on('error', (e) => {
-        console.log('error => ',e);
+        console.log('error => ',e.message);
         socket.emit('error', {
             message: e
         });
@@ -49,13 +48,22 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {
         console.log('disconnected');
-        ws.disconnect();
-    })
-
-    socket.on('close', () => {
-        console.log('closed');
         ws.close();
     })
+
+    socket.on('close', (e) => {
+        console.log('closed ->',e.reason);
+        ws.close();
+        setTimeout(function() {
+            console.log('will reconnect');
+            connect();
+        }, 1000);
+    })
+}
+
+io.on('connection', socket => {
+    console.log('connected');
+    connect(socket);
 });
 
 nextApp.prepare().then(() => {
