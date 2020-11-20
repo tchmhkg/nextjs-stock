@@ -36,7 +36,9 @@ const MarketIndices = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      getQuotes();
+      if(TDA_CLIENT_ID) {
+        getQuotes();
+      }
     }, 1500);
     return () => clearInterval(interval);
   }, []);

@@ -30,7 +30,7 @@ io.on('connection', socket => {
     });
     
     ws.on('message', function(data, flags) {
-        console.log('api message => ',data);
+        // console.log('api message => ',data);
         const parseData = JSON.parse(data);
         if(parseData.data && parseData.data[0] === 'Q') {
             socket.emit('api message', {

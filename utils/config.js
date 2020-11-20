@@ -12,6 +12,6 @@ export const IEX_SANDBOX_API_KEY = process.env.IEX_SANDBOX_API_KEY;
 export const TDA_CLIENT_ID = process.env.TDA_CLIENT_ID;
 
 export const TDA_LOGIN_URL =
-  'https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=https%3A%2F%2Fchmtdsapi.herokuapp.com%2Fauth&client_id=1AQTLQTIRXA05MXOGHCE96NC5BFRTQFH%40AMER.OAUTHAP';
+  `https://auth.tdameritrade.com/auth?response_type=code&redirect_uri=https%3A%2F%2Fchmtdsapi.herokuapp.com%2Fauth&client_id=${TDA_CLIENT_ID}%40AMER.OAUTHAP`;
 
 export const TIINGO_API_KEY = process.env.TIINGO_API_KEY;
