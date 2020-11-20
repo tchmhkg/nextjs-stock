@@ -37,16 +37,16 @@ const CandleStickChart = ({symbol, ...props}) => {
             return;
           }
           // setLoading(true);
-          const res = await axios.get('/api/market/getStockPrices', {
-            params: {
-                symbol
-            },
-          });
+          // const res = await axios.get('/api/market/getStockPrices', {
+          //   params: {
+          //       symbol
+          //   },
+          // });
 
-          console.log('res => ',res?.data);
-          parseData(res.data?.data);
-          setData(res.data);
-          setLoading(false);
+          // console.log('res => ',res?.data);
+          // parseData(res.data?.data);
+          // setData(res.data);
+          // setLoading(false);
         } catch (error) {
           console.log(error);
           setLoading(false);

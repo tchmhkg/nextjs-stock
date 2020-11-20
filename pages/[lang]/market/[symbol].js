@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import axios from "axios";
 import Head from "next/head";
 import styled from 'styled-components';
@@ -18,7 +18,43 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const Stock = ({news = [], symbol}) => {
+const Symbol = styled.span`
+  font-size: 24px;
+  font-weight: bold;
+`;
+
+const Name = styled.span`
+  font-size: 18px;
+`;
+
+const DescWrapper = styled.div`
+  max-height: 150px;
+  overflow-y: auto;
+`;
+
+const HeaderContainer = memo(({symbol, name}) => {
+  return (
+    <Header>
+      <div>
+        <Symbol>{symbol} </Symbol>
+        <Name>({name})</Name>
+      </div>
+      <Bookmark symbol={symbol}/>
+    </Header>
+  )
+});
+
+const CompanyDesc = memo(({description = ''}) => {
+  const {t} = useTranslation();
+  return (
+    <div>
+      <h3>{t('Company Info')}</h3>
+      <DescWrapper>{description}</DescWrapper>
+    </div>
+  )
+});
+
+const Stock = ({news = [], symbol, stockInfo = {}, closePrice}) => {
   const { t } = useTranslation();
 
   return (
@@ -26,13 +62,11 @@ const Stock = ({news = [], symbol}) => {
       <Head>
         <title>{symbol}</title>
       </Head>
-      <Header>
-        <h2>{symbol}</h2>
-        <Bookmark symbol={symbol}/>
-      </Header>
-      <LatestPrice symbol={symbol}/>
-      <CandleStickChart symbol={symbol}/>
-      {`!! TODO: Display candlestick chart, historical data and company info`}
+      <HeaderContainer symbol={symbol} name={stockInfo?.name} />
+      <LatestPrice symbol={symbol} closePrice={closePrice} />
+      <CompanyDesc description={stockInfo?.description} />
+      {/* <CandleStickChart symbol={symbol}/>
+      {`!! TODO: Display candlestick chart, historical data`} */}
       <h3>{t("news")}</h3>
       {news?.map((item) => (
         <NewsItem key={item.guid} item={item} />
@@ -40,19 +74,24 @@ const Stock = ({news = [], symbol}) => {
     </Layout>
   );
 };
+
 export async function getServerSideProps(ctx) {
   const localization = getLocalizationProps(ctx);
   const { symbol } = ctx.query;
-  const res = await axios.get(process.env.VERCEL_URL + "/api/market/news", {
+  const res = await axios.get(process.env.VERCEL_URL + "/api/market/stockInfo", {
     params: {
       symbol,
     },
   });
-  const news = res?.data?.data;
+  const news = res?.data?.feeds;
+  const stockInfo = res?.data?.metaInfo;
+  const closePrice = res?.data?.latestPrice?.[0]?.adjClose;
   return {
     props: {
       localization,
       news,
+      closePrice,
+      stockInfo,
       symbol,
     },
   }

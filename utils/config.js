@@ -3,7 +3,7 @@ export const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 export const IEX_BASE_URL = 'https://cloud.iexapis.com/v1';
 export const IEX_SANDBOX_BASE_URL = 'https://sandbox.iexapis.com/stable';
 export const TDA_BASE_URL = 'https://api.tdameritrade.com/v1';
-export const TIINGO_BASE_URL = 'https://api.tiingo.com/iex';
+export const TIINGO_BASE_URL = 'https://api.tiingo.com/tiingo';
 
 export const NEWS_API_KEY = process.env.NEWS_API_KEY;
 export const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY;

@@ -11,7 +11,13 @@ console.log('environment =',process.env.NODE_ENV);
 let port = process.env.PORT || 3000;
 let host = process.env.HOST || 'http://localhost';
 
-subscribe = {
+const SOCKET_MAP = {
+    crypto: 'crypto',
+    fx: 'fx',
+    stock: 'iex'
+}
+
+let subscribe = {
     'eventName':'subscribe',
     'authorization':process.env.TIINGO_API_KEY,
     'eventData': {
@@ -19,20 +25,35 @@ subscribe = {
     }
 }
 
+let unsubscribe = {
+    'eventName':'unsubscribe',
+    'authorization':process.env.TIINGO_API_KEY,
+}
+
 function connect(socket) {
-    var ws = new WebSocket('wss://api.tiingo.com/crypto');
+    const type = socket.handshake.query['type'];
+    var ws = new WebSocket(`wss://api.tiingo.com/${SOCKET_MAP[type]}`);
     console.log('query params => ',socket.handshake.query['symbol']);
 
     ws.on('open', function open() {
         console.log('opened');
         subscribe.eventData.tickers = JSON.parse(socket.handshake.query['symbol']);
+        if(socket.handshake.query['thresholdLevel']) {
+            subscribe.eventData.thresholdLevel = socket.handshake.query['thresholdLevel'];
+        }
         ws.send(JSON.stringify(subscribe));
     });
     
     ws.on('message', function(data, flags) {
         // console.log('api message => ',data);
         const parseData = JSON.parse(data);
-        if(parseData.data && parseData.data[0] === 'Q') {
+        if(parseData.messageType === 'I') {
+            console.log('return subscriptionId',parseData.data.subscriptionId);
+            socket.emit('api message', {
+                subscriptionId: parseData.data.subscriptionId
+            });
+        }
+        if(parseData.data && ((type === 'crypto' && parseData.data[0] === 'Q') || type === 'stock' && (parseData.data[0] === 'T' || parseData.data[0] === 'Q'))) {
             socket.emit('api message', {
                 message: data
             });
@@ -49,6 +70,15 @@ function connect(socket) {
     socket.on('disconnect', () => {
         console.log('disconnected');
         ws.close();
+        // setTimeout(function() {
+        //     console.log('will reconnect');
+        //     connect(socket);
+        // }, 1000);
+    })
+
+    socket.on('unsubscribe', (data) => {
+        console.log('unsubscribe ->',data);
+        ws.send(JSON.stringify(unsubscribe));
         // setTimeout(function() {
         //     console.log('will reconnect');
         //     connect(socket);

@@ -10,13 +10,19 @@ const Crypto = ({symbol = symbolList, ...props}) => {
     const { t } = useTranslation();
 
     useEffect(() => {
+        let subscriptionId = null
         const socket = io({
             query: {
-              symbol: JSON.stringify(symbol)
+              symbol: JSON.stringify(symbol),
+              type: 'crypto'
             }
           });
 
         socket.on('api message', data => {
+            if(data?.subscriptionId) {
+                subscriptionId = data?.subscriptionId;
+                return;
+            }
             const parseData = JSON.parse(data?.message)?.data;
             // console.log('api message =>', parseData);
             setPrices(prevState => {
@@ -45,7 +51,8 @@ const Crypto = ({symbol = symbolList, ...props}) => {
             console.log('error ->',data);
         })
         return () => {
-            console.log('unmount, close socket');
+            console.log(`unmount, unsubscribe id ${subscriptionId} and close socket`);
+            socket.emit('unsubscribe', subscriptionId);
             socket.close();
         };
     }, [])
