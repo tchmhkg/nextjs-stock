@@ -25,6 +25,7 @@ io.on('connection', socket => {
     console.log('query params => ',socket.handshake.query['symbol']);
 
     ws.on('open', function open() {
+        console.log('opened');
         subscribe.eventData.tickers = [socket.handshake.query['symbol']];
         ws.send(JSON.stringify(subscribe));
     });
@@ -40,7 +41,7 @@ io.on('connection', socket => {
     });
     
     ws.on('error', (e) => {
-        console.log('error => ',e.code);
+        console.log('error => ',e);
         socket.emit('error', {
             message: e
         });
@@ -48,6 +49,11 @@ io.on('connection', socket => {
 
     socket.on('disconnect', () => {
         console.log('disconnected');
+        ws.disconnect();
+    })
+
+    socket.on('close', () => {
+        console.log('closed');
         ws.close();
     })
 });
