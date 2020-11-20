@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, memo } from "react";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -29,8 +29,12 @@ const Label = styled.span`
   text-transform: uppercase;
 `;
 
-const MarketIndices = () => {
+const LabelContainer = memo(({label = ''}) => {
   const { t } = useTranslation();
+  return <Label>{t(label)}</Label>
+})
+
+const MarketIndices = () => {
   const [prices, setPrices] = useState([]);
   let isCancelled = useRef(false);
 
@@ -73,7 +77,7 @@ const MarketIndices = () => {
   const renderIndexContent = useCallback((priceObj) => {
     return (
       <Wrapper key={priceObj?.symbol}>
-        <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>
+        <LabelContainer label={priceObj?.symbol} />
         <IndexPrice priceObj={priceObj} />
       </Wrapper>
     );
@@ -82,7 +86,7 @@ const MarketIndices = () => {
   const renderFutureContent = useCallback((priceObj) => {
     return (
       <Wrapper key={priceObj?.symbol}>
-        <Label numberOfLines={2}>{t(priceObj?.symbol)}</Label>
+        <LabelContainer label={priceObj?.symbol} />
         <IndexPrice priceObj={priceObj} isFuture />
       </Wrapper>
     );

@@ -1,7 +1,8 @@
-import React, { useCallback } from "react";
+import React, { memo } from "react";
 import moment from "moment";
 import styled from "styled-components";
 import styles from "~/components/market/news-item.module.scss";
+import useTranslation from "~/hooks/useTranslation";
 
 const Container = styled.div`
   padding: 10px;
@@ -20,17 +21,31 @@ const Text = styled.span`
   color: ${props => props.theme.text};
 `;
 
-const NewsItem = ({ item }) => {
+const PublishDate = memo(({date}) => {
+  const { t } = useTranslation();
+  return (
+    <div className={`${styles.row} ${styles.metadataRow}`}>
+      <Text>{t('Published at')}: {moment(date).fromNow()}</Text>
+    </div>
+  )
+})
+
+const TitleContainer = memo(({title, link}) => {
+  return (
+    <div className={styles.row}>
+      <a href={link} target="_blank">
+        <Title>{title}</Title>
+      </a>
+    </div>
+  )
+})
+
+const NewsItem = ({item = {}}) => {
+  const { title = '', link = '', pubDate = '' } = item;
   return (
     <Container>
-      <div className={styles.row}>
-        <a href={item?.link} target="_blank">
-          <Title>{item.title}</Title>
-        </a>
-      </div>
-      <div className={`${styles.row} ${styles.metadataRow}`}>
-        <Text>Published at: {moment(item.pubDate).fromNow()}</Text>
-      </div>
+      <TitleContainer title={title} link={link} />
+      <PublishDate date={pubDate} />
     </Container>
   );
 };
