@@ -12,11 +12,11 @@ const CryptoPrice = ({item = {}}) => {
     // console.log('render CryptoPrice ->',item.key);
     const CURR = item.key?.substr(-3);
     const formattedName = useMemo(() => item.key ? ((item.key?.slice(0, 3) + "/" + item.key?.slice(3)).toUpperCase()) : '', [item.key])
-    const formattedPrice = useMemo(() => new Intl.NumberFormat({},{ style: 'currency', currency: CURR, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2 }).format(item.price || 0), [CURR, item.price]);
+    // const formattedPrice = useMemo(() => new Intl.NumberFormat({},{ style: 'currency', currency: CURR, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2 }).format(item.price || 0), [CURR, item.price]);
 
     return (
         <div>
-            <div>{formattedName}: <Price>{formattedPrice}</Price></div>
+            <div>{formattedName}: <Price>{item?.price?.toFixed(2)}</Price></div>
             <div>{t('Last update time')}: {item.lastUpdateTime}</div>
         </div>
     )
