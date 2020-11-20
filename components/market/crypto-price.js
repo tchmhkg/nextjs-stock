@@ -1,22 +1,29 @@
 import React, {useMemo} from 'react';
 import styled from 'styled-components';
 import useTranslation from '~/hooks/useTranslation';
+import { dollarFormat } from '~/utils';
 
 const Price = styled.span`
     font-size: 22px;
     font-weight: bold;
 `;
 
+const CURRENCY_MAP = {
+    'USD': '$',
+    'JPY': '¥',
+    'HKD': 'HK$'
+};
+
 const CryptoPrice = ({item = {}}) => {
     const { t } = useTranslation();
     // console.log('render CryptoPrice ->',item.key);
-    const CURR = item.key?.substr(-3);
+    const CURR = (item.key?.substr(-3))?.toUpperCase();
     const formattedName = useMemo(() => item.key ? ((item.key?.slice(0, 3) + "/" + item.key?.slice(3)).toUpperCase()) : '', [item.key])
-    // const formattedPrice = useMemo(() => new Intl.NumberFormat({},{ style: 'currency', currency: CURR, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2 }).format(item.price || 0), [CURR, item.price]);
-
+    const formattedPrice = useMemo(() => `${CURRENCY_MAP[CURR]}${dollarFormat(item.price || 0)}`, [CURR, item.price]);
+    
     return (
         <div>
-            <div>{formattedName}: <Price>{item?.price?.toFixed(2)}</Price></div>
+            <div>{formattedName}: <Price>{formattedPrice}</Price></div>
             <div>{t('Last update time')}: {item.lastUpdateTime}</div>
         </div>
     )
