@@ -25,7 +25,7 @@ function connect(socket) {
 
     ws.on('open', function open() {
         console.log('opened');
-        subscribe.eventData.tickers = [socket.handshake.query['symbol']];
+        subscribe.eventData.tickers = JSON.parse(socket.handshake.query['symbol']);
         ws.send(JSON.stringify(subscribe));
     });
     
@@ -49,15 +49,15 @@ function connect(socket) {
     socket.on('disconnect', () => {
         console.log('disconnected');
         ws.close();
+        // setTimeout(function() {
+        //     console.log('will reconnect');
+        //     connect(socket);
+        // }, 1000);
     })
 
     socket.on('close', (e) => {
         console.log('closed ->',e.reason);
         ws.close();
-        setTimeout(function() {
-            console.log('will reconnect');
-            connect();
-        }, 1000);
     })
 }
 

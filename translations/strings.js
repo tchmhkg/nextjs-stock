@@ -14,6 +14,9 @@ const strings = {
     "/ES":"S&P 500 (Future)",
     "Search": "Search",
     "Your list is empty!": "Your list is empty!",
+    "US Market": "US Market",
+    "Last update time": "Last update time",
+    "BTC real-time quote": "BTC real-time quote",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -29,7 +32,10 @@ const strings = {
     "/NQ":"納斯達克 (期貨)",
     "/ES":"標普500 (期貨)",
     "Search": "搜尋",
-    "Your list is empty!": "你的列表為空"
+    "Your list is empty!": "你的列表為空",
+    "US Market": "美國市場",
+    "Last update time": "最後更新時間",
+    "BTC real-time quote": "BTC實時報價",
   },
 };
 
