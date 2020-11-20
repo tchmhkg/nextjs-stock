@@ -4,16 +4,15 @@ import moment from 'moment';
 import CryptoPrice from '~/components/market/crypto-price';
 import useTranslation from '~/hooks/useTranslation';
 
-const BTC_USD = 'btcusd';
 const symbolList = ['btcusd', 'btcjpy'];
-const Crypto = ({symbol = BTC_USD, ...props}) => {
+const Crypto = ({symbol = symbolList, ...props}) => {
     const [prices, setPrices] = useState([]);
     const { t } = useTranslation();
 
     useEffect(() => {
         const socket = io({
             query: {
-              symbol: JSON.stringify(symbolList)
+              symbol: JSON.stringify(symbol)
             }
           });
 
