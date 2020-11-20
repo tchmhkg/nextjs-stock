@@ -1,0 +1,11 @@
+.stockPrice {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+.positive {
+  color: #4DBD33;
+}
+.negative {
+  color: #FD1050;
+}

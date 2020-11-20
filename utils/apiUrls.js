@@ -33,7 +33,11 @@ export const TDA_REFRESH_TOKEN_API = TDA_BASE_URL + '/oauth2/token';
 
 export const TDA_QUOTES_API = TDA_BASE_URL + '/marketdata/quotes';
 
-export const getHistPrices = (symbol) => TIINGO_BASE_URL + `/${symbol}/prices?token=${TIINGO_API_KEY}`;
+export const getHistPrices = (symbol) => `${TIINGO_BASE_URL}/${symbol}/prices?token=${TIINGO_API_KEY}`;
+
+export const getLatestPrice = (symbol) => `${TIINGO_BASE_URL}/daily/${symbol}/prices?token=${TIINGO_API_KEY}`;
+
+export const getMetaInfo = (symbol) => `${TIINGO_BASE_URL}/daily/${symbol}?token=${TIINGO_API_KEY}`;
 
 
 // export const getTDARefreshTokenUrl = (token) => {

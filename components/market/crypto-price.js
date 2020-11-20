@@ -23,7 +23,7 @@ const Name = memo(({name = ''}) => {
 
 const LastUpdate = memo(({lastUpdateTime = ''}) => {
     const { t } = useTranslation();
-    const formattedTime = useMemo(() => moment(lastUpdateTime).format('YYYY-MM-DD HH:mm:ss'), [lastUpdateTime, moment])
+    const formattedTime = useMemo(() => lastUpdateTime ? moment(lastUpdateTime).format('YYYY-MM-DD HH:mm:ss') : '', [lastUpdateTime, moment])
     return (
         <div>{t('Last update time')}: {formattedTime}</div>
     )
