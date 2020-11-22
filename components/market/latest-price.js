@@ -21,8 +21,6 @@ const LastUpdateText = styled.div`
 `;
 
 const PriceContainer = memo(({price = 0, closePrice = 0}) => {
-    console.log(price, closePrice)
-
   const getPriceColor = useCallback(() => {
     if (price === 0) {
       return '';

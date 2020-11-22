@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, memo } from "react";
+import React, { memo } from "react";
 import axios from "axios";
 import Head from "next/head";
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import useTranslation from "~/hooks/useTranslation";
 import Layout from "~/components/layout";
 import NewsItem from "~/components/market/news-item";
 import Bookmark from "~/components/market/bookmark";
-import CandleStickChart from "~/components/market/candlestick-chart";
+// import CandleStickChart from "~/components/market/candlestick-chart";
 import LatestPrice from "~/components/market/latest-price";
 
 const Header = styled.div`
