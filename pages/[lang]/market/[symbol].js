@@ -32,6 +32,13 @@ const DescWrapper = styled.div`
   overflow-y: auto;
 `;
 
+const StickyWrapper = styled.div`
+  position: sticky;
+  top: 0;
+  background-color: ${props => props.theme.background};
+  padding: 5px 0;
+`;
+
 const HeaderContainer = memo(({symbol, name}) => {
   return (
     <Header>
@@ -62,8 +69,10 @@ const Stock = ({news = [], symbol, stockInfo = {}, closePrice}) => {
       <Head>
         <title>{symbol}</title>
       </Head>
-      <HeaderContainer symbol={symbol} name={stockInfo?.name} />
-      <LatestPrice symbol={symbol} closePrice={closePrice} />
+      <StickyWrapper>
+        <HeaderContainer symbol={symbol} name={stockInfo?.name} />
+        <LatestPrice symbol={symbol} closePrice={closePrice} />
+      </StickyWrapper>
       <CompanyDesc description={stockInfo?.description} />
       {/* <CandleStickChart symbol={symbol}/>
       {`!! TODO: Display candlestick chart, historical data`} */}

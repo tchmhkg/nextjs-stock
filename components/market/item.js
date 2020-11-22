@@ -46,7 +46,7 @@ const StockItem = ({ item, refreshing }) => {
     } else if (lastPrice < closePrice) {
       return styles.negative;
     } else {
-      return {};
+      return '';
     }
   }, [lastPrice, closePrice]);
 

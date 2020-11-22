@@ -2,14 +2,9 @@ import React, { useEffect, useState, useRef, useCallback, memo } from "react";
 import axios from "axios";
 import styled from "styled-components";
 
-import { TDA_QUOTES_API } from "~/utils/apiUrls";
-import { TDA_CLIENT_ID } from "~/utils/config";
 import useTranslation from "~/hooks/useTranslation";
 import IndexPrice from "~/components/market-indices/index-price";
 import Carousel from "~/components/market/carousel";
-
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
 
 const Wrapper = styled.div`
   margin: 5px 10px;
@@ -36,32 +31,21 @@ const LabelContainer = memo(({label = ''}) => {
 
 const MarketIndices = () => {
   const [prices, setPrices] = useState([]);
-  let isCancelled = useRef(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if(TDA_CLIENT_ID) {
-        getQuotes();
-      }
+      getQuotes();
     }, 1500);
     return () => clearInterval(interval);
   }, []);
 
   const getQuotes = useCallback(() => {
     axios
-      .get(TDA_QUOTES_API, {
-        cancelToken: source.token,
-        params: {
-          apikey: TDA_CLIENT_ID,
-          symbol: "$DJI,$COMPX,$SPX.X,/YM,/NQ,/ES",
-        },
-      })
+      .get('/api/market/indices')
       .then((res) => {
-        if (res?.data && !isCancelled.current) {
-          // console.log(Object.values(res?.data));
-          setPrices(Object.values(res?.data));
+        if (res?.data) {
+          setPrices(Object.values(res?.data?.data));
         }
-        // setIsRefreshing(false);
       })
       .catch(function (thrown) {
         if (axios.isCancel(thrown)) {
@@ -70,7 +54,6 @@ const MarketIndices = () => {
           console.log(thrown);
           console.log(thrown?.response);
         }
-        // setIsRefreshing(false);
       });
   }, [prices]);
 

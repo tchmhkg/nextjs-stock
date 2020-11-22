@@ -20,20 +20,24 @@ const LastUpdateText = styled.div`
     margin-bottom: 10px;
 `;
 
-const PriceContainer = memo(({price = '', closePrice = ''}) => {
+const PriceContainer = memo(({price = 0, closePrice = 0}) => {
+    console.log(price, closePrice)
 
   const getPriceColor = useCallback(() => {
+    if (price === 0) {
+      return '';
+    }
     if (price > closePrice) {
       return styles.positive;
     } else if (price < closePrice) {
       return styles.negative;
     } else {
-      return {};
+      return '';
     }
   }, [price, closePrice]);
 
   const getPriceDiff = useCallback(() => {
-    const diff = price - closePrice;
+    const diff = price > 0 ? price - closePrice : 0;
     const diffPercent = (diff / closePrice) * 100;
     if (diff > 0) {
       return `+${diff.toFixed(3)}(+${diffPercent.toFixed(2)}%)`;
@@ -46,11 +50,11 @@ const PriceContainer = memo(({price = '', closePrice = ''}) => {
     }
   }, [price, closePrice]);
 
-    const formattedPrice = useMemo(() => `${dollarFormat(price || 0)}`, [price, dollarFormat]);
+    const formattedPrice = useMemo(() => `${dollarFormat(price || closePrice)}`, [price, dollarFormat]);
     return (
         <div className={styles.stockPrice}>
           <Price className={getPriceColor()}>{formattedPrice}</Price>
-          {price && <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>}
+          <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
         </div>
     )
 })
@@ -64,7 +68,7 @@ const LastUpdate = memo(({lastUpdateTime = ''}) => {
 })
 
 const LatestPrice = ({symbol = '', closePrice, ...props}) => {
-    const [price, setPrice] = useState(null);
+    const [price, setPrice] = useState(0);
     const [lastUpdateTime, setLastUpdateTime] = useState(null);
 
     useEffect(() => {
@@ -106,7 +110,7 @@ const LatestPrice = ({symbol = '', closePrice, ...props}) => {
     return (
         <div>
             <PriceContainer price={price} closePrice={closePrice}/>
-            <LastUpdate lastUpdateTime={lastUpdateTime} />
+            {lastUpdateTime && <LastUpdate lastUpdateTime={lastUpdateTime} />}
         </div>
     )
 }
