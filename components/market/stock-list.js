@@ -139,7 +139,7 @@ const StockList = () => {
       </>
       ) : (
         <EmptyContainer>
-          <EmptyDataText>{t('Your list is empty!')}</EmptyDataText>
+          <EmptyDataText>{t('It\'s empty here.')}</EmptyDataText>
         </EmptyContainer>
       )}
     </div>
