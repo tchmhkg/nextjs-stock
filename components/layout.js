@@ -8,7 +8,7 @@ import Head from "~/components/head";
 import Navbar from "~/components/navbar";
 import BackButton from "~/components/back";
 
-const name = "Truman";
+export const name = "Truman";
 export const siteTitle = "Next.js Sample Website";
 
 const Container = styled.div`

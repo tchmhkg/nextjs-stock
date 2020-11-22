@@ -18,6 +18,7 @@ const strings = {
     "Last update time": "Last update time",
     "BTC real-time quote": "BTC real-time quote",
     "Published at": "Published at",
+    "Market": "Market",
     "Company Info": "Company Info",
   },
   zh: {
@@ -39,6 +40,7 @@ const strings = {
     "Last update time": "最後更新時間",
     "BTC real-time quote": "BTC實時報價",
     "Published at": "發布於",
+    "Market": "市場",
     "Company Info": "公司資料",
   },
 };
