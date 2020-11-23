@@ -14,6 +14,7 @@ import ShowChartIcon from "@material-ui/icons/ShowChart";
 import useTranslation from "~/hooks/useTranslation";
 import Avatar from "~/components/avatar";
 import { useTheme } from "~/theme";
+import { useRouter } from "next/router";
 
 const Container = styled.div`
   width: 250px;
@@ -44,6 +45,8 @@ const iconStyles = colors => {
 }
 
 const Menu = () => {
+  const router = useRouter();
+  const { pathname } = router;
   const [isOpen, setIsOpen] = React.useState(false);
   const {colors} = useTheme();
   const classes = makeStyles(iconStyles(colors))();
@@ -70,19 +73,17 @@ const Menu = () => {
         <Avatar />
         <Divider classes={{root: classes.divider}} />
         <List>
-          {["Market"].map((text, index) => (
-            <Link key={text} href="/[lang]/market" as={`/${locale}/market`}>
-              <ListItem button>
-                <ListItemIcon className={classes.listItemIcon}>
-                  <ShowChartIcon />
-                </ListItemIcon>
-                <ListItemText
-                  className={classes.listItemText}
-                  primary={t(text)} 
-                />
-              </ListItem>
-            </Link>
-          ))}
+          <Link href="/[lang]/market" as={`/${locale}/market`}>
+            <ListItem button selected={pathname === '/[lang]/market'}>
+              <ListItemIcon className={classes.listItemIcon}>
+                <ShowChartIcon />
+              </ListItemIcon>
+              <ListItemText
+                className={classes.listItemText}
+                primary={t('Market')} 
+              />
+            </ListItem>
+          </Link>
         </List>
         <Divider classes={{root: classes.divider}} />
       </Container>
