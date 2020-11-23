@@ -23,7 +23,7 @@ const MenuContainer = styled(IconButton)`
   margin: 0 15px;
 `;
 
-function iconStyles(colors) {
+const iconStyles = colors => {
   return {
     menuIcon: {
       color: "#ECEFF4",

@@ -13,14 +13,14 @@ const TopProgressBar = dynamic(
 
 const App = ({ Component, pageProps }) => {
   return (
-    <>
-      <TopProgressBar />
-      <ThemeManager>
-        <LanguageProvider lang={pageProps.localization?.locale}>
+    <ThemeManager>
+      <LanguageProvider lang={pageProps.localization?.locale}>
+        <>
+          <TopProgressBar />
           <Component {...pageProps} />
-        </LanguageProvider>
-      </ThemeManager>
-    </>
+        </>
+      </LanguageProvider>
+    </ThemeManager>
   );
 };
 

@@ -1,39 +1,17 @@
 import { memo } from 'react';
-import AliceCarousel from "react-alice-carousel";
-import "react-alice-carousel/lib/alice-carousel.css";
+import Marquee from "react-marquee-slider";
 import styled from "styled-components";
 
 const Container = styled.div`
-  height: 60px;
-  @media (max-width: 768px) {
-    height: 80px;
-  }
+  height: 85px;
 `;
-
-const responsive = {
-  0: {
-    items: 2,
-  },
-  768: {
-    items: 3,
-  },
-};
 
 const Carousel = ({ children }) => {
   return (
     <Container>
-      <AliceCarousel
-        mouseTracking
-        autoPlay
-        autoPlayInterval={800}
-        infinite
-        responsive={responsive}
-        disableButtonsControls
-        disableDotsControls
-        autoPlayStrategy="none"
-      >
+      <Marquee>
         {children}
-      </AliceCarousel>
+      </Marquee>
     </Container>
   );
 };

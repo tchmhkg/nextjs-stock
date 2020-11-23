@@ -9,6 +9,7 @@ const Wrapper = styled.div`
 const Price = styled.span`
   font-size: 20px;
   font-weight: bold;
+  display: flex;
 `;
 
 const PriceDiff = styled.span`

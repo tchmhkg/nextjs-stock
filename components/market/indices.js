@@ -7,14 +7,12 @@ import IndexPrice from "~/components/market-indices/index-price";
 import Carousel from "~/components/market/carousel";
 
 const Wrapper = styled.div`
-  margin: 5px 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 160px;
-  height: 50px;
+  min-width: 250px;
   @media (max-width: 768px) {
-    height: 70px;
+    min-width: ${props => props.isFuture ? '180px' : '150px'};
   }
 `;
 
@@ -68,7 +66,7 @@ const MarketIndices = () => {
 
   const renderFutureContent = useCallback((priceObj) => {
     return (
-      <Wrapper key={priceObj?.symbol}>
+      <Wrapper isFuture key={priceObj?.symbol}>
         <LabelContainer label={priceObj?.symbol} />
         <IndexPrice priceObj={priceObj} isFuture />
       </Wrapper>
