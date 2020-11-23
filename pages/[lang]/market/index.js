@@ -5,7 +5,7 @@ import { getLocalizationProps } from "~/context/LanguageContext";
 import Layout from "~/components/layout";
 import MarketIndices from "~/components/market/indices";
 import StockList from "~/components/market/stock-list";
-import Crypto from "~/components/market/crypto";
+// import Crypto from "~/components/market/crypto";
 import useTranslation from "~/hooks/useTranslation";
 
 // const fetcher = (...args) => fetch(...args).then((res) => res.json());
@@ -27,7 +27,7 @@ const Market = () => {
       </Head>
       <MarketIndices />
       <hr />
-      <Crypto />
+      {/* <Crypto /> */}
       <StockList />
     </Layout>
   );
