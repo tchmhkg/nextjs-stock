@@ -48,7 +48,7 @@ const PriceContainer = memo(({price = 0, closePrice = 0}) => {
     }
   }, [price, closePrice]);
 
-    const formattedPrice = useMemo(() => `${dollarFormat(price || closePrice)}`, [price, closePrice, dollarFormat]);
+    const formattedPrice = useMemo(() => `${dollarFormat(price || closePrice, 3)}`, [price, closePrice, dollarFormat]);
     return (
         <div className={styles.stockPrice}>
           <Price className={getPriceColor()}>{formattedPrice}</Price>
@@ -78,7 +78,7 @@ const LatestPrice = ({symbol = '', closePrice, ...props}) => {
             query: {
               symbol: JSON.stringify([symbol]),
               type: 'stock',
-              thresholdLevel: 5
+              thresholdLevel: 0
             }
           });
 
@@ -90,8 +90,10 @@ const LatestPrice = ({symbol = '', closePrice, ...props}) => {
             const parseData = JSON.parse(data?.message)?.data;
 
             if(parseData[0] === 'T') {
-                setPrice(parseData[9]);
-                setLastUpdateTime(parseData[1]);
+                if(parseData[9]) {
+                    setPrice(parseData[9]);
+                    setLastUpdateTime(parseData[1]);
+                }
             }
         });
 

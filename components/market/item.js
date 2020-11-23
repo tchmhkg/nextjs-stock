@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 
 import styled from "styled-components";
 import styles from "~/components/market/item.module.scss";
 import useTranslation from "~/hooks/useTranslation";
+import { dollarFormat } from '~/utils';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 
 const Container = styled.div`
   display: flex;
@@ -27,9 +29,16 @@ const Symbol = styled.span`
   font-size: 18px;
 `;
 
+const PriceWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const Price = styled.span`
   font-size: 24px;
   font-weight: bold;
+  margin-left: 5px;
 `;
 
 const Diff = styled.span`
@@ -39,6 +48,7 @@ const Diff = styled.span`
 const StockItem = ({ item, refreshing }) => {
   const { locale } = useTranslation();
   const { lastPrice = item.lastPriceInDouble, closePrice } = item;
+  const formattedPrice = useMemo(() => dollarFormat(lastPrice, 3), [dollarFormat, lastPrice]);
 
   const getPriceColor = useCallback(() => {
     if (lastPrice > closePrice) {
@@ -75,7 +85,10 @@ const StockItem = ({ item, refreshing }) => {
           <Name>{item.description || item.name}</Name>
         </div>
         <div className={styles.stockPrice}>
-          <Price className={getPriceColor()}>{lastPrice}</Price>
+          <PriceWrapper>
+            <ScheduleIcon fontSize="small" />
+            <Price className={getPriceColor()}>{formattedPrice}</Price>
+          </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
         </div>
       </Container>

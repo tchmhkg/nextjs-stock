@@ -22,7 +22,7 @@ const Container = styled.div`
   }
 `;
 
-const Layout = ({ children, home, showAvatar = true, back = false, ...props }) => {
+const Layout = ({ children, home, showAvatar = true, back = false, showBackToHome = true, ...props }) => {
   const { locale, t } = useTranslation();
 
   return (
@@ -67,7 +67,7 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
       )}
       {back && <BackButton backUrl={props.backUrl}/>}
       <main>{children}</main>
-      {!home && (
+      {(!home && showBackToHome) && (
         <div className={styles.backToHome}>
           <Link href="/[lang]" as={`/${locale}`}>
             <a>← {t('Back to home')}</a>

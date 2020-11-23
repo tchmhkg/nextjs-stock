@@ -31,6 +31,17 @@ const EmptyDataText = styled.span`
   color: ${props => props.theme.text};
 `;
 
+const HeaderWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const DelayReminder = styled.span`
+  font-size: 14px;
+`;
+
 const StockList = () => {
   const { locale, t } = useTranslation();
 
@@ -132,7 +143,10 @@ const StockList = () => {
       />
       {stocks && stocks.length ? (
       <>
-        {t('Saved Stock List')}
+        <HeaderWrapper>
+          <span>{t('Saved Stock List')}</span>
+          <DelayReminder>{t('Delay +20 min.')}</DelayReminder>
+        </HeaderWrapper>
         {stocks?.map((stock) => (
           <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} />
         ))}

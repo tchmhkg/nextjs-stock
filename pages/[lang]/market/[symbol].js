@@ -11,6 +11,7 @@ import NewsItem from '~/components/market/news-item';
 import Bookmark from '~/components/market/bookmark';
 // import CandleStickChart from "~/components/market/candlestick-chart";
 import LatestPrice from '~/components/market/latest-price';
+import Spinner from '~/components/spinner';
 
 const Header = styled.div`
   display: flex;
@@ -63,6 +64,7 @@ const CompanyDesc = memo(({ description = '' }) => {
 
 const Stock = ({ symbol }) => {
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(true);
   const [news, setNews] = useState([]);
   const [stockInfo, setStockInfo] = useState([]);
   const [closePrice, setClosePrice] = useState(0);
@@ -81,12 +83,22 @@ const Stock = ({ symbol }) => {
         setNews(newsData);
         setStockInfo(stockInfoData);
         setClosePrice(closePriceData);
+        setLoading(false);
       } catch (err) {
         console.log(err);
+        setLoading(false)
       }
     };
     getData();
   }, [symbol]);
+
+  if(loading) {
+    return (
+      <Layout showAvatar={false} showBackToHome={false}>
+       <Spinner />
+      </Layout>
+    )
+  }
 
   return (
     <Layout showAvatar={false} back backUrl="/market">

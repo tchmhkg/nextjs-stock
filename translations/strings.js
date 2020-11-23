@@ -20,6 +20,7 @@ const strings = {
     "Published at": "Published at",
     "Market": "Market",
     "Company Info": "Company Info",
+    "Delay +20 min.": "Delay +20 min.",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -42,6 +43,7 @@ const strings = {
     "Published at": "發布於",
     "Market": "市場",
     "Company Info": "公司資料",
+    "Delay +20 min.": "延遲超過20分鐘",
   },
 };
 
