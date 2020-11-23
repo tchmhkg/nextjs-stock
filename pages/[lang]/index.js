@@ -8,7 +8,7 @@ import { useTheme } from "~/theme";
 
 const IndexPage = ({ allPostsData = [] }) => {
   const theme = useTheme();
-  console.log(theme);
+  // console.log(theme);
   return (
     <Layout home>
       <Home allPostsData={allPostsData} />

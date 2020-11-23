@@ -48,7 +48,7 @@ const PriceContainer = memo(({price = 0, closePrice = 0}) => {
     }
   }, [price, closePrice]);
 
-    const formattedPrice = useMemo(() => `${dollarFormat(price || closePrice)}`, [price, dollarFormat]);
+    const formattedPrice = useMemo(() => `${dollarFormat(price || closePrice)}`, [price, closePrice, dollarFormat]);
     return (
         <div className={styles.stockPrice}>
           <Price className={getPriceColor()}>{formattedPrice}</Price>

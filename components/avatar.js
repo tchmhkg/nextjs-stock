@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import React, { memo } from "react";
 import styles from "~/components/avatar.module.scss";
 import utilStyles from "~/styles/utils.module.scss";
@@ -16,8 +17,10 @@ const Avatar = () => {
     <div className={styles.header}>
       <Link href="/[lang]" as={`/${locale}`}>
         <a>
-          <img
+          <Image
             src="/images/profile.png"
+            width={70}
+            height={87.5}
             className={`${styles.headerImage} ${utilStyles.borderCircle}`}
             alt={name}
           />

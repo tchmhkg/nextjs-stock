@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styled from 'styled-components';
 import styles from "~/components/layout.module.scss";
 import utilStyles from "~/styles/utils.module.scss";
@@ -33,8 +34,10 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
       <header className={styles.header}>
         {home ? (
           <>
-            <img
+            <Image
               src="/images/profile.png"
+              width={100}
+              height={125}
               className={`${styles.headerHomeImage} ${utilStyles.borderCircle}`}
               alt={name}
             />
@@ -44,8 +47,10 @@ const Layout = ({ children, home, showAvatar = true, back = false, ...props }) =
           <>
           <Link href="/[lang]" as={`/${locale}`}>
               <a>
-                <img
+                <Image
                   src="/images/profile.png"
+                  width={70}
+                  height={87.5}
                   className={`${styles.headerImage} ${utilStyles.borderCircle}`}
                   alt={name}
                 />
