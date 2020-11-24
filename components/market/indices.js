@@ -41,7 +41,7 @@ const MarketIndices = () => {
     axios
       .get('/api/market/indices')
       .then((res) => {
-        if (res?.data) {
+        if (res?.data && res?.data?.data) {
           setPrices(Object.values(res?.data?.data));
         }
       })
