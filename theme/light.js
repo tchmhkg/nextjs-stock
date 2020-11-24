@@ -1,8 +1,8 @@
 const light = {
   theme: {
-    background: '#fafafa',
+    background: '#eaeaeb',
     border: '#dfdfdf',
-    backgroundAlt: '#eaeaeb',
+    backgroundAlt: '#dbdbdb',
     borderAlt: '#bdbdbd',
     text: '#171717',
     buttonText: '#ebffff',
