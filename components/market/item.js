@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
-
+import Image from "next/image";
+import axios from 'axios';
 import styled from "styled-components";
+import ScheduleIcon from '@material-ui/icons/Schedule';
+
 import styles from "~/components/market/item.module.scss";
 import useTranslation from "~/hooks/useTranslation";
 import { dollarFormat } from '~/utils';
-import ScheduleIcon from '@material-ui/icons/Schedule';
 
 const Container = styled.div`
   display: flex;
@@ -22,7 +24,7 @@ const Container = styled.div`
 
 const Name = styled.span`
   font-size: 14px;
-  color: #b2b2b2;
+  color: ${props => props.theme.inactiveLegend};
 `;
 
 const Symbol = styled.span`
@@ -45,10 +47,59 @@ const Diff = styled.span`
   font-size: 14px;
 `;
 
-const StockItem = ({ item, refreshing }) => {
+const ProfileWrapper = styled.div`
+  display: flex;
+  flex: 0.6;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Logo = styled(Image)`
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+`;
+
+const Placeholder = styled.div`
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: ${props => props.theme.chartDataZoomBackground};
+`;
+
+const StockItem = ({ item, refreshing, setIsRefreshing = () => {} }) => {
   const { locale } = useTranslation();
-  const { lastPrice = item.lastPriceInDouble, closePrice } = item;
-  const formattedPrice = useMemo(() => dollarFormat(lastPrice, 3), [dollarFormat, lastPrice]);
+  const [profile, setProfile] = useState({});
+  const [quote, setQuote] = useState({});
+  const { c: lastPrice, pc: closePrice } = quote || 0;
+  const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [dollarFormat, lastPrice, closePrice]);
+
+  useEffect(() => {
+    if(item?.symbol) {
+      getQuote(item.symbol);
+    }
+  }, [])
+
+  useEffect(() => {
+    if(refreshing && item?.symbol) {
+      getQuote(item.symbol)
+    }
+  }, [refreshing])
+
+  const getQuote = async () => {
+    try {
+      const res = await axios.get('/api/market/quote', {params: {symbol: item.symbol}});
+      setIsRefreshing(false);
+      if (res?.data) {
+        console.log(res?.data);
+        setQuote(res?.data?.quote);
+        setProfile(res?.data?.profile);
+      }
+    } catch (err) {
+      console.log(err);
+      setIsRefreshing(false);
+    }
+  }
 
   const getPriceColor = useCallback(() => {
     if (lastPrice > closePrice) {
@@ -74,16 +125,27 @@ const StockItem = ({ item, refreshing }) => {
     }
   }, [lastPrice, closePrice]);
 
+  const renderLogo = useMemo(() => profile?.logo ? (
+    <Logo 
+      src={profile?.logo}
+      width={35}
+      height={35}
+    />
+  ) : <Placeholder />, [profile?.logo]);
+
   return (
     <Link
       href={`/[lang]/market/[symbol]]`}
       as={`/${locale}/market/${item.symbol}`}
     >
       <Container>
-        <div className={styles.stockInfo}>
-          <Symbol>{item.symbol}</Symbol>
-          <Name>{item.description || item.name}</Name>
-        </div>
+        <ProfileWrapper>
+          {renderLogo}
+          <div className={styles.stockInfo}>
+            <Symbol>{item.symbol}</Symbol>
+            <Name>{profile?.name}</Name>
+          </div>
+        </ProfileWrapper>
         <div className={styles.stockPrice}>
           <PriceWrapper>
             <ScheduleIcon fontSize="small" />

@@ -9,6 +9,7 @@ import {
   TDA_CLIENT_ID,
   TIINGO_API_KEY,
   TIINGO_BASE_URL,
+  FINNHUB_API_KEY,
 } from '~/utils/config';
 
 export const LOGIN_API = API_BASE_URL + '/login';
@@ -20,7 +21,8 @@ export const getNewsApiByCategory = (category, page) => {
 };
 
 export const CANDLES_API = FINNHUB_BASE_URL + '/stock/candle';
-export const QUOTE_API = FINNHUB_BASE_URL + '/quote';
+export const FINNHUB_QUOTE_API = FINNHUB_BASE_URL + `/quote?token=${FINNHUB_API_KEY}`;
+export const FINNHUB_STOCK_PROFILE_API = FINNHUB_BASE_URL + `/stock/profile2?token=${FINNHUB_API_KEY}`;
 
 export const getIntradayPriceApi = (symbol) =>
   IEX_BASE_URL + `/stock/${symbol}/intraday-prices`;

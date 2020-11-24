@@ -1,26 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { IconButton } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { TDA_QUOTES_API } from "~/utils/apiUrls";
-import { TDA_CLIENT_ID } from "~/utils/config";
-import useTranslation from "~/hooks/useTranslation";
-
 import StockItem from "~/components/market/item";
 import SearchInput from '~/components/market/input';
 
-// const dummyData = [
-//   { symbol: "AAPL", name: "Apple" },
-//   { symbol: "GOOG", name: "Google" },
-//   { symbol: "AMD", name: "AMD Inc." },
-//   { symbol: "TSLA", name: "Tesla" },
-// ];
-
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
+import { useTheme } from "~/theme";
+import useTranslation from "~/hooks/useTranslation";
 
 const EmptyContainer = styled.div`
   display: flex;
@@ -41,9 +30,9 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const DelayReminder = styled.span`
-  font-size: 14px;
-`;
+// const DelayReminder = styled.span`
+//   font-size: 14px;
+// `;
 
 const iconStyles = colors => {
   return {
@@ -69,7 +58,6 @@ const StockList = () => {
   const [stocks, setStocks] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  let isCancelled = useRef(false);
   const [symbol, setSymbol] = useState("");
 
   const onChangeSymbol = (e) => {
@@ -89,8 +77,6 @@ const StockList = () => {
           jsonData = JSON.parse(data);
           if (jsonData?.length) {
             setStocks(jsonData);
-            const symbolsString = jsonData.map(({ symbol }) => symbol).join(",");
-            getQuotes(symbolsString);
           }
         }
       } catch (e) {
@@ -100,60 +86,9 @@ const StockList = () => {
     getFromStorage();
   }, []);
 
-  useEffect(() => {
-    const fetchStocks = async () => {
-      try {
-        const data = await window.localStorage.getItem('symbols');
-        if (data !== null) {
-          // console.log(JSON.parse(data));
-          const jsonData = JSON.parse(data);
-          if (jsonData?.length) {
-            const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
-            getQuotes(symbolsString);
-          } else {
-            setIsRefreshing(false);
-          }
-          // setStocks(JSON.parse(data));
-        }
-      } catch (e) {
-        console.log(e);
-        setIsRefreshing(false);
-      }
-    };
-    if (isRefreshing) {
-      fetchStocks();
-    }
-  }, [isRefreshing])
-
-  const getQuotes = (symbols) => {
-    axios
-      .get(TDA_QUOTES_API, {
-        cancelToken: source.token,
-        // headers: {
-        //   Authorization: 'Bearer ' + authInfo?.access_token,
-        // },
-        params: {
-          symbol: symbols,
-          apikey: TDA_CLIENT_ID,
-        },
-      })
-      .then((res) => {
-        if (res?.data && !isCancelled.current) {
-          // console.log(res.data);
-          setStocks(Object.values(res?.data));
-          // console.log(Object.values(res?.data));
-        }
-        setIsRefreshing(false);
-      })
-      .catch(function (thrown) {
-        if (axios.isCancel(thrown)) {
-          console.log("Request canceled", thrown.message);
-        } else {
-          console.log(thrown);
-        }
-        setIsRefreshing(false);
-      });
-  };
+  const onClickRefresh = useCallback(() => {
+    setIsRefreshing(true);
+  }, []);
 
   return (
     <div>
@@ -166,10 +101,11 @@ const StockList = () => {
       <>
         <HeaderWrapper>
           <span>{t('Saved Stock List')}</span>
-          <DelayReminder>{t('Delay +20 min.')}</DelayReminder>
+          <RefreshButton onClick={onClickRefresh} />
+          {/* <DelayReminder>{t('Delay +20 min.')}</DelayReminder> */}
         </HeaderWrapper>
         {stocks?.map((stock) => (
-          <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} />
+          <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} setIsRefreshing={setIsRefreshing}/>
         ))}
       </>
       ) : (

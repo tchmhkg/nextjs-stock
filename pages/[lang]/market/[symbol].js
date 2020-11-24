@@ -40,6 +40,7 @@ const Name = styled.span`
 const DescWrapper = styled.div`
   max-height: 150px;
   overflow-y: auto;
+  color: ${(props) => props.theme.text};
 `;
 
 const StickyWrapper = styled.div`
