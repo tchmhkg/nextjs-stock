@@ -8,7 +8,7 @@ import { useLocalStorage } from '~/hooks/useLocalStorage';
 const ThemeContext = createContext({
   mode: 'light',
   setMode: (mode) => {},
-  colors: {},
+  colors: lightTheme.theme,
 });
 
 export const useTheme = () => useContext(ThemeContext);
