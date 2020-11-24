@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import LanguageSwitcher from '~/components/language-switcher';
 import ThemeSwitcher from "~/components/theme-switcher";
 import Menu from "~/components/menu";
+import Image from 'next/image';
 
 const Container = styled.div`
   display: flex;
@@ -19,12 +20,28 @@ const RightWrapper = styled.div`
   flex-direction: row;
   align-items: center;
 `;
+const GitHubIconWrapper = styled.div`
+  background-color: #ffffff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+`;
 
 const Header = () => {
   return (
     <Container>
       <Menu />
       <RightWrapper>
+        <GitHubIconWrapper>
+          <a href="https://github.com/tchmhkg/nextjs-app" target="_blank">
+            <Image 
+              src="/images/github.png"
+              width={30}
+              height={30}
+              alt="GitHub Icon"
+            />
+          </a>
+        </GitHubIconWrapper>
         <LanguageSwitcher />
         <ThemeSwitcher />
       </RightWrapper>
