@@ -91,7 +91,7 @@ const StockItem = ({ item, refreshing, setIsRefreshing = () => {} }) => {
       const res = await axios.get('/api/market/quote', {params: {symbol: item.symbol}});
       setIsRefreshing(false);
       if (res?.data) {
-        console.log(res?.data);
+        // console.log(res?.data);
         setQuote(res?.data?.quote);
         setProfile(res?.data?.profile);
       }
