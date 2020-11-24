@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import RefreshIcon from '@material-ui/icons/Refresh';
+import { IconButton } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { TDA_QUOTES_API } from "~/utils/apiUrls";
 import { TDA_CLIENT_ID } from "~/utils/config";
@@ -41,6 +44,24 @@ const HeaderWrapper = styled.div`
 const DelayReminder = styled.span`
   font-size: 14px;
 `;
+
+const iconStyles = colors => {
+  return {
+    icon: {
+      color: colors.text,
+    },
+  };
+}
+
+const RefreshButton = ({onClick = () => {}}) => {
+  const {colors} = useTheme();
+  const classes = makeStyles(iconStyles(colors))();
+    return (
+      <IconButton className={classes.icon} onClick={onClick}>
+        <RefreshIcon />
+      </IconButton>
+    )
+}
 
 const StockList = () => {
   const { locale, t } = useTranslation();
