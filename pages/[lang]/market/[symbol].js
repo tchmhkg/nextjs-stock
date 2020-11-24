@@ -62,7 +62,7 @@ const HeaderContainer = memo(({ symbol, name }) => {
   );
 });
 
-const CompanyDesc = memo(({ description = '' }) => {
+const CompanyDesc = ({ description = '' }) => {
   const { t } = useTranslation();
   return (
     <div>
@@ -70,7 +70,7 @@ const CompanyDesc = memo(({ description = '' }) => {
       <DescWrapper>{description}</DescWrapper>
     </div>
   );
-});
+};
 
 const Stock = ({ symbol }) => {
   const { t } = useTranslation();

@@ -14,6 +14,10 @@ export const siteTitle = "Next.js Sample Website";
 
 const Container = styled.div`
   min-height: calc(100vh - 70px);
+  min-height: -webkit-calc(100vh - 70px);
+  min-height: -moz-calc(100vh - 70px);
+  min-height: -ms-calc(100vh - 70px);
+  min-height: -o-calc(100vh - 70px);
   padding: 15px;
   position: relative;
   color: ${props => props.theme.text};

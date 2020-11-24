@@ -15,7 +15,15 @@ const Wrapper = styled.div`
   position: fixed;
   z-index: 10;
   top: calc(100vh / 2 - 35px);
+  top: -webkit-calc(100vh / 2 - 35px);
+  top: -moz-calc(100vh / 2 - 35px);
+  top: -ms-calc(100vh / 2 - 35px);
+  top: -o-calc(100vh / 2 - 35px);
   left: calc(100vw / 2 - 35px);
+  left: -webkit-calc(100vw / 2 - 35px);
+  left: -moz-calc(100vw / 2 - 35px);
+  left: -ms-calc(100vw / 2 - 35px);
+  left: -o-calc(100vw / 2 - 35px);
 `;
 
 const iconStyles = colors => {

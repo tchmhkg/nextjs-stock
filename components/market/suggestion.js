@@ -10,6 +10,10 @@ const Container = styled.div`
   top: 40px;
   max-height: 300px;
   width: calc(100vw - 31px);
+  width: -webkit-calc(100vw - 31px);
+  width: -moz-calc(100vw - 31px);
+  width: -ms-calc(100vw - 31px);
+  width: -o-calc(100vw - 31px);
   overflow-y: auto;
 `;
 
