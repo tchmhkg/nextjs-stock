@@ -58,6 +58,7 @@ const StockList = () => {
   const [stocks, setStocks] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  let isCancelled = useRef(false);
   const [symbol, setSymbol] = useState("");
 
   const onChangeSymbol = (e) => {
@@ -77,6 +78,8 @@ const StockList = () => {
           jsonData = JSON.parse(data);
           if (jsonData?.length) {
             setStocks(jsonData);
+            const symbolsString = jsonData.map(({ symbol }) => symbol).join(",");
+            getQuotes(symbolsString);
           }
         }
       } catch (e) {
@@ -85,6 +88,88 @@ const StockList = () => {
     }
     getFromStorage();
   }, []);
+
+
+
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        const data = await window.localStorage.getItem('symbols');
+        if (data !== null) {
+          // console.log(JSON.parse(data));
+          const jsonData = JSON.parse(data);
+          if (jsonData?.length) {
+            const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
+            getQuotes(symbolsString);
+          } else {
+            if(isRefreshing) {
+              setIsRefreshing(false);
+            }
+          }
+          // setStocks(JSON.parse(data));
+        }
+      } catch (e) {
+        console.log(e);
+        if(isRefreshing) {
+          setIsRefreshing(false);
+        }
+      }
+    };
+    if (isRefreshing) {
+      fetchStocks();
+    }
+  }, [isRefreshing])
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const data = await window.localStorage.getItem('symbols');
+        if (data !== null) {
+          const jsonData = JSON.parse(data);
+          if (jsonData?.length) {
+            const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
+            getQuotes(symbolsString);
+          } else {
+            if(isRefreshing) {
+              setIsRefreshing(false);
+            }
+          }
+        }
+      } catch (e) {
+        console.log(e);
+        if(isRefreshing) {
+          setIsRefreshing(false);
+        }
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getQuotes = (symbols) => {
+    axios
+      .get('/api/market/quotes', {
+        params: {
+          symbol: symbols
+        }
+      })
+      .then((res) => {
+        if (res?.data && !isCancelled.current) {
+          // console.log(res.data);
+          setStocks(res?.data?.data);
+          // setStocks(Object.values(res?.data));
+          // console.log(Object.values(res?.data));
+        }
+        setIsRefreshing(false);
+      })
+      .catch(function (thrown) {
+        if (axios.isCancel(thrown)) {
+          console.log("Request canceled", thrown.message);
+        } else {
+          console.log(thrown);
+        }
+        setIsRefreshing(false);
+      });
+  };
 
   const onClickRefresh = useCallback(() => {
     setIsRefreshing(true);
@@ -105,7 +190,7 @@ const StockList = () => {
           {/* <DelayReminder>{t('Delay +20 min.')}</DelayReminder> */}
         </HeaderWrapper>
         {stocks?.map((stock) => (
-          <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} setIsRefreshing={setIsRefreshing}/>
+          <StockItem key={stock.symbol} item={stock} />
         ))}
       </>
       ) : (
