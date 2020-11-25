@@ -1,3 +1,4 @@
+const withPWA = require('next-pwa');
 const withPlugins = require('next-compose-plugins');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true',
@@ -7,6 +8,12 @@ const webpack = require('webpack');
 module.exports = withPlugins(
     [
       [withBundleAnalyzer],
+      [withPWA, {
+        pwa: {
+          disable: process.env.NODE_ENV !== 'production',
+          dest: 'public'
+        }
+      }],
     ],
     {
         webpack: (config, options) => {
