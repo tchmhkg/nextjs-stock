@@ -102,19 +102,48 @@ const StockList = () => {
             const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
             getQuotes(symbolsString);
           } else {
-            setIsRefreshing(false);
+            if(isRefreshing) {
+              setIsRefreshing(false);
+            }
           }
           // setStocks(JSON.parse(data));
         }
       } catch (e) {
         console.log(e);
-        setIsRefreshing(false);
+        if(isRefreshing) {
+          setIsRefreshing(false);
+        }
       }
     };
     if (isRefreshing) {
       fetchStocks();
     }
   }, [isRefreshing])
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const data = await window.localStorage.getItem('symbols');
+        if (data !== null) {
+          const jsonData = JSON.parse(data);
+          if (jsonData?.length) {
+            const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
+            getQuotes(symbolsString);
+          } else {
+            if(isRefreshing) {
+              setIsRefreshing(false);
+            }
+          }
+        }
+      } catch (e) {
+        console.log(e);
+        if(isRefreshing) {
+          setIsRefreshing(false);
+        }
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getQuotes = (symbols) => {
     axios
@@ -125,7 +154,7 @@ const StockList = () => {
       })
       .then((res) => {
         if (res?.data && !isCancelled.current) {
-          console.log(res.data);
+          // console.log(res.data);
           setStocks(res?.data?.data);
           // setStocks(Object.values(res?.data));
           // console.log(Object.values(res?.data));
@@ -161,7 +190,7 @@ const StockList = () => {
           {/* <DelayReminder>{t('Delay +20 min.')}</DelayReminder> */}
         </HeaderWrapper>
         {stocks?.map((stock) => (
-          <StockItem key={stock.symbol} item={stock} refreshing={isRefreshing} setIsRefreshing={setIsRefreshing}/>
+          <StockItem key={stock.symbol} item={stock} />
         ))}
       </>
       ) : (

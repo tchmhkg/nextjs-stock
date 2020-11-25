@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         // events: 'yes'
       },
     });
-    console.log(apiRes?.data);
+    // console.log(apiRes?.data);
     res.json({
       success: true,
       data: apiRes?.data?.attr,

@@ -58,6 +58,7 @@ const Logo = styled(Image)`
   width: 35px;
   height: 35px;
   border-radius: 50%;
+  object-fit: contain;
 `;
 
 const Placeholder = styled.div`
@@ -67,15 +68,19 @@ const Placeholder = styled.div`
   background: ${props => props.theme.chartDataZoomBackground};
 `;
 
-const StockItem = ({ item, refreshing, setIsRefreshing = () => {} }) => {
+const StockItem = ({ item }) => {
   const { locale } = useTranslation();
   const [profile, setProfile] = useState({});
-  const [quote, setQuote] = useState({});
+  const { marketState, longName } = item;
   let lastPrice = 0;
-  if(item?.marketState === 'PRE') {
+  if(marketState === 'PRE') {
     lastPrice = item?.preMarketPrice;
+  } else if (marketState === 'REGULAR') {
+    lastPrice = item?.regularMarketPrice;
+  } else if (marketState === 'AFTER') {
+    lastPrice = item?.afterMarketPrice;
   }
-  let closePrice = item?.regularMarketPrice;
+  let closePrice = item?.regularMarketPreviousClose;
   // const { c: lastPrice, pc: closePrice } = quote || 0;
   const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [dollarFormat, lastPrice, closePrice]);
 
@@ -148,13 +153,13 @@ const StockItem = ({ item, refreshing, setIsRefreshing = () => {} }) => {
           {renderLogo}
           <div className={styles.stockInfo}>
             <Symbol>{item.symbol}</Symbol>
-            <Name>{profile?.name}</Name>
+            <Name>{longName}</Name>
           </div>
         </ProfileWrapper>
         <div className={styles.stockPrice}>
           <PriceWrapper>
-            <ScheduleIcon fontSize="small" />
-            <Price className={getPriceColor()}>{formattedPrice}</Price>
+            {item?.quoteSourceName === "Delayed Quote" && <ScheduleIcon fontSize="small" />}
+            <Price className={getPriceColor()}>{formattedPrice} {['PRE', 'AFTER'].includes(marketState) && `(${marketState})`}</Price>
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
         </div>
