@@ -71,7 +71,12 @@ const StockItem = ({ item, refreshing, setIsRefreshing = () => {} }) => {
   const { locale } = useTranslation();
   const [profile, setProfile] = useState({});
   const [quote, setQuote] = useState({});
-  const { c: lastPrice, pc: closePrice } = quote || 0;
+  let lastPrice = 0;
+  if(item?.marketState === 'PRE') {
+    lastPrice = item?.preMarketPrice;
+  }
+  let closePrice = item?.regularMarketPrice;
+  // const { c: lastPrice, pc: closePrice } = quote || 0;
   const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [dollarFormat, lastPrice, closePrice]);
 
   useEffect(() => {
@@ -80,24 +85,24 @@ const StockItem = ({ item, refreshing, setIsRefreshing = () => {} }) => {
     }
   }, [])
 
-  useEffect(() => {
-    if(refreshing && item?.symbol) {
-      getQuote(item.symbol)
-    }
-  }, [refreshing])
+  // useEffect(() => {
+  //   if(refreshing && item?.symbol) {
+  //     getQuote(item.symbol)
+  //   }
+  // }, [refreshing])
 
   const getQuote = async () => {
     try {
       const res = await axios.get('/api/market/quote', {params: {symbol: item.symbol}});
-      setIsRefreshing(false);
+      // setIsRefreshing(false);
       if (res?.data) {
         // console.log(res?.data);
-        setQuote(res?.data?.quote);
+        // setQuote(res?.data?.quote);
         setProfile(res?.data?.profile);
       }
     } catch (err) {
       console.log(err);
-      setIsRefreshing(false);
+      // setIsRefreshing(false);
     }
   }
 

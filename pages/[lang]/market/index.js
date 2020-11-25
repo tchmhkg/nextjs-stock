@@ -4,6 +4,7 @@ import { getLocalizationProps } from "~/context/LanguageContext";
 
 import Layout from "~/components/layout";
 import MarketIndices from "~/components/market/indices";
+import USIndices from "~/components/market/us-indices";
 import StockList from "~/components/market/stock-list";
 // import Crypto from "~/components/market/crypto";
 import useTranslation from "~/hooks/useTranslation";
@@ -25,7 +26,8 @@ const Market = () => {
       <Head>
         <title>{t('US Market')}</title>
       </Head>
-      <MarketIndices />
+      {/* <MarketIndices /> */}
+      <USIndices />
       <hr />
       {/* <Crypto /> */}
       <StockList />
