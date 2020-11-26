@@ -7,12 +7,15 @@ import Menu from "~/components/menu";
 import Image from 'next/image';
 
 const Container = styled.div`
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 70px;
   background-color: ${props => props.theme.primary};
   border-bottom: 1px solid ${props => props.theme.border};
+  z-index: 20;
 `;
 
 const RightWrapper = styled.div`
