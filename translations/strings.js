@@ -22,7 +22,8 @@ const strings = {
     "Company Info": "Company Info",
     "Delay +20 min.": "Delay +20 min.",
     "POSTPOST": "After hours",
-    "PRE": "Pre-market"
+    "PRE": "Pre-market",
+    "CLOSED": "Closed",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -47,7 +48,8 @@ const strings = {
     "Company Info": "公司資料",
     "Delay +20 min.": "延遲超過20分鐘",
     "POSTPOST": "盤後",
-    "PRE": "盤前"
+    "PRE": "盤前",
+    "CLOSED": "已收盤",
   },
 };
 

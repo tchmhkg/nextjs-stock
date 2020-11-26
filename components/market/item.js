@@ -84,7 +84,7 @@ const StockItem = ({ item }) => {
   } else if (marketState === 'REGULAR') {
     lastPrice = item?.regularMarketPrice;
     closePrice = item?.regularMarketPreviousClose;
-  } else if (marketState === 'POSTPOST') {
+  } else if (marketState === 'POSTPOST' || marketState === 'CLOSED') {
     lastPrice = item?.postMarketPrice;
     closePrice = item?.regularMarketPrice;
   }
@@ -169,7 +169,7 @@ const StockItem = ({ item }) => {
             <Price className={getPriceColor()}>{formattedPrice}</Price>
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
-          {['PRE', 'POSTPOST'].includes(marketState) && <Remark>{t(marketState)}</Remark>}
+          {['PRE', 'POSTPOST', 'CLOSED'].includes(marketState) && <Remark>{t(marketState)}</Remark>}
         </div>
       </Container>
     </Link>
