@@ -21,6 +21,8 @@ const strings = {
     "Market": "Market",
     "Company Info": "Company Info",
     "Delay +20 min.": "Delay +20 min.",
+    "POSTPOST": "After hours",
+    "PRE": "Pre-market"
   },
   zh: {
     "Back to home": "回到首頁",
@@ -44,6 +46,8 @@ const strings = {
     "Market": "市場",
     "Company Info": "公司資料",
     "Delay +20 min.": "延遲超過20分鐘",
+    "POSTPOST": "盤後",
+    "PRE": "盤前"
   },
 };
 

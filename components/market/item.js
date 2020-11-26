@@ -68,19 +68,26 @@ const Placeholder = styled.div`
   background: ${props => props.theme.chartDataZoomBackground};
 `;
 
+const Remark = styled.div`
+  font-size: 12px;
+`;
+
 const StockItem = ({ item }) => {
-  const { locale } = useTranslation();
+  const { locale, t } = useTranslation();
   const [profile, setProfile] = useState({});
   const { marketState, longName } = item;
   let lastPrice = 0;
+  let closePrice = 0;
   if(marketState === 'PRE') {
     lastPrice = item?.preMarketPrice;
+    closePrice = item?.regularMarketPrice;
   } else if (marketState === 'REGULAR') {
     lastPrice = item?.regularMarketPrice;
-  } else if (marketState === 'AFTER') {
-    lastPrice = item?.afterMarketPrice;
+    closePrice = item?.regularMarketPreviousClose;
+  } else if (marketState === 'POSTPOST') {
+    lastPrice = item?.postMarketPrice;
+    closePrice = item?.regularMarketPrice;
   }
-  let closePrice = item?.regularMarketPreviousClose;
   // const { c: lastPrice, pc: closePrice } = quote || 0;
   const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [dollarFormat, lastPrice, closePrice]);
 
@@ -159,9 +166,10 @@ const StockItem = ({ item }) => {
         <div className={styles.stockPrice}>
           <PriceWrapper>
             {item?.quoteSourceName === "Delayed Quote" && <ScheduleIcon fontSize="small" />}
-            <Price className={getPriceColor()}>{formattedPrice} {['PRE', 'AFTER'].includes(marketState) && `(${marketState})`}</Price>
+            <Price className={getPriceColor()}>{formattedPrice}</Price>
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
+          {['PRE', 'POSTPOST'].includes(marketState) && <Remark>{t(marketState)}</Remark>}
         </div>
       </Container>
     </Link>
