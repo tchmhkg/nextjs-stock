@@ -49,10 +49,10 @@ const menuItems = [
     label: 'Market',
     link: 'market',
   },
-  {
-    label: 'HK Market',
-    link: 'market/hk',
-  }
+  // {
+  //   label: 'HK Market',
+  //   link: 'market/hk',
+  // }
 ];
 
 const Menu = () => {
