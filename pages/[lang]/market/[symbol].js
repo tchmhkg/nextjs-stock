@@ -45,7 +45,7 @@ const DescWrapper = styled.div`
 
 const StickyWrapper = styled.div`
   position: sticky;
-  top: 0;
+  top: 70px;
   background-color: ${(props) => props.theme.background};
   padding: 5px 0;
 `;

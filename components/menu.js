@@ -44,6 +44,17 @@ const iconStyles = colors => {
   };
 }
 
+const menuItems = [
+  {
+    label: 'Market',
+    link: 'market',
+  },
+  // {
+  //   label: 'HK Market',
+  //   link: 'market/hk',
+  // }
+];
+
 const Menu = () => {
   const router = useRouter();
   const { pathname } = router;
@@ -71,24 +82,28 @@ const Menu = () => {
         onKeyDown={toggleDrawer(false)}
       >
         <Avatar />
-        <Divider classes={{root: classes.divider}} />
         <List>
-          <Link href="/[lang]/market" as={`/${locale}/market`}>
-            <ListItem button selected={pathname === '/[lang]/market'}>
-              <ListItemIcon className={classes.listItemIcon}>
-                <ShowChartIcon />
-              </ListItemIcon>
-              <ListItemText
-                className={classes.listItemText}
-                primary={t('Market')} 
-              />
-            </ListItem>
-          </Link>
-        </List>
         <Divider classes={{root: classes.divider}} />
+        {menuItems?.map(({label, link}) => (
+          <React.Fragment key={link}>
+            <Link href={`/[lang]/${link}`} as={`/${locale}/${link}`}>
+              <ListItem button selected={pathname === `/[lang]/${link}`}>
+                <ListItemIcon className={classes.listItemIcon}>
+                  <ShowChartIcon />
+                </ListItemIcon>
+                <ListItemText
+                  className={classes.listItemText}
+                  primary={t(label)} 
+                />
+              </ListItem>
+            </Link>
+            <Divider classes={{root: classes.divider}} />
+          </React.Fragment>
+        ))}
+        </List>
       </Container>
     ),
-    [mode, classes, locale]
+    [mode, classes, locale, menuItems]
   );
 
   return (
