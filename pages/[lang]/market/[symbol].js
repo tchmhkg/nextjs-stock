@@ -40,7 +40,9 @@ const Name = styled.span`
 const DescWrapper = styled.div`
   max-height: 150px;
   overflow-y: auto;
-  color: ${(props) => props.theme.text};
+  p {
+    color: ${(props) => props.theme.text};
+  }
 `;
 
 const StickyWrapper = styled.div`
@@ -62,15 +64,15 @@ const HeaderContainer = memo(({ symbol, name }) => {
   );
 });
 
-const CompanyDesc = ({ description = '' }) => {
+const CompanyDesc = memo(({ description = '' }) => {
   const { t } = useTranslation();
   return (
     <div>
       <h3>{t('Company Info')}</h3>
-      <DescWrapper>{description}</DescWrapper>
+      <DescWrapper><p>{description}</p></DescWrapper>
     </div>
   );
-};
+});
 
 const Stock = ({ symbol }) => {
   const { t } = useTranslation();
