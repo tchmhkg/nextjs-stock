@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useLayoutEffect, useState } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
@@ -79,7 +79,7 @@ const Stock = ({ symbol }) => {
   const [stockInfo, setStockInfo] = useState([]);
   const [closePrice, setClosePrice] = useState(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get('/api/market/stockInfo', {
