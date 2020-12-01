@@ -2,7 +2,7 @@ import Head from "next/head";
 import { getLocalizationProps } from "~/context/LanguageContext";
 
 import Layout from "~/components/layout";
-import MarketIndices from "~/components/market/indices";
+import HKIndices from "~/components/market/hk/indices";
 // import USIndices from "~/components/market/us-indices";
 import StockList from "~/components/market/stock-list";
 // import Crypto from "~/components/market/crypto";
@@ -17,7 +17,7 @@ const HKMarket = () => {
         <title>{t('HK Market')}</title>
       </Head>
       HK Market
-      {/* <MarketIndices /> */}
+      <HKIndices />
       {/* <StockList /> */}
     </Layout>
   );

@@ -24,6 +24,8 @@ const strings = {
     "POSTPOST": "After hours",
     "PRE": "Pre-market",
     "CLOSED": "Closed",
+    "HSI": "Hang Seng Index",
+    "HSI-F": "HSI Future",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -50,6 +52,8 @@ const strings = {
     "POSTPOST": "盤後",
     "PRE": "盤前",
     "CLOSED": "已收盤",
+    "HSI": "恆生指數",
+    "HSI-F": "恆指期貨",
   },
 };
 

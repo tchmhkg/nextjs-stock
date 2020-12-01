@@ -54,7 +54,7 @@ const IndexPrice = ({ priceObj, isFuture = false }) => {
   }, [lastPrice, closePrice]);
 
   const renderLastPrice = useCallback(() => {
-    const price = (lastPrice ? lastPrice : closePrice)?.toFixed(2);
+    const price = parseFloat((lastPrice ? lastPrice : closePrice))?.toFixed(2);
     return <Price className={getPriceColor()}>{price}</Price>;
   }, [lastPrice, closePrice]);
 
