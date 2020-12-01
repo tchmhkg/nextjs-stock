@@ -140,4 +140,4 @@ export async function getServerSideProps(ctx) {
   };
 }
 
-export default React.memo(Stock);
+export default Stock;
