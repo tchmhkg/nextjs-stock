@@ -81,12 +81,12 @@ const StockItem = ({ item }) => {
   if(marketState === 'PRE') {
     lastPrice = item?.preMarketPrice;
     closePrice = item?.regularMarketPrice;
-  } else if (marketState === 'REGULAR') {
-    lastPrice = item?.regularMarketPrice;
-    closePrice = item?.regularMarketPreviousClose;
-  } else if (marketState === 'POSTPOST' || marketState === 'CLOSED' || marketState === 'PREPARE') {
+  } else if (['POSTPOST', 'PREPRE', 'CLOSED', 'PREPARE'].includes(marketState)) {
     lastPrice = item?.postMarketPrice;
     closePrice = item?.regularMarketPrice;
+  } else {
+    lastPrice = item?.regularMarketPrice;
+    closePrice = item?.regularMarketPreviousClose;
   }
   // const { c: lastPrice, pc: closePrice } = quote || 0;
   const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [dollarFormat, lastPrice, closePrice]);
