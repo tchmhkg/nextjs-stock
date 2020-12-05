@@ -46,7 +46,7 @@ const iconStyles = colors => {
 
 const menuItems = [
   {
-    label: 'Market',
+    label: 'US Market',
     link: 'market',
   },
   {
