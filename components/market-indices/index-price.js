@@ -18,11 +18,11 @@ const PriceDiff = styled.span`
 
 const IndexPrice = ({ priceObj, isFuture = false }) => {
   const lastPrice = useMemo(
-    () => (isFuture ? priceObj?.lastPriceInDouble : priceObj?.lastPrice),
+    () => parseFloat((isFuture ? priceObj?.lastPriceInDouble : priceObj?.lastPrice)).toFixed(2),
     [priceObj?.lastPriceInDouble, priceObj?.lastPrice]
   );
   const closePrice = useMemo(
-    () => (isFuture ? priceObj?.closePriceInDouble : priceObj?.closePrice),
+    () => parseFloat((isFuture ? priceObj?.closePriceInDouble : priceObj?.closePrice)).toFixed(2),
     [priceObj?.closePriceInDouble, priceObj?.closePrice]
   );
   const getPriceColor = useCallback(() => {

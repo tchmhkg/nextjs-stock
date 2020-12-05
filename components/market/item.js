@@ -81,9 +81,12 @@ const StockItem = ({ item }) => {
   if(marketState === 'PRE') {
     lastPrice = item?.preMarketPrice;
     closePrice = item?.regularMarketPrice;
-  } else if (['POSTPOST', 'PREPRE', 'CLOSED', 'PREPARE'].includes(marketState)) {
+  } else if (['POSTPOST', 'PREPRE', 'PREPARE'].includes(marketState)) {
     lastPrice = item?.postMarketPrice;
     closePrice = item?.regularMarketPrice;
+  } else if (marketState === 'CLOSED') {
+    lastPrice = item?.postMarketPrice;
+    closePrice = item?.regularMarketPreviousClose;
   } else {
     lastPrice = item?.regularMarketPrice;
     closePrice = item?.regularMarketPreviousClose;
