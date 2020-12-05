@@ -1,8 +1,9 @@
-import React, { memo, useLayoutEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import styled from 'styled-components';
+import { motion } from "framer-motion";
 
 import { getLocalizationProps } from '~/context/LanguageContext';
 import useTranslation from '~/hooks/useTranslation';
@@ -28,13 +29,19 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const Symbol = styled.span`
+const Symbol = styled(motion.span)`
   font-size: 24px;
   font-weight: bold;
+  display: inline-block;
 `;
 
 const Name = styled.span`
   font-size: 18px;
+`;
+
+const SymbolNameWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const DescWrapper = styled.div`
@@ -55,10 +62,10 @@ const StickyWrapper = styled.div`
 const HeaderContainer = memo(({ symbol, name }) => {
   return (
     <Header>
-      <div>
-        <Symbol>{symbol} </Symbol>
+      <SymbolNameWrapper>
+        <Symbol layoutId={symbol}>{symbol} </Symbol>
         <Name>({name})</Name>
-      </div>
+      </SymbolNameWrapper>
       <Bookmark symbol={symbol} />
     </Header>
   );
@@ -81,7 +88,7 @@ const Stock = ({ symbol }) => {
   const [stockInfo, setStockInfo] = useState([]);
   const [closePrice, setClosePrice] = useState(0);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const getData = async () => {
       try {
         const res = await axios.get('/api/market/stockInfo', {
@@ -104,14 +111,6 @@ const Stock = ({ symbol }) => {
     getData();
   }, [symbol]);
 
-  if (loading) {
-    return (
-      <Layout showAvatar={false} showBackToHome={false}>
-        <Spinner />
-      </Layout>
-    );
-  }
-
   return (
     <Layout showAvatar={false} back backUrl="/market">
       <Head>
@@ -121,10 +120,16 @@ const Stock = ({ symbol }) => {
         <HeaderContainer symbol={symbol} name={stockInfo?.name} />
         <LatestPrice symbol={symbol} closePrice={closePrice} />
       </StickyWrapper>
-      <CompanyDesc description={stockInfo?.description} />
-      {/* <CandleStickChart symbol={symbol}/>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <CompanyDesc description={stockInfo?.description} />
+          {/* <CandleStickChart symbol={symbol}/>
       {`!! TODO: Display candlestick chart, historical data`} */}
-      <NewsList news={news} />
+          <NewsList news={news} />
+        </>
+      )}
     </Layout>
   );
 };

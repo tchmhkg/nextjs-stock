@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "date-fns": "^2.16.1",
     "express": "^4.17.1",
+    "framer-motion": "^2.9.5",
     "gray-matter": "^4.0.2",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",

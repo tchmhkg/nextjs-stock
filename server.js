@@ -31,6 +31,7 @@ let unsubscribe = {
 }
 
 function connect(socket) {
+    try {
     const type = socket.handshake.query['type'];
     var ws = new WebSocket(`wss://api.tiingo.com/${SOCKET_MAP[type]}`);
     console.log('query params => ',socket.handshake.query['symbol']);
@@ -89,6 +90,9 @@ function connect(socket) {
         console.log('closed ->',e.reason);
         ws.close();
     })
+    } catch (err) {
+        console.log('server websocket error => ',err);
+    }
 }
 
 io.on('connection', socket => {

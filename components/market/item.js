@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from 'axios';
 import styled from "styled-components";
 import ScheduleIcon from '@material-ui/icons/Schedule';
+import { motion } from "framer-motion";
 
 import styles from "~/components/market/item.module.scss";
 import useTranslation from "~/hooks/useTranslation";
@@ -27,8 +28,9 @@ const Name = styled.span`
   color: ${props => props.theme.inactiveLegend};
 `;
 
-const Symbol = styled.span`
+const Symbol = styled(motion.span)`
   font-size: 18px;
+  display: inline-block;
 `;
 
 const PriceWrapper = styled.div`
@@ -153,6 +155,10 @@ const StockItem = ({ item }) => {
     />
   ) : <Placeholder />, [profile?.logo]);
 
+  const SymbolContainer = memo(({symbol}) => (
+    <Symbol layoutId={symbol}>{symbol}</Symbol>
+  ))
+
   return (
     <Link
       href={`/[lang]/market/[symbol]]`}
@@ -162,17 +168,21 @@ const StockItem = ({ item }) => {
         <ProfileWrapper>
           {renderLogo}
           <div className={styles.stockInfo}>
-            <Symbol>{item.symbol}</Symbol>
+            <SymbolContainer symbol={item.symbol} />
             <Name>{longName}</Name>
           </div>
         </ProfileWrapper>
         <div className={styles.stockPrice}>
           <PriceWrapper>
-            {item?.quoteSourceName === "Delayed Quote" && <ScheduleIcon fontSize="small" />}
+            {item?.quoteSourceName === 'Delayed Quote' && (
+              <ScheduleIcon fontSize="small" />
+            )}
             <Price className={getPriceColor()}>{formattedPrice}</Price>
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
-          {['PRE', 'POSTPOST', 'CLOSED'].includes(marketState) && <Remark>{t(marketState)}</Remark>}
+          {['PRE', 'POSTPOST', 'CLOSED'].includes(marketState) && (
+            <Remark>{t(marketState)}</Remark>
+          )}
         </div>
       </Container>
     </Link>

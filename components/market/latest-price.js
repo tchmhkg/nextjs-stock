@@ -71,40 +71,44 @@ const LatestPrice = ({symbol = '', closePrice, ...props}) => {
 
     useEffect(() => {
         let subscriptionId;
-        if(!symbol) {
-            return;
+        if (!symbol) {
+          return;
         }
-        const socket = io({
+        try {
+          const socket = io({
             query: {
               symbol: JSON.stringify([symbol]),
               type: 'stock',
-              thresholdLevel: 0
-            }
+              thresholdLevel: 0,
+            },
           });
 
-        socket.on('api message', data => {
-            if(data?.subscriptionId) {
-                subscriptionId = data?.subscriptionId;
-                return;
+          socket.on('api message', (data) => {
+            if (data?.subscriptionId) {
+              subscriptionId = data?.subscriptionId;
+              return;
             }
             const parseData = JSON.parse(data?.message)?.data;
 
-            if(parseData[0] === 'T') {
-                if(parseData[9]) {
-                    setPrice(parseData[9]);
-                    setLastUpdateTime(parseData[1]);
-                }
+            if (parseData[0] === 'T') {
+              if (parseData[9]) {
+                setPrice(parseData[9]);
+                setLastUpdateTime(parseData[1]);
+              }
             }
-        });
+          });
 
-        socket.on('error', data => {
-            console.log('error ->',data);
-        })
+          socket.on('error', (data) => {
+            console.log('error ->', data);
+          });
         return () => {
             console.log(`unmount, unsubscribe id ${subscriptionId} and close socket`);
             socket.emit('unsubscribe', subscriptionId);
             socket.close();
         };
+      } catch (err) {
+        console.log(err);
+      }
     }, [symbol])
 
     return (
