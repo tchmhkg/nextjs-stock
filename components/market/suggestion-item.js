@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import React from 'react';
 import styled from 'styled-components';
+import { motion } from "framer-motion";
+
 import useTranslation from '~/hooks/useTranslation';
 
 const Container = styled.div`
@@ -20,9 +22,15 @@ const Name = styled.span`
   color: ${(props) => props.theme.text};
 `;
 
-const Symbol = styled.div`
+const SymbolWrapper = styled.div`
   font-size: 18px;
   color: ${(props) => props.theme.text};
+`;
+
+const Symbol = styled(motion.span)`
+  font-size: 18px;
+  display: inline-block;
+  margin-right: 5px;
 `;
 
 const SuggestionItem = ({item}) => {
@@ -34,10 +42,10 @@ const SuggestionItem = ({item}) => {
       as={`/${locale}/market/${item.symbol}`}
     >
       <Container>
-        <Symbol>
-          {item.symbol}{' '}
+        <SymbolWrapper>
+          <Symbol layoutId={item.symbol}>{item.symbol}</Symbol>
           <span style={{color: '#888888'}}>{item.exchDisp}</span>
-        </Symbol>
+        </SymbolWrapper>
         <Name numberOfLines={1}>{item.name}</Name>
       </Container>
     </Link>

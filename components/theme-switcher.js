@@ -20,7 +20,7 @@ const spring = {
 
 const ThemeSwitcher = () => {
   const theme = useTheme();
-  const [isOn, setIsOn] = useState(false);
+  const [isOn, setIsOn] = useState(theme.mode === 'dark');
   const onChangeTheme = useCallback(
     (e) => {
       setIsOn(!isOn);
