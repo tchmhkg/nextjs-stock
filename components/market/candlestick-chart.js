@@ -97,9 +97,6 @@ export default CandleStickChart;
 const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
   // console.log(ohlc)
   const options = {
-    panning: {
-      enabled: true
-    },
     plotOptions: {
       candlestick: {
         color: 'red',
@@ -124,6 +121,10 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
     navigator: {
       enabled: false,
     },
+    xAxis: {
+      min: ohlc[ohlc.length - 30][0],
+      max: ohlc[ohlc.length - 1][0]
+    },
     yAxis: [
       {
         labels: {
@@ -131,9 +132,9 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
         },
         height: '70%',
         lineWidth: 2,
-        resize: {
-          enabled: true,
-        },
+        // resize: {
+        //   enabled: true,
+        // },
       },
       {
         labels: {
@@ -149,6 +150,7 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
     tooltip: {
       split: true,
       borderColor: 'black',
+      followTouchMove: false,
     },
 
     series: [
@@ -157,11 +159,25 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
         name: symbol,
         data: ohlc,
         id: symbol,
+        panning: true,
+        pinchType: 'x',
         tooltip: {
           valueDecimals: 2,
           pointFormat:
-            '<span style="color:black">●</span> <b> {series.name}</b><br/>Open: {point.open}<br/>High: {point.high}<br/>Low: {point.low}<br/>Close: {point.close}<br/>',
+            'Open: {point.open}<br/>High: {point.high}<br/>Low: {point.low}<br/>Close: {point.close}<br/>',
         },
+        zoomType: null,
+        // Hide reset zoom button
+        resetZoomButton: {
+            theme: {
+                display: 'none'
+            }
+        },
+        events: {
+            load () {
+                this.xAxis[0].setExtremes(0, 5)
+            }
+        }
       },
       {
         type: 'column',
