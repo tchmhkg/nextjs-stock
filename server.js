@@ -11,7 +11,7 @@ console.log('environment =',process.env.NODE_ENV);
 let port = process.env.PORT || 3000;
 let host = process.env.HOST || 'http://localhost';
 
-const baseUrl = dev ? `${host}:${port}` : host;
+const baseUrl = `${host}:${port}`
 const getQuote = socket => {
     const symbol = socket.handshake.query['symbol'];
 
