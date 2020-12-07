@@ -20,7 +20,7 @@ export const getNewsApiByCategory = (category, page) => {
   return `${API_BASE_URL}/top-headlines?country=hk&page=${page}&apiKey=${NEWS_API_KEY}`;
 };
 
-export const CANDLES_API = FINNHUB_BASE_URL + '/stock/candle';
+export const CANDLES_API = FINNHUB_BASE_URL + `/stock/candle?token=${FINNHUB_API_KEY}`;
 export const FINNHUB_QUOTE_API = FINNHUB_BASE_URL + `/quote?token=${FINNHUB_API_KEY}`;
 export const FINNHUB_STOCK_PROFILE_API = FINNHUB_BASE_URL + `/stock/profile2?token=${FINNHUB_API_KEY}`;
 
@@ -35,11 +35,11 @@ export const TDA_REFRESH_TOKEN_API = TDA_BASE_URL + '/oauth2/token';
 
 export const TDA_QUOTES_API = TDA_BASE_URL + '/marketdata/quotes';
 
-export const getHistPrices = (symbol) => `${TIINGO_BASE_URL}/${symbol}/prices?token=${TIINGO_API_KEY}`;
+export const getHistPrices = (symbol) => `${TIINGO_BASE_URL}/iex/${symbol}/prices?token=${TIINGO_API_KEY}`;
 
-export const getLatestPrice = (symbol) => `${TIINGO_BASE_URL}/daily/${symbol}/prices?token=${TIINGO_API_KEY}`;
+export const getLatestPrice = (symbol) => `${TIINGO_BASE_URL}/tiingo/daily/${symbol}/prices?token=${TIINGO_API_KEY}`;
 
-export const getMetaInfo = (symbol) => `${TIINGO_BASE_URL}/daily/${symbol}?token=${TIINGO_API_KEY}`;
+export const getMetaInfo = (symbol) => `${TIINGO_BASE_URL}/tiingo/daily/${symbol}?token=${TIINGO_API_KEY}`;
 
 
 // export const getTDARefreshTokenUrl = (token) => {

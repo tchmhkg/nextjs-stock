@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 import styles from "~/components/market/item.module.scss";
 import useTranslation from "~/hooks/useTranslation";
-import { dollarFormat } from '~/utils';
+import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
 
 const Container = styled.div`
   display: flex;
@@ -78,21 +78,8 @@ const StockItem = ({ item }) => {
   const { locale, t } = useTranslation();
   const [profile, setProfile] = useState({});
   const { marketState, longName } = item;
-  let lastPrice = 0;
-  let closePrice = 0;
-  if(marketState === 'PRE') {
-    lastPrice = item?.preMarketPrice;
-    closePrice = item?.regularMarketPrice;
-  } else if (['POSTPOST', 'PREPRE', 'PREPARE'].includes(marketState)) {
-    lastPrice = item?.postMarketPrice;
-    closePrice = item?.regularMarketPrice;
-  } else if (marketState === 'CLOSED') {
-    lastPrice = item?.postMarketPrice;
-    closePrice = item?.regularMarketPreviousClose;
-  } else {
-    lastPrice = item?.regularMarketPrice;
-    closePrice = item?.regularMarketPreviousClose;
-  }
+  const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(item);
+  
   // const { c: lastPrice, pc: closePrice } = quote || 0;
   const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [dollarFormat, lastPrice, closePrice]);
 

@@ -3,7 +3,7 @@ import moment from 'moment';
 import SocketIOClient from 'socket.io-client';
 import styled from 'styled-components';
 import useTranslation from '~/hooks/useTranslation';
-import { dollarFormat } from '~/utils';
+import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
 import styles from "~/components/market/latest-price.module.scss";
 
 const Price = styled.span`
@@ -65,63 +65,33 @@ const LastUpdate = memo(({lastUpdateTime = ''}) => {
     )
 })
 
-const LatestPrice = ({symbol = '', closePrice, ...props}) => {
+const LatestPrice = ({symbol = '', ...props}) => {
     const [price, setPrice] = useState(0);
+    const [closePrice, setClosePrice] = useState(0);
     const [lastUpdateTime, setLastUpdateTime] = useState(null);
 
     useEffect(() => {
-      const socket = SocketIOClient();
+      if(!symbol) {
+        return;
+      }
+      const socket = SocketIOClient({
+        query: {
+          symbol,
+        },
+      });
       socket.on("FromAPI", data => {
-        setLastUpdateTime(data);
+        // console.log('from api data => ',data)
+        const { lastPrice, closePrice: apiClosePrice } = getLastAndClosePriceFromYahoo(data[0]);
+        setPrice(lastPrice);
+        setClosePrice(apiClosePrice)
+        // setLastUpdateTime(data);
       });
       return () => socket.disconnect();
-    }, [])
-
-    // useEffect(() => {
-    //     let subscriptionId;
-    //     if (!symbol) {
-    //       return;
-    //     }
-    //     try {
-    //       const socket = io({
-    //         query: {
-    //           symbol: JSON.stringify([symbol]),
-    //           type: 'stock',
-    //           thresholdLevel: 0,
-    //         },
-    //       });
-
-    //       socket.on('api message', (data) => {
-    //         if (data?.subscriptionId) {
-    //           subscriptionId = data?.subscriptionId;
-    //           return;
-    //         }
-    //         const parseData = JSON.parse(data?.message)?.data;
-
-    //         if (parseData[0] === 'T') {
-    //           if (parseData[9]) {
-    //             setPrice(parseData[9]);
-    //             setLastUpdateTime(parseData[1]);
-    //           }
-    //         }
-    //       });
-
-    //       socket.on('error', (data) => {
-    //         console.log('error ->', data);
-    //       });
-    //     return () => {
-    //         console.log(`unmount, unsubscribe id ${subscriptionId} and close socket`);
-    //         socket.emit('unsubscribe', subscriptionId);
-    //         socket.close();
-    //     };
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // }, [symbol])
+    }, [symbol])
 
     return (
         <div>
-            {/* <PriceContainer price={price} closePrice={closePrice}/> */}
+            <PriceContainer price={price} closePrice={closePrice}/>
             {lastUpdateTime && <LastUpdate lastUpdateTime={lastUpdateTime} />}
         </div>
     )

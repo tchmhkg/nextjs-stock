@@ -9,6 +9,7 @@ import useTranslation from '~/hooks/useTranslation';
 
 import Layout from '~/components/layout';
 import Spinner from '~/components/spinner';
+import CandleStickChart from '~/components/market/candlestick-chart';
 
 const LatestPrice = dynamic({
   loader: () => import('~/components/market/latest-price'),
@@ -86,7 +87,6 @@ const Stock = () => {
   const [loading, setLoading] = useState(true);
   const [news, setNews] = useState([]);
   const [stockInfo, setStockInfo] = useState([]);
-  const [closePrice, setClosePrice] = useState(0);
 
   useEffect(() => {
     const getData = async () => {
@@ -101,11 +101,9 @@ const Stock = () => {
         });
         const newsData = res?.data?.feeds;
         const stockInfoData = res?.data?.metaInfo;
-        const closePriceData = res?.data?.latestPrice?.[0]?.adjClose;
+        setLoading(false);
         setNews(newsData);
         setStockInfo(stockInfoData);
-        setClosePrice(closePriceData);
-        setLoading(false);
       } catch (err) {
         console.log(err);
         setLoading(false);
@@ -121,15 +119,15 @@ const Stock = () => {
       </Head>
       <StickyWrapper>
         <HeaderContainer symbol={symbol} name={stockInfo?.name} />
-        <LatestPrice symbol={symbol} closePrice={closePrice} />
+        <LatestPrice symbol={symbol} />
       </StickyWrapper>
       {loading ? (
         <Spinner />
       ) : (
         <>
           <CompanyDesc description={stockInfo?.description} />
-          {/* <CandleStickChart symbol={symbol}/>
-      {`!! TODO: Display candlestick chart, historical data`} */}
+          <CandleStickChart symbol={symbol}/>
+          {/* {`!! TODO: Display candlestick chart, historical data`} */}
           <NewsList news={news} />
         </>
       )}

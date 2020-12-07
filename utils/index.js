@@ -14,3 +14,26 @@ export const dollarFormat = (amount, decimalCount = 2, decimal = ".", thousands 
       return false;
     }
 };
+
+export const getLastAndClosePriceFromYahoo = item => {
+  let lastPrice = 0;
+  let closePrice = 0;
+  if(!item) {
+    return {lastPrice, closePrice};
+  }
+  const { marketState } = item;
+  if(marketState === 'PRE') {
+    lastPrice = item?.preMarketPrice;
+    closePrice = item?.regularMarketPrice;
+  } else if (['POSTPOST', 'PREPRE', 'PREPARE'].includes(marketState)) {
+    lastPrice = item?.postMarketPrice;
+    closePrice = item?.regularMarketPrice;
+  } else if (marketState === 'CLOSED') {
+    lastPrice = item?.postMarketPrice;
+    closePrice = item?.regularMarketPreviousClose;
+  } else {
+    lastPrice = item?.regularMarketPrice;
+    closePrice = item?.regularMarketPreviousClose;
+  }
+  return {lastPrice, closePrice};
+}

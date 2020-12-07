@@ -27,6 +27,7 @@ const strings = {
     "CLOSED": "Closed",
     "HSI": "Hang Seng Index",
     "HSI-F": "HSI Future",
+    "Chart": "Chart",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -56,6 +57,7 @@ const strings = {
     "CLOSED": "已收盤",
     "HSI": "恆生指數",
     "HSI-F": "恆指期貨",
+    "Chart": "圖表",
   },
 };
 
