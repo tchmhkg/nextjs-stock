@@ -80,7 +80,7 @@ const CandleStickChart = ({ symbol, ...props }) => {
 
   return (
     <div>
-      <h3>{t('Chart')} (3 months)</h3>
+      <h3>{t('Chart')}</h3>
       {!loading && (
         <HighchartsReact
           options={options}
@@ -97,10 +97,19 @@ export default CandleStickChart;
 const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
   // console.log(ohlc)
   const options = {
+    lang: {
+      decimalPoint: '.',
+      thousandsSeparator: ','
+    },
+    chart: {
+      backgroundColor: 'transparent',
+    },
     plotOptions: {
       candlestick: {
         color: 'red',
+        lineColor: 'red',
         upColor: 'green',
+        upLineColor: 'green',
       },
       column: {
         color: 'gray',
@@ -122,33 +131,46 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
       enabled: false,
     },
     xAxis: {
-      min: ohlc[ohlc.length - 30][0],
+      min: ohlc[ohlc.length - 28][0],
       max: ohlc[ohlc.length - 1][0],
       labels: {
         formatter: function() {
-          return moment(this.value).format('YYYY-MM-DD');
+          return moment(this.value).format('YYYY/MM');
         }
-      }
+      },
+      tickInterval: 24 * 3600 * 1000 * 30.5,
+      lineWidth: 0,
     },
     yAxis: [
       {
         height: '70%',
-        lineWidth: 2,
-        opposite:false
+        lineWidth: 0,
+        opposite:false,
+        offset: 0,
+        tickAmount: 8,
+        tickPosition: 'inside',
+        zoomEnabled: false,
+        crosshair: true,
+        gridLineWidth: 0.5,
+        gridLineColor: '#9f9f9f'
       },
       {
         top: '75%',
         height: '25%',
         offset: 0,
-        lineWidth: 2,
-        opposite:false
-
+        lineWidth: 0,
+        opposite:false,
+        tickAmount: 4,
+        tickPosition: 'inside',
+        zoomEnabled: false,
+        gridLineWidth: 0.5,
+        gridLineColor: '#9f9f9f'
       },
     ],
-
     tooltip: {
       split: true,
       borderColor: 'black',
+      borderWidth: 0,
       followTouchMove: false,
     },
 
@@ -166,17 +188,6 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
             'Open: {point.open}<br/>High: {point.high}<br/>Low: {point.low}<br/>Close: {point.close}<br/>',
         },
         zoomType: null,
-        // Hide reset zoom button
-        resetZoomButton: {
-            theme: {
-                display: 'none'
-            }
-        },
-        events: {
-            load () {
-                this.xAxis[0].setExtremes(0, 5)
-            }
-        }
       },
       {
         type: 'column',
