@@ -123,27 +123,26 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
     },
     xAxis: {
       min: ohlc[ohlc.length - 30][0],
-      max: ohlc[ohlc.length - 1][0]
+      max: ohlc[ohlc.length - 1][0],
+      labels: {
+        formatter: function() {
+          return moment(this.value).format('YYYY-MM-DD');
+        }
+      }
     },
     yAxis: [
       {
-        labels: {
-          align: 'left',
-        },
         height: '70%',
         lineWidth: 2,
-        // resize: {
-        //   enabled: true,
-        // },
+        opposite:false
       },
       {
-        labels: {
-          align: 'left',
-        },
         top: '75%',
         height: '25%',
         offset: 0,
         lineWidth: 2,
+        opposite:false
+
       },
     ],
 
