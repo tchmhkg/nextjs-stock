@@ -57,6 +57,7 @@ const StickyWrapper = styled.div`
   top: 70px;
   background-color: ${(props) => props.theme.background};
   padding: 5px 0;
+  z-index: 10;
 `;
 
 const HeaderContainer = memo(({ symbol, name }) => {

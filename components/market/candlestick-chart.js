@@ -1,120 +1,135 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
 import _ from 'lodash';
-import Highcharts from 'highcharts/highstock'
-import HighchartsExporting from 'highcharts/modules/exporting'
-import HighchartsReact from 'highcharts-react-official'
+import Highcharts from 'highcharts/highstock';
+import HighchartsExporting from 'highcharts/modules/exporting';
+import HighchartsReact from 'highcharts-react-official';
 import useTranslation from '~/hooks/useTranslation';
 // import { useTheme } from '~/theme';
 // import { chartDarkTheme } from '~/theme/dark';
 // import { chartLightTheme } from '~/theme/light';
 
 if (typeof Highcharts === 'object') {
-    HighchartsExporting(Highcharts)
+  HighchartsExporting(Highcharts);
 }
 
-const formatDateTime = timestamp => parseFloat(moment.unix(timestamp).format('x'))
+const formatDateTime = (timestamp) =>
+  parseFloat(moment.unix(timestamp).format('x'));
 
 function parseData(data) {
   let ohlc = [];
   let volume = [];
-    for (let i = 0; i < data.timestamp.length; i += 1) {
-      ohlc.push([
-        formatDateTime(data.timestamp[i]), // the date
-        data.indicators.quote[0]['open'][i], // open
-        data.indicators.quote[0]['high'][i], // high
-        data.indicators.quote[0]['low'][i], // low
-        data.indicators.quote[0]['close'][i] // close
-      ]);
+  for (let i = 0; i < data.timestamp.length; i += 1) {
+    ohlc.push([
+      formatDateTime(data.timestamp[i]), // the date
+      data.indicators.quote[0]['open'][i], // open
+      data.indicators.quote[0]['high'][i], // high
+      data.indicators.quote[0]['low'][i], // low
+      data.indicators.quote[0]['close'][i], // close
+    ]);
 
-      volume.push([
-        formatDateTime(data.timestamp[i]), // the date
-        data.indicators.quote[0]['volume'][i] // the volume
-      ]);
-    }
-  return {ohlc, volume}
+    volume.push([
+      formatDateTime(data.timestamp[i]), // the date
+      data.indicators.quote[0]['volume'][i], // the volume
+    ]);
+  }
+  return { ohlc, volume };
 }
 
-const CandleStickChart = ({symbol, ...props}) => {
-  const {t} = useTranslation();
+const CandleStickChart = ({ symbol, ...props }) => {
+  const { t } = useTranslation();
   // const {mode} = useTheme();
-    // const [data, setData] = useState([]);
-    // const [vData, setVData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [options, setOptions] = useState({});
+  // const [data, setData] = useState([]);
+  // const [vData, setVData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [options, setOptions] = useState({});
 
-    useEffect(() => {
-      window.moment = moment;
-      fetchStock();
-    }, [symbol])
+  useEffect(() => {
+    window.moment = moment;
+    fetchStock();
+  }, [symbol]);
 
-    // useEffect(() => {
-    //   Highcharts.theme = mode === 'dark' ? chartDarkTheme : chartLightTheme;
-    //   Highcharts.setOptions(Highcharts.theme)
-    // }, [mode])
+  // useEffect(() => {
+  //   Highcharts.theme = mode === 'dark' ? chartDarkTheme : chartLightTheme;
+  //   Highcharts.setOptions(Highcharts.theme)
+  // }, [mode])
 
-    const fetchStock = async () => {
-        try {
-          if (!symbol) {
-            return;
-          }
-          // setLoading(true);
-          const res = await axios.get('/api/market/get-hist', {
-            params: {
-              symbol,
-            },
-          });
+  const fetchStock = async () => {
+    try {
+      if (!symbol) {
+        return;
+      }
+      // setLoading(true);
+      const res = await axios.get('/api/market/get-hist', {
+        params: {
+          symbol,
+        },
+      });
 
-          // console.log('res => ',res?.data);
+      // console.log('res => ',res?.data);
 
-          const { ohlc, volume } = parseData(res.data?.data);
-          setOptions(getOptions({symbol, ohlc, volume}))
-          setLoading(false);
-        } catch (error) {
-          console.log(error);
-          setLoading(false);
-        }
-      };
-    
-    return (
-      <div>
-        <h3>{t('Chart')}</h3>
-        {!loading && (
+      const { ohlc, volume } = parseData(res.data?.data);
+      setOptions(getOptions({ symbol, ohlc, volume }));
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h3>{t('Chart')} (3 months)</h3>
+      {!loading && (
         <HighchartsReact
           options={options}
           highcharts={Highcharts}
           constructorType="stockChart"
           containerProps={{ className: 'chartContainer' }}
         />
-
-        )}
-      </div>
-    );
-}
+      )}
+    </div>
+  );
+};
 
 export default CandleStickChart;
-const getOptions = ({symbol = '', ohlc = [], volume = []}) => {
-// console.log(ohlc)
+const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
+  // console.log(ohlc)
   const options = {
+    panning: {
+      enabled: true
+    },
+    plotOptions: {
+      candlestick: {
+        color: 'red',
+        upColor: 'green',
+      },
+      column: {
+        color: 'gray',
+      },
+    },
     exporting: {
-      enabled: false
+      enabled: false,
     },
     time: {
       timezone: 'America/New_York',
     },
     rangeSelector: {
-      enabled: false
+      enabled: false,
     },
     scrollbar: {
-      enabled: false
+      enabled: false,
+    },
+    navigator: {
+      enabled: false,
     },
     yAxis: [
       {
         labels: {
           align: 'left',
         },
-        height: '60%',
+        height: '70%',
         lineWidth: 2,
         resize: {
           enabled: true,
@@ -124,8 +139,8 @@ const getOptions = ({symbol = '', ohlc = [], volume = []}) => {
         labels: {
           align: 'left',
         },
-        top: '65%',
-        height: '35%',
+        top: '75%',
+        height: '25%',
         offset: 0,
         lineWidth: 2,
       },
@@ -133,6 +148,7 @@ const getOptions = ({symbol = '', ohlc = [], volume = []}) => {
 
     tooltip: {
       split: true,
+      borderColor: 'black',
     },
 
     series: [
@@ -141,7 +157,11 @@ const getOptions = ({symbol = '', ohlc = [], volume = []}) => {
         name: symbol,
         data: ohlc,
         id: symbol,
-        tooltip: { valueDecimals: 2 },
+        tooltip: {
+          valueDecimals: 2,
+          pointFormat:
+            '<span style="color:black">●</span> <b> {series.name}</b><br/>Open: {point.open}<br/>High: {point.high}<br/>Low: {point.low}<br/>Close: {point.close}<br/>',
+        },
       },
       {
         type: 'column',
@@ -152,5 +172,4 @@ const getOptions = ({symbol = '', ohlc = [], volume = []}) => {
     ],
   };
   return options;
-
-}
+};
