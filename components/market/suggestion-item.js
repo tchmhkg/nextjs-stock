@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
 import styled from 'styled-components';
-import { motion } from "framer-motion";
 
 import useTranslation from '~/hooks/useTranslation';
 
@@ -27,10 +26,14 @@ const SymbolWrapper = styled.div`
   color: ${(props) => props.theme.text};
 `;
 
-const Symbol = styled(motion.span)`
+const Symbol = styled.span`
   font-size: 18px;
   display: inline-block;
   margin-right: 5px;
+`;
+
+const Exch = styled.span`
+  color: ${props => props.theme.inactiveLegend};
 `;
 
 const SuggestionItem = ({item}) => {
@@ -38,13 +41,15 @@ const SuggestionItem = ({item}) => {
 
   return (
     <Link
-      href={`/[lang]/market/[symbol]`}
-      as={`/${locale}/market/${item.symbol}`}
+      href={{
+        pathname: '/[lang]/market/quote',
+        query: { lang: locale, symbol: item.symbol },
+      }}
     >
       <Container>
         <SymbolWrapper>
-          <Symbol layoutId={item.symbol}>{item.symbol}</Symbol>
-          <span style={{color: '#888888'}}>{item.exchDisp}</span>
+          <Symbol>{item.symbol}</Symbol>
+          <Exch>{item.exchDisp}</Exch>
         </SymbolWrapper>
         <Name numberOfLines={1}>{item.name}</Name>
       </Container>

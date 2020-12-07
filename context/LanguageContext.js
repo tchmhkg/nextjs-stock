@@ -7,7 +7,7 @@ export const LanguageContext = React.createContext({
   setLocale: () => null
 })
 
-export const LanguageProvider = ({ lang, children }) => {
+export const LanguageProvider = ({ lang = 'en', children }) => {
   const [locale, setLocale] = React.useState(lang)
   const { query } = useRouter()
 

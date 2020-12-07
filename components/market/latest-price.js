@@ -1,6 +1,6 @@
 import React, {useState, useEffect, memo, useMemo, useCallback} from 'react';
 import moment from 'moment';
-import io from 'socket.io-client';
+import SocketIOClient from 'socket.io-client';
 import styled from 'styled-components';
 import useTranslation from '~/hooks/useTranslation';
 import { dollarFormat } from '~/utils';
@@ -70,50 +70,58 @@ const LatestPrice = ({symbol = '', closePrice, ...props}) => {
     const [lastUpdateTime, setLastUpdateTime] = useState(null);
 
     useEffect(() => {
-        let subscriptionId;
-        if (!symbol) {
-          return;
-        }
-        try {
-          const socket = io({
-            query: {
-              symbol: JSON.stringify([symbol]),
-              type: 'stock',
-              thresholdLevel: 0,
-            },
-          });
+      const socket = SocketIOClient();
+      socket.on("FromAPI", data => {
+        setLastUpdateTime(data);
+      });
+      return () => socket.disconnect();
+    }, [])
 
-          socket.on('api message', (data) => {
-            if (data?.subscriptionId) {
-              subscriptionId = data?.subscriptionId;
-              return;
-            }
-            const parseData = JSON.parse(data?.message)?.data;
+    // useEffect(() => {
+    //     let subscriptionId;
+    //     if (!symbol) {
+    //       return;
+    //     }
+    //     try {
+    //       const socket = io({
+    //         query: {
+    //           symbol: JSON.stringify([symbol]),
+    //           type: 'stock',
+    //           thresholdLevel: 0,
+    //         },
+    //       });
 
-            if (parseData[0] === 'T') {
-              if (parseData[9]) {
-                setPrice(parseData[9]);
-                setLastUpdateTime(parseData[1]);
-              }
-            }
-          });
+    //       socket.on('api message', (data) => {
+    //         if (data?.subscriptionId) {
+    //           subscriptionId = data?.subscriptionId;
+    //           return;
+    //         }
+    //         const parseData = JSON.parse(data?.message)?.data;
 
-          socket.on('error', (data) => {
-            console.log('error ->', data);
-          });
-        return () => {
-            console.log(`unmount, unsubscribe id ${subscriptionId} and close socket`);
-            socket.emit('unsubscribe', subscriptionId);
-            socket.close();
-        };
-      } catch (err) {
-        console.log(err);
-      }
-    }, [symbol])
+    //         if (parseData[0] === 'T') {
+    //           if (parseData[9]) {
+    //             setPrice(parseData[9]);
+    //             setLastUpdateTime(parseData[1]);
+    //           }
+    //         }
+    //       });
+
+    //       socket.on('error', (data) => {
+    //         console.log('error ->', data);
+    //       });
+    //     return () => {
+    //         console.log(`unmount, unsubscribe id ${subscriptionId} and close socket`);
+    //         socket.emit('unsubscribe', subscriptionId);
+    //         socket.close();
+    //     };
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // }, [symbol])
 
     return (
         <div>
-            <PriceContainer price={price} closePrice={closePrice}/>
+            {/* <PriceContainer price={price} closePrice={closePrice}/> */}
             {lastUpdateTime && <LastUpdate lastUpdateTime={lastUpdateTime} />}
         </div>
     )

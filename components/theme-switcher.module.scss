@@ -15,7 +15,7 @@ $white: #fff;
   margin: 0 10px 0 5px;
   align-items: center;
 
-  &[data-isOn='true'] {
+  &[data-enabled='true'] {
     justify-content: flex-end;
     &:before {
       content: attr(data-on);
@@ -25,7 +25,7 @@ $white: #fff;
     }
   }
 
-  &[data-isOn='false'] {
+  &[data-enabled='false'] {
     &:after {
       content: attr(data-off);
       font-size: 22px;

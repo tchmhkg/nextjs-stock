@@ -1,11 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
+import { useRouter } from "next/router";
 import axios from 'axios';
 import styled from 'styled-components';
 import { motion } from "framer-motion";
-
-import { getLocalizationProps } from '~/context/LanguageContext';
 import useTranslation from '~/hooks/useTranslation';
 
 import Layout from '~/components/layout';
@@ -64,7 +63,7 @@ const HeaderContainer = memo(({ symbol, name }) => {
     <Header>
       <SymbolNameWrapper>
         <Symbol layoutId={symbol}>{symbol} </Symbol>
-        <Name>({name})</Name>
+        {name && <Name>({name})</Name>}
       </SymbolNameWrapper>
       <Bookmark symbol={symbol} />
     </Header>
@@ -81,8 +80,9 @@ const CompanyDesc = memo(({ description = '' }) => {
   );
 });
 
-const Stock = ({ symbol }) => {
-  const { t } = useTranslation();
+const Stock = () => {
+  const router = useRouter();
+  const {symbol} = router.query;
   const [loading, setLoading] = useState(true);
   const [news, setNews] = useState([]);
   const [stockInfo, setStockInfo] = useState([]);
@@ -91,6 +91,9 @@ const Stock = ({ symbol }) => {
   useEffect(() => {
     const getData = async () => {
       try {
+        if(!symbol) {
+          return;
+        }
         const res = await axios.get('/api/market/stockInfo', {
           params: {
             symbol,
@@ -133,16 +136,5 @@ const Stock = ({ symbol }) => {
     </Layout>
   );
 };
-
-export async function getServerSideProps(ctx) {
-  const localization = getLocalizationProps(ctx);
-  const { symbol } = ctx.query;
-  return {
-    props: {
-      localization,
-      symbol,
-    },
-  };
-}
 
 export default Stock;
