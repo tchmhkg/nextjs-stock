@@ -23,7 +23,7 @@ export const getLastAndClosePriceFromYahoo = item => {
   }
   const { marketState } = item;
   if(marketState === 'PRE') {
-    lastPrice = item?.preMarketPrice;
+    lastPrice = item?.preMarketPrice || item?.regularMarketPrice;
     closePrice = item?.regularMarketPrice;
   } else if (['POSTPOST', 'PREPRE', 'PREPARE'].includes(marketState)) {
     lastPrice = item?.postMarketPrice;
