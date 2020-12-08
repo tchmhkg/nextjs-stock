@@ -10,6 +10,8 @@ import useTranslation from '~/hooks/useTranslation';
 import Layout from '~/components/layout';
 import Spinner from '~/components/spinner';
 import CandleStickChart from '~/components/market/candlestick-chart';
+import AreaChart from '~/components/market/area-chart';
+import Charts from '~/components/market/charts';
 
 const LatestPrice = dynamic({
   loader: () => import('~/components/market/latest-price'),
@@ -127,7 +129,7 @@ const Stock = () => {
       ) : (
         <>
           <CompanyDesc description={stockInfo?.description} />
-          <CandleStickChart symbol={symbol}/>
+          <Charts symbol={symbol} />
           {/* {`!! TODO: Display candlestick chart, historical data`} */}
           <NewsList news={news} />
         </>

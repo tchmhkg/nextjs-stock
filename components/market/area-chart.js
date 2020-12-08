@@ -17,33 +17,38 @@ const formatDateTime = (timestamp) =>
 
 function parseData(data) {
   let ohlc = [];
-  let volume = [];
-  for (let i = 0; i < data.timestamp.length; i += 1) {
+  const dataLength = data.timestamp.length;
+  for (let i = 0; i < dataLength; i += 1) {
     ohlc.push([
       formatDateTime(data.timestamp[i]), // the date
-      data.indicators.quote[0]['open'][i], // open
-      data.indicators.quote[0]['high'][i], // high
-      data.indicators.quote[0]['low'][i], // low
       data.indicators.quote[0]['close'][i], // close
     ]);
-
-    volume.push([
-      formatDateTime(data.timestamp[i]), // the date
-      data.indicators.quote[0]['volume'][i], // the volume
-    ]);
   }
-  return { ohlc, volume };
+
+  const dummyArray = Array(391 - dataLength)
+    .fill()
+    .map((_, i) => [ohlc[dataLength - 1][0] + 60000 * i, null]);
+  ohlc = [...ohlc, ...dummyArray];
+
+  return { ohlc };
 }
 
-const CandleStickChart = ({ symbol, ...props }) => {
+const AreaChart = ({ symbol, ...props }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
-  const [options, setOptions] = useState({});
+  const [options, setOptions] = useState(getOptions({ symbol }));
   const isVisible = usePageVisibility();
 
   useEffect(() => {
     window.moment = moment;
     fetchStock();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchStock();
+    }, 2000);
+    return () => clearInterval(interval);
   }, [symbol, isVisible]);
 
   const fetchStock = async () => {
@@ -60,16 +65,13 @@ const CandleStickChart = ({ symbol, ...props }) => {
         params: {
           symbol,
           params: JSON.stringify({
-            range: 'max',
-            interval: '1d',
-          })
+            interval: '1m',
+          }),
         },
       });
 
-      // console.log('res => ',res?.data);
-
-      const { ohlc, volume } = parseData(res.data?.data);
-      setOptions(getOptions({ symbol, ohlc, volume }));
+      const { ohlc } = parseData(res.data?.data);
+      setOptions(prevOptions => ({ ...prevOptions, series: [{ ...prevOptions.series[0], data: ohlc }] }));
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -91,28 +93,22 @@ const CandleStickChart = ({ symbol, ...props }) => {
   );
 };
 
-export default CandleStickChart;
-const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
-  // console.log(ohlc)
+export default AreaChart;
+
+const getOptions = ({ symbol = ''}) => {
   const options = {
+    plotOptions: {
+      series: {
+          lineWidth: 1
+      }
+    },
     lang: {
       decimalPoint: '.',
-      thousandsSeparator: ','
+      thousandsSeparator: ',',
     },
     chart: {
       backgroundColor: 'transparent',
-      height: 300
-    },
-    plotOptions: {
-      candlestick: {
-        color: 'red',
-        lineColor: 'red',
-        upColor: 'green',
-        upLineColor: 'green',
-      },
-      column: {
-        color: 'gray',
-      },
+      height: 300,
     },
     exporting: {
       enabled: false,
@@ -130,69 +126,53 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
       enabled: false,
     },
     xAxis: {
-      min: ohlc[ohlc.length - 28][0],
-      max: ohlc[ohlc.length - 1][0],
-      labels: {
-        formatter: function() {
-          return moment(this.value).format('YYYY/MM');
-        }
-      },
-      tickInterval: 24 * 3600 * 1000 * 30.5,
       lineWidth: 0,
     },
     yAxis: [
       {
-        height: '70%',
         lineWidth: 0,
-        opposite:false,
+        opposite: false,
         offset: 0,
-        tickAmount: 8,
         tickPosition: 'inside',
         zoomEnabled: false,
         crosshair: true,
         gridLineWidth: 0.5,
-        gridLineColor: '#9f9f9f'
-      },
-      {
-        top: '75%',
-        height: '25%',
-        offset: 0,
-        lineWidth: 0,
-        opposite:false,
-        tickAmount: 4,
-        tickPosition: 'inside',
-        zoomEnabled: false,
-        gridLineWidth: 0.5,
-        gridLineColor: '#9f9f9f'
+        gridLineColor: '#9f9f9f',
       },
     ],
     tooltip: {
       split: true,
       borderColor: 'black',
       borderWidth: 0,
-      followTouchMove: false,
     },
 
     series: [
       {
-        type: 'candlestick',
+        type: 'area',
         name: symbol,
-        data: ohlc,
+        data: [],
         id: symbol,
-        panning: true,
-        pinchType: 'x',
+        threshold: null,
         tooltip: {
           valueDecimals: 2,
-          pointFormat:
-            'Open: {point.open}<br/>High: {point.high}<br/>Low: {point.low}<br/>Close: {point.close}<br/>',
         },
-        zoomType: null,
-      },
-      {
-        type: 'column',
-        name: 'Volume',
-        data: volume,
-        yAxis: 1,
+        fillColor: {
+          linearGradient: {
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: 1,
+          },
+          stops: [
+            [0, Highcharts.getOptions().colors[0]],
+            [
+              1,
+              Highcharts.color(Highcharts.getOptions().colors[0])
+                .setOpacity(0.2)
+                .get('rgba'),
+            ],
+          ],
+        },
       },
     ],
   };

@@ -28,6 +28,8 @@ const strings = {
     "HSI": "Hang Seng Index",
     "HSI-F": "HSI Future",
     "Chart": "Chart",
+    "Time Frame": "Time Frame",
+    "1d": "1D",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -58,6 +60,8 @@ const strings = {
     "HSI": "恆生指數",
     "HSI-F": "恆指期貨",
     "Chart": "圖表",
+    "Time Frame": "分時",
+    "1d": "日K",
   },
 };
 
