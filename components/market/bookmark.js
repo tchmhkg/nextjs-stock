@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FavoriteBorder as BorderIcon, Favorite as Icon } from '@material-ui/icons';
 import _ from 'lodash';
+import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { makeStyles } from "@material-ui/core/styles";
 
+const IconWrapper = styled(motion.div)`
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+`;
 
 const iconStyles = () => {
   return {
@@ -15,6 +19,8 @@ const iconStyles = () => {
     },
   };
 }
+
+const iconAnimConfig = { scale: 1.3 };
 
 const Bookmark = ({symbol}) => {
   const [saved, setSaved] = useState(null);
@@ -70,9 +76,9 @@ const Bookmark = ({symbol}) => {
 
   // TODO: merge to single function
   return (
-    <motion.div whileTap={{ scale: 1.3 }} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
+    <IconWrapper whileTap={iconAnimConfig} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
         {saved ? <Icon className={classes.activeIcon} /> : <BorderIcon />}
-    </motion.div>
+    </IconWrapper>
   );
 };
 
