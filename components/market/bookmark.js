@@ -1,9 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { BookmarkBorder as BookmarkBorderIcon, Bookmark as BookmarkIcon } from '@material-ui/icons';
+import { FavoriteBorder as BorderIcon, Favorite as Icon } from '@material-ui/icons';
 import _ from 'lodash';
+import { motion } from 'framer-motion';
+import { makeStyles } from "@material-ui/core/styles";
+
+
+const iconStyles = () => {
+  return {
+    activeIcon: {
+      color: "#F47983",
+    },
+    inactiveIcon: {
+      color: "#b2b2b2",
+    },
+  };
+}
 
 const Bookmark = ({symbol}) => {
   const [saved, setSaved] = useState(null);
+  const classes = makeStyles(iconStyles)();
 
   const onPressSaveSymbol = useCallback(async () => {
     try {
@@ -55,9 +70,9 @@ const Bookmark = ({symbol}) => {
 
   // TODO: merge to single function
   return (
-    <div onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
-        {saved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-    </div>
+    <motion.div whileTap={{ scale: 1.3 }} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
+        {saved ? <Icon className={classes.activeIcon} /> : <BorderIcon />}
+    </motion.div>
   );
 };
 
