@@ -78,7 +78,7 @@ const Bookmark = ({symbol}) => {
 
   // TODO: merge to single function
   return (
-    <IconWrapper whileTap={iconAnimConfig} onTap={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
+    <IconWrapper whileTap={iconAnimConfig} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
         {saved ? <Icon className={classes.activeIcon} /> : <BorderIcon />}
     </IconWrapper>
   );
