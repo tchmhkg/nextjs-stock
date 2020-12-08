@@ -28,7 +28,6 @@ const Bookmark = ({symbol}) => {
 
   const onPressSaveSymbol = useCallback(async () => {
     try {
-      window.navigator.vibrate(200);
       const existing = await window.localStorage.getItem('symbols');
 
       const existingJson = existing ? JSON.parse(existing) : [];
@@ -50,7 +49,6 @@ const Bookmark = ({symbol}) => {
 
   const onPressRemoveSymbol = useCallback(async () => {
     try {
-      window.navigator.vibrate(200);
       const existing = await window.localStorage.getItem('symbols');
 
       const existingJson = existing ? JSON.parse(existing) : [];
