@@ -5,6 +5,7 @@ import styled from "styled-components";
 import useTranslation from "~/hooks/useTranslation";
 import IndexPrice from "~/components/market-indices/index-price";
 import Carousel from "~/components/market/carousel";
+import { usePageVisibility } from "~/hooks/usePageVisibility";
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,31 +30,35 @@ const LabelContainer = memo(({label = ''}) => {
 
 const MarketIndices = () => {
   const [prices, setPrices] = useState([]);
+  const isVisible = usePageVisibility();
 
   useEffect(() => {
     const interval = setInterval(() => {
       getQuotes();
     }, 1500);
     return () => clearInterval(interval);
-  }, []);
+  }, [isVisible]);
 
-  const getQuotes = useCallback(() => {
-    axios
-      .get('/api/market/indices')
-      .then((res) => {
-        if (res?.data && res?.data?.data) {
-          setPrices(Object.values(res?.data?.data));
-        }
-      })
-      .catch(function (thrown) {
-        if (axios.isCancel(thrown)) {
-          console.log("Request canceled", thrown.message);
-        } else {
-          console.log(thrown);
-          console.log(thrown?.response);
-        }
-      });
-  }, [prices]);
+  const getQuotes = useCallback(async () => {
+    try {
+      if(!isVisible) {
+        console.log('page not visible, quit');
+        return;
+      }
+
+      const res = await axios.get('/api/market/indices');
+      if (res?.data && res?.data?.data) {
+        setPrices(Object.values(res?.data?.data));
+      }
+    } catch (thrown) {
+      if (axios.isCancel(thrown)) {
+        console.log("Request canceled", thrown.message);
+      } else {
+        console.log(thrown);
+        console.log(thrown?.response);
+      }
+    }
+  }, [prices, isVisible]);
 
   const renderIndexContent = useCallback((priceObj) => {
     return (
