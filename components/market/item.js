@@ -1,13 +1,20 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  memo,
+} from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import axios from 'axios';
-import styled from "styled-components";
+import styled from 'styled-components';
 import ScheduleIcon from '@material-ui/icons/Schedule';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
-import styles from "~/components/market/item.module.scss";
-import useTranslation from "~/hooks/useTranslation";
+import styles from '~/components/market/item.module.scss';
+import useTranslation from '~/hooks/useTranslation';
 import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
 
 const Container = styled.div`
@@ -19,13 +26,13 @@ const Container = styled.div`
   justify-content: space-between;
   cursor: pointer;
   &:not(:last-child) {
-    border-bottom: 1px solid ${props => props.theme.border};
+    border-bottom: 1px solid ${(props) => props.theme.border};
   }
 `;
 
 const Name = styled.span`
   font-size: 14px;
-  color: ${props => props.theme.inactiveLegend};
+  color: ${(props) => props.theme.inactiveLegend};
 `;
 
 const Symbol = styled(motion.span)`
@@ -56,6 +63,14 @@ const ProfileWrapper = styled.div`
   align-items: center;
 `;
 
+const LogoWrapper = styled.div`
+  min-width: 35px;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 const Logo = styled(Image)`
   width: 35px;
   height: 35px;
@@ -67,7 +82,7 @@ const Placeholder = styled.div`
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: ${props => props.theme.chartDataZoomBackground};
+  background: ${(props) => props.theme.chartDataZoomBackground};
 `;
 
 const Remark = styled.div`
@@ -79,15 +94,19 @@ const StockItem = ({ item }) => {
   const [profile, setProfile] = useState({});
   const { marketState, longName } = item;
   const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(item);
-  
+
   // const { c: lastPrice, pc: closePrice } = quote || 0;
-  const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [dollarFormat, lastPrice, closePrice]);
+  const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [
+    dollarFormat,
+    lastPrice,
+    closePrice,
+  ]);
 
   useEffect(() => {
-    if(item?.symbol) {
+    if (item?.symbol) {
       getQuote(item.symbol);
     }
-  }, [])
+  }, []);
 
   // useEffect(() => {
   //   if(refreshing && item?.symbol) {
@@ -97,7 +116,9 @@ const StockItem = ({ item }) => {
 
   const getQuote = async () => {
     try {
-      const res = await axios.get('/api/market/quote', {params: {symbol: item.symbol}});
+      const res = await axios.get('/api/market/quote', {
+        params: { symbol: item.symbol },
+      });
       // setIsRefreshing(false);
       if (res?.data) {
         // console.log(res?.data);
@@ -108,7 +129,7 @@ const StockItem = ({ item }) => {
       console.log(err);
       // setIsRefreshing(false);
     }
-  }
+  };
 
   const getPriceColor = useCallback(() => {
     if (lastPrice > closePrice) {
@@ -128,23 +149,27 @@ const StockItem = ({ item }) => {
     } else if (diff < 0) {
       return `${diff.toFixed(3)}(${diffPercent.toFixed(2)}%)`;
     } else if (diff === 0) {
-      return "0(+0%)";
+      return '0(+0%)';
     } else {
-      return "-";
+      return '-';
     }
   }, [lastPrice, closePrice]);
 
-  const renderLogo = useMemo(() => profile?.logo ? (
-    <Logo 
-      src={profile?.logo}
-      width={35}
-      height={35}
-    />
-  ) : <Placeholder />, [profile?.logo]);
+  const renderLogo = useMemo(
+    () =>
+      profile?.logo ? (
+        <LogoWrapper>
+          <Logo src={profile?.logo} width={35} height={35} />
+        </LogoWrapper>
+      ) : (
+        <Placeholder />
+      ),
+    [profile?.logo]
+  );
 
-  const SymbolContainer = memo(({symbol}) => (
+  const SymbolContainer = memo(({ symbol }) => (
     <Symbol layoutId={symbol}>{symbol}</Symbol>
-  ))
+  ));
 
   return (
     <Link

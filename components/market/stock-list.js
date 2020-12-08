@@ -10,6 +10,7 @@ import SearchInput from '~/components/market/input';
 
 import { useTheme } from "~/theme";
 import useTranslation from "~/hooks/useTranslation";
+import { usePageVisibility } from "~/hooks/usePageVisibility";
 
 const EmptyContainer = styled.div`
   display: flex;
@@ -54,6 +55,7 @@ const RefreshButton = ({onClick = () => {}}) => {
 
 const StockList = () => {
   const { locale, t } = useTranslation();
+  const isVisible = usePageVisibility();
 
   const [stocks, setStocks] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -143,9 +145,13 @@ const StockList = () => {
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isVisible]);
 
   const getQuotes = (symbols) => {
+    if(!isVisible) {
+      console.log('stock list page not visible, quit');
+      return;
+    }
     axios
       .get('/api/market/quotes', {
         params: {

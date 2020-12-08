@@ -3,10 +3,16 @@ import axios from 'axios';
 import styled from 'styled-components';
 
 import useTranslation from '~/hooks/useTranslation';
-import { dollarFormat } from '~/utils';
+// import { dollarFormat } from '~/utils';
 import IndexPrice from '~/components/market-indices/index-price';
+import { usePageVisibility } from '~/hooks/usePageVisibility';
 
 const Container = styled.div`
+  height: 85px;
+  position: sticky;
+  top: 70px;
+  background-color: ${props => props.theme.background};
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -41,34 +47,38 @@ const Price = styled.span`
 
 const HKIndices = () => {
   const [prices, setPrices] = useState([]);
+  const isVisible = usePageVisibility();
 
   useEffect(() => {
     const interval = setInterval(() => {
       getQuotes();
     }, 1500);
     return () => clearInterval(interval);
-  }, []);
+  }, [isVisible]);
 
-  const getQuotes = useCallback(() => {
-    axios
-      .get('/api/market/market-indices', {
+  const getQuotes = useCallback(async () => {
+    try {
+      if (!isVisible) {
+        console.log('page not visible, quit');
+        return;
+      }
+      const res = await axios.get('/api/market/market-indices', {
         params: { market: 'HK' },
-      })
-      .then((res) => {
-        if (res?.data && res?.data?.data) {
-          console.log(res?.data?.data);
-          setPrices(res?.data?.data);
-        }
-      })
-      .catch(function (thrown) {
-        if (axios.isCancel(thrown)) {
-          console.log('Request canceled', thrown.message);
-        } else {
-          console.log(thrown);
-          console.log(thrown?.response);
-        }
       });
-  }, [prices]);
+      if (res?.data && res?.data?.data) {
+        // console.log(res?.data?.data);
+        setPrices(res?.data?.data);
+      }
+    } catch (thrown) {
+      if (axios.isCancel(thrown)) {
+        console.log('Request canceled', thrown.message);
+      } else {
+        console.log(thrown);
+        console.log(thrown?.response);
+      }
+    }
+  }, [prices, isVisible]);
+
   return (
     <Container>
       {prices?.map((price) => {
