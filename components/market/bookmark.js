@@ -28,6 +28,7 @@ const Bookmark = ({symbol}) => {
 
   const onPressSaveSymbol = useCallback(async () => {
     try {
+      window.navigator.vibrate(200);
       const existing = await window.localStorage.getItem('symbols');
 
       const existingJson = existing ? JSON.parse(existing) : [];
@@ -49,6 +50,7 @@ const Bookmark = ({symbol}) => {
 
   const onPressRemoveSymbol = useCallback(async () => {
     try {
+      window.navigator.vibrate(200);
       const existing = await window.localStorage.getItem('symbols');
 
       const existingJson = existing ? JSON.parse(existing) : [];
@@ -76,7 +78,7 @@ const Bookmark = ({symbol}) => {
 
   // TODO: merge to single function
   return (
-    <IconWrapper whileTap={iconAnimConfig} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
+    <IconWrapper whileTap={iconAnimConfig} onTap={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
         {saved ? <Icon className={classes.activeIcon} /> : <BorderIcon />}
     </IconWrapper>
   );
