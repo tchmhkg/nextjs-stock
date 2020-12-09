@@ -1,31 +1,33 @@
 {
-    "theme_color": "#0ECD9D",
-    "background_color": "#eaeaeb",
-    "display": "standalone",
-    "scope": "/",
-    "start_url": "/",
-    "app_name": "NextStock",
-    "short_name": "NextStock",
-    "icons": [
-        {
-            "src": "/icon-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/icon-256x256.png",
-            "sizes": "256x256",
-            "type": "image/png"
-        },
-        {
-            "src": "/icon-384x384.png",
-            "sizes": "384x384",
-            "type": "image/png"
-        },
-        {
-            "src": "/icon-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
+  "theme_color": "#0ECD9D",
+  "background_color": "#eaeaeb",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "app_name": "NextStock",
+  "short_name": "NextStock",
+  "icons": [
+    {
+      "src": "assets/manifest-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/manifest-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    }
+  ]
 }
