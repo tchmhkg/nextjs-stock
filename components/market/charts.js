@@ -15,10 +15,10 @@ const MotionBg = styled(motion.div)`
   left: 0px;
   right: 0px;
   bottom: 0px;
-  border-radius: 2px;
+  border-radius: 5px;
 `;
 
-const OptionsGroup = styled.div`
+const OptionsGroup = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,16 +30,6 @@ const OptionsGroup = styled.div`
 const Option = styled.div`
   padding: 5px 15px;
   width: 50%;
-  ${'' /* background: ${({ active, theme }) =>
-    active ? theme.primary1 : 'transparent'};
-  background: ${({ active, theme }) =>
-    active
-      ? `-webkit-linear-gradient(to right, ${theme.primary2}, ${theme.primary1});`
-      : 'transparent'};
-  background: ${({ active, theme }) =>
-    active
-      ? `linear-gradient(to right, ${theme.primary2}, ${theme.primary1});`
-      : 'transparent'}; */}
   color: ${({ theme, active }) => (active ? '#ffffff' : theme.text)};
   cursor: ${({ active }) => (active ? 'normal' : 'pointer')};
   font-size: 16px;
@@ -63,24 +53,22 @@ const Charts = ({ symbol }) => {
       <h3>{t('Chart')}</h3>
     <AnimateSharedLayout>
       <OptionsGroup>
-        <Option onClick={() => setView('time')} active={view === 'time'}>
+        <Option layout onClick={() => setView('time')} active={view === 'time'}>
           <div className="option-label">{t('Time Frame')}</div>
           {view === 'time' && (
-            <MotionBg
-              layoutId="outline"
-              className="outline"
+            <MotionBg 
+              layoutId="option"
               initial={false}
               animate={{ background: `linear-gradient(to right, ${colors.primary2}, ${colors.primary1})` }}
               transition={spring}
             />
           )}
         </Option>
-        <Option onClick={() => setView('1d')} active={view === '1d'}>
+        <Option layout onClick={() => setView('1d')} active={view === '1d'}>
           <div className="option-label">{t('1d')}</div>
           {view === '1d' && (
             <MotionBg
-              layoutId="outline"
-              className="outline"
+              layoutId="option"
               initial={false}
               animate={{ background: `linear-gradient(to right, ${colors.primary2}, ${colors.primary1})` }}
               transition={spring}

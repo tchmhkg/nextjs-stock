@@ -122,7 +122,7 @@ const Stock = ({ symbol, data = [] }) => {
       <Head>
         <title>{symbol}</title>
       </Head>
-      <StickyWrapper layoutId={symbol}>
+      <StickyWrapper layout layoutId={symbol}>
         <HeaderContainer symbol={symbol} name={data?.longName || stockInfo?.name} />
         <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} isDelayed={data?.quoteSourceName === 'Delayed Quote'}/>
         <Bookmark symbol={symbol} />
