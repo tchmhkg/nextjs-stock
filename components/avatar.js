@@ -19,14 +19,14 @@ const Avatar = () => {
         <a>
           <Image
             src="/images/profile.png"
-            width={70}
-            height={87.5}
+            width={70 / 2}
+            height={87.5 / 2}
             className={`${styles.headerImage} ${utilStyles.borderCircle}`}
             alt={name}
           />
         </a>
       </Link>
-      <h2 className={utilStyles.headingLg}>
+      <h2 className={styles.name}>
         <Link href="/[lang]" as={`/${locale}`}>
           <Name className={utilStyles.colorInherit}>{name}</Name>
         </Link>

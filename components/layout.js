@@ -10,7 +10,6 @@ import Navbar from "~/components/navbar";
 import BackButton from "~/components/back";
 
 export const name = "Truman";
-export const siteTitle = "Next.js Sample Website";
 
 const Container = styled.div`
   min-height: calc(100vh - 70px);
@@ -18,12 +17,13 @@ const Container = styled.div`
   min-height: -moz-calc(100vh - 70px);
   min-height: -ms-calc(100vh - 70px);
   min-height: -o-calc(100vh - 70px);
+  top: 70px;
   padding: 15px;
   position: relative;
   color: ${props => props.theme.text};
   a {
     color: ${props => props.theme.text};
-  }
+  };
 `;
 
 const Layout = ({ children, home, showAvatar = true, back = false, showBackToHome = true, ...props }) => {

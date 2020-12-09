@@ -7,14 +7,15 @@ import Menu from "~/components/menu";
 import Image from 'next/image';
 
 const Container = styled.div`
-  position: sticky;
+  position: fixed;
+  width: 100vw;
   top: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 70px;
-  background-color: ${props => props.theme.primary};
-  border-bottom: 1px solid ${props => props.theme.border};
+  background-color: ${props => props.theme.background};
   z-index: 20;
 `;
 

@@ -12,7 +12,7 @@ const IconWrapper = styled(motion.div)`
 const iconStyles = () => {
   return {
     activeIcon: {
-      color: "#F47983",
+      color: "#E100FF",
     },
     inactiveIcon: {
       color: "#b2b2b2",

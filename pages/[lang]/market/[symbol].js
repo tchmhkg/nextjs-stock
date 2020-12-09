@@ -1,17 +1,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import { useRouter } from "next/router";
 import axios from 'axios';
 import styled from 'styled-components';
 import { motion } from "framer-motion";
 import useTranslation from '~/hooks/useTranslation';
+import { getLocalizationProps } from '~/context/LanguageContext';
 
 import Layout from '~/components/layout';
 import Spinner from '~/components/spinner';
-import CandleStickChart from '~/components/market/candlestick-chart';
-import AreaChart from '~/components/market/area-chart';
-import Charts from '~/components/market/charts';
 
 const LatestPrice = dynamic({
   loader: () => import('~/components/market/latest-price'),
@@ -23,6 +20,10 @@ const NewsList = dynamic({
 
 const Bookmark = dynamic({
   loader: () => import('~/components/market/bookmark'),
+});
+
+const Charts = dynamic({
+  loader: () => import('~/components/market/charts'),
 });
 
 const Header = styled.div`
@@ -57,6 +58,7 @@ const DescWrapper = styled.div`
 const StickyWrapper = styled.div`
   position: sticky;
   top: 70px;
+  left: 0;
   background-color: ${(props) => props.theme.background};
   padding: 5px 0;
   z-index: 10;
@@ -84,9 +86,9 @@ const CompanyDesc = memo(({ description = '' }) => {
   );
 });
 
-const Stock = () => {
-  const router = useRouter();
-  const {symbol} = router.query;
+const Stock = ({symbol}) => {
+  {/* const router = useRouter(); */}
+  {/* const {symbol} = router.query; */}
   const [loading, setLoading] = useState(true);
   const [news, setNews] = useState([]);
   const [stockInfo, setStockInfo] = useState([]);
@@ -137,5 +139,18 @@ const Stock = () => {
     </Layout>
   );
 };
+
+export async function getServerSideProps(ctx) {
+  const localization = getLocalizationProps(ctx);
+  const { symbol } = ctx.query || '';
+  return {
+    props: {
+      localization,
+      symbol,
+    },
+  };
+}
+
+
 
 export default Stock;

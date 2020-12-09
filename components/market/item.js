@@ -173,10 +173,8 @@ const StockItem = ({ item }) => {
 
   return (
     <Link
-      href={{
-        pathname: '/[lang]/market/quote',
-        query: { lang: locale, symbol: item.symbol },
-      }}
+      href={`/[lang]/market/[symbol]]`}
+      as={`/${locale}/market/${item.symbol}`}
     >
       <Container>
         <ProfileWrapper>

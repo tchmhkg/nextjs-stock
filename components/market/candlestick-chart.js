@@ -105,10 +105,10 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
     },
     plotOptions: {
       candlestick: {
-        color: 'red',
-        lineColor: 'red',
-        upColor: 'green',
-        upLineColor: 'green',
+        color: '#fd1050',
+        lineColor: '#fd1050',
+        upColor: '#4DBD33',
+        upLineColor: '#4DBD33',
       },
       column: {
         color: 'gray',

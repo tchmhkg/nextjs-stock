@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { makeStyles } from "@material-ui/core/styles";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -20,17 +19,30 @@ const Container = styled.div`
   width: 250px;
 `;
 
-const MenuContainer = styled(IconButton)`
-  margin: 0 15px;
-`;
+const MenuContainer = styled(IconButton)``;
 
 const iconStyles = colors => {
   return {
     menuIcon: {
-      color: "#ECEFF4",
+      background: colors.primary1,
+      background: `-webkit-linear-gradient(to right, ${colors.primary2}, ${colors.primary1})`,
+      background: `linear-gradient(to right, ${colors.primary2}, ${colors.primary1});`,
+      color: '#ffffff',
+      alignItems: 'center',
+      justifyContent: 'center',
+      display: 'flex',
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginLeft: 10
+    },
+    customHover: {
+      "&:hover": { opacity: 0.7 }
     },
     drawer: {
-      backgroundColor: colors.background
+      backgroundColor: colors.background,
+      borderTopRightRadius: 30,
+      borderBottomRightRadius: 30,
     },
     listItemIcon: {
       color: colors.text
@@ -83,7 +95,6 @@ const Menu = () => {
       >
         <Avatar />
         <List>
-        <Divider classes={{root: classes.divider}} />
         {menuItems?.map(({label, link}) => (
           <React.Fragment key={link}>
             <Link href={`/[lang]/${link}`} as={`/${locale}/${link}`}>
@@ -97,7 +108,6 @@ const Menu = () => {
                 />
               </ListItem>
             </Link>
-            <Divider classes={{root: classes.divider}} />
           </React.Fragment>
         ))}
         </List>
@@ -109,7 +119,7 @@ const Menu = () => {
   return (
     <div>
       <React.Fragment>
-        <MenuContainer className={classes.menuIcon} onClick={toggleDrawer(!isOpen)}>
+        <MenuContainer className={[classes.menuIcon, classes.customHover]} onClick={toggleDrawer(!isOpen)}>
           <MenuIcon />
         </MenuContainer>
         <SwipeableDrawer

@@ -1,11 +1,18 @@
 .header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  padding-top: 20px;
+  padding: 10px 20px;
+  margin-top: 20px;
 }
 
 .headerImage {
-  width: 70px;
-  height: 87.5px;
+  width: 70px / 2;
+  height: 87.5px / 2;
+}
+
+.name {
+  margin-left: 15px;
+  font-size: 18px;
+  cursor: pointer;
 }

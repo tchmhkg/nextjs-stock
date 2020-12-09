@@ -12,14 +12,18 @@ const Wrapper = styled.div`
 const LocaleButton = styled.div`
   cursor: pointer;
   color: ${(props) =>
-    props.selected ? props.theme.primary : '#ECEFF4'};
+    props.selected ? '#ffffff' : props.theme.text};
   display: flex;
   justify-content: center;
   margin: 0 5px;
   border-radius: 20px;
-  padding: 5px;
-  background-color: ${(props) =>
-    props.selected ? '#ECEFF4' : 'transparent'};
+  padding: 5px 10px;
+  background: ${({selected, theme}) =>
+    selected ? theme.primary1 : 'transparent'};
+  background: ${({selected, theme}) =>
+    selected ? `-webkit-linear-gradient(to right, ${theme.primary2}, ${theme.primary1});` : 'transparent'};
+  background: ${({selected, theme}) =>
+    selected ? `linear-gradient(to right, ${theme.primary2}, ${theme.primary1});` : 'transparent'};
 `;
 
 const LanguageSwitcher = () => {

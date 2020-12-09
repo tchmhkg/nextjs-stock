@@ -12,7 +12,7 @@ const Container = styled.div`
   justify-content: space-between;
   cursor: pointer;
   &:not(:last-child) {
-    border-bottom: 1px solid ${props => props.theme.border};
+    border-bottom: 1px solid ${(props) => props.theme.border};
   }
 `;
 
@@ -33,18 +33,16 @@ const Symbol = styled.span`
 `;
 
 const Exch = styled.span`
-  color: ${props => props.theme.inactiveLegend};
+  color: ${(props) => props.theme.inactiveLegend};
 `;
 
-const SuggestionItem = ({item}) => {
-  const {locale} = useTranslation();
+const SuggestionItem = ({ item }) => {
+  const { locale } = useTranslation();
 
   return (
     <Link
-      href={{
-        pathname: '/[lang]/market/quote',
-        query: { lang: locale, symbol: item.symbol },
-      }}
+      href={`/[lang]/market/[symbol]`}
+      as={`/${locale}/market/${item.symbol}`}
     >
       <Container>
         <SymbolWrapper>
