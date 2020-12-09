@@ -69,6 +69,8 @@ const LogoWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #fff;
+  border-radius: 50%;
 `;
 
 const Logo = styled(Image)`
