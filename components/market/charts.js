@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
+import { motion, AnimateSharedLayout } from "framer-motion";
 
 import useTranslation from '~/hooks/useTranslation';
+import { useTheme } from '~/theme';
 
 const AreaChart = dynamic(import('~/components/market/area-chart'));
 const CandleStickChart = dynamic(import('~/components/market/candlestick-chart'));
+
+const MotionBg = styled(motion.div)`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  border-radius: 2px;
+`;
 
 const OptionsGroup = styled.div`
   display: flex;
@@ -19,7 +30,7 @@ const OptionsGroup = styled.div`
 const Option = styled.div`
   padding: 5px 15px;
   width: 50%;
-  background: ${({ active, theme }) =>
+  ${'' /* background: ${({ active, theme }) =>
     active ? theme.primary1 : 'transparent'};
   background: ${({ active, theme }) =>
     active
@@ -28,7 +39,7 @@ const Option = styled.div`
   background: ${({ active, theme }) =>
     active
       ? `linear-gradient(to right, ${theme.primary2}, ${theme.primary1});`
-      : 'transparent'};
+      : 'transparent'}; */}
   color: ${({ theme, active }) => (active ? '#ffffff' : theme.text)};
   cursor: ${({ active }) => (active ? 'normal' : 'pointer')};
   font-size: 16px;
@@ -36,23 +47,48 @@ const Option = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  position: relative;
+  .option-label {
+    z-index: 5;
+  }
 `;
 
 const Charts = ({ symbol }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [view, setView] = useState('time');
 
   return (
     <div>
       <h3>{t('Chart')}</h3>
+    <AnimateSharedLayout>
       <OptionsGroup>
         <Option onClick={() => setView('time')} active={view === 'time'}>
-          {t('Time Frame')}
+          <div className="option-label">{t('Time Frame')}</div>
+          {view === 'time' && (
+            <MotionBg
+              layoutId="outline"
+              className="outline"
+              initial={false}
+              animate={{ background: `linear-gradient(to right, ${colors.primary2}, ${colors.primary1})` }}
+              transition={spring}
+            />
+          )}
         </Option>
         <Option onClick={() => setView('1d')} active={view === '1d'}>
-          {t('1d')}
+          <div className="option-label">{t('1d')}</div>
+          {view === '1d' && (
+            <MotionBg
+              layoutId="outline"
+              className="outline"
+              initial={false}
+              animate={{ background: `linear-gradient(to right, ${colors.primary2}, ${colors.primary1})` }}
+              transition={spring}
+            />
+          )}
         </Option>
       </OptionsGroup>
+    </AnimateSharedLayout>
       {view === 'time' ? (
         <AreaChart symbol={symbol} />
       ) : (
@@ -60,6 +96,12 @@ const Charts = ({ symbol }) => {
       )}
     </div>
   );
+};
+
+const spring = {
+  type: "spring",
+  bounce: 0,
+  duration: 0.4
 };
 
 export default Charts;

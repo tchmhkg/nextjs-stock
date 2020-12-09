@@ -34,14 +34,6 @@ const HeaderWrapper = styled.div`
 //   font-size: 14px;
 // `;
 
-const iconStyles = colors => {
-  return {
-    icon: {
-      color: colors.text,
-    },
-  };
-}
-
 const StockList = () => {
   const { locale, t } = useTranslation();
   const isVisible = usePageVisibility();
