@@ -7,6 +7,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
 import useTranslation from '~/hooks/useTranslation';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
+import { useTheme } from '~/theme';
 
 if (typeof Highcharts === 'object') {
   HighchartsExporting(Highcharts);
@@ -35,8 +36,9 @@ function parseData(data) {
 
 const AreaChart = ({ symbol, ...props }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [loading, setLoading] = useState(true);
-  const [options, setOptions] = useState(getOptions({ symbol }));
+  const [options, setOptions] = useState(getOptions({ symbol, colors }));
   const isVisible = usePageVisibility();
 
   useEffect(() => {
@@ -95,7 +97,7 @@ const AreaChart = ({ symbol, ...props }) => {
 
 export default AreaChart;
 
-const getOptions = ({ symbol = ''}) => {
+const getOptions = ({ symbol = '', colors = {} }) => {
   const options = {
     plotOptions: {
       series: {
@@ -155,7 +157,10 @@ const getOptions = ({ symbol = ''}) => {
         threshold: null,
         tooltip: {
           valueDecimals: 2,
+          pointFormat:
+            '{point.y}'
         },
+        lineColor: colors.primary1,
         fillColor: {
           linearGradient: {
             x1: 0,
@@ -164,11 +169,11 @@ const getOptions = ({ symbol = ''}) => {
             y2: 1,
           },
           stops: [
-            [0, Highcharts.getOptions().colors[0]],
+            [0, colors.primary1],
             [
               1,
-              Highcharts.color(Highcharts.getOptions().colors[0])
-                .setOpacity(0.2)
+              Highcharts.color(colors.primary2)
+                .setOpacity(0.3)
                 .get('rgba'),
             ],
           ],
