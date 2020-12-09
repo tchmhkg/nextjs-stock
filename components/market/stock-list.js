@@ -2,17 +2,14 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import dynamic from "next/dynamic";
-import { IconButton } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
 
 import SearchInput from '~/components/market/input';
 
-import { useTheme } from "~/theme";
 import useTranslation from "~/hooks/useTranslation";
 import { usePageVisibility } from "~/hooks/usePageVisibility";
+import Refresh from "~/components/refresh";
 
 const StockItem = dynamic(import('~/components/market/item'));
-const RefreshIcon = dynamic(import('@material-ui/icons/Refresh'));
 
 const EmptyContainer = styled.div`
   display: flex;
@@ -43,16 +40,6 @@ const iconStyles = colors => {
       color: colors.text,
     },
   };
-}
-
-const RefreshButton = ({onClick = () => {}}) => {
-  const {colors} = useTheme();
-  const classes = makeStyles(iconStyles(colors))();
-    return (
-      <IconButton className={classes.icon} onClick={onClick}>
-        <RefreshIcon />
-      </IconButton>
-    )
 }
 
 const StockList = () => {
@@ -194,7 +181,7 @@ const StockList = () => {
       <>
         <HeaderWrapper>
           <span>{t('Saved Stock List')}</span>
-          <RefreshButton onClick={onClickRefresh} />
+          <Refresh onClick={onClickRefresh} />
           {/* <DelayReminder>{t('Delay +20 min.')}</DelayReminder> */}
         </HeaderWrapper>
         {stocks?.map((stock) => (
