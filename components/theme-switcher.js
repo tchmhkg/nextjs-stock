@@ -23,7 +23,7 @@ const ThemeSwitcher = () => {
 
   useEffect(() => {
     theme.setMode(isOn ? "dark" : "light");
-  }, [isOn])
+  }, [theme, isOn])
 
   return (
     <div
