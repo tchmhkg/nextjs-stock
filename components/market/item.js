@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-  memo,
-} from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import axios from 'axios';
@@ -17,7 +10,7 @@ import styles from '~/components/market/item.module.scss';
 import useTranslation from '~/hooks/useTranslation';
 import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   display: flex;
   flex: 1;
   padding: 10px;
@@ -35,9 +28,8 @@ const Name = styled.span`
   color: ${(props) => props.theme.inactiveLegend};
 `;
 
-const Symbol = styled(motion.span)`
+const Symbol = styled.span`
   font-size: 18px;
-  display: inline-block;
 `;
 
 const PriceWrapper = styled.div`
@@ -81,8 +73,8 @@ const Logo = styled(Image)`
 `;
 
 const Placeholder = styled.div`
-  width: 35px;
-  height: 35px;
+  min-width: 35px;
+  min-height: 35px;
   border-radius: 50%;
   background: ${(props) => props.theme.chartDataZoomBackground};
 `;
@@ -97,7 +89,6 @@ const StockItem = ({ item }) => {
   const { marketState, longName } = item;
   const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(item);
 
-  // const { c: lastPrice, pc: closePrice } = quote || 0;
   const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [
     dollarFormat,
     lastPrice,
@@ -110,26 +101,16 @@ const StockItem = ({ item }) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if(refreshing && item?.symbol) {
-  //     getQuote(item.symbol)
-  //   }
-  // }, [refreshing])
-
   const getQuote = async () => {
     try {
       const res = await axios.get('/api/market/quote', {
         params: { symbol: item.symbol },
       });
-      // setIsRefreshing(false);
       if (res?.data) {
-        // console.log(res?.data);
-        // setQuote(res?.data?.quote);
         setProfile(res?.data?.profile);
       }
     } catch (err) {
       console.log(err);
-      // setIsRefreshing(false);
     }
   };
 
@@ -169,16 +150,14 @@ const StockItem = ({ item }) => {
     [profile?.logo]
   );
 
-  const SymbolContainer = memo(({ symbol }) => (
-    <Symbol layoutId={symbol}>{symbol}</Symbol>
-  ));
+  const SymbolContainer = memo(({ symbol }) => <Symbol>{symbol}</Symbol>);
 
   return (
     <Link
       href={`/[lang]/market/[symbol]]`}
       as={`/${locale}/market/${item.symbol}`}
     >
-      <Container>
+      <Container layoutId={item.symbol} initial={false}>
         <ProfileWrapper>
           {renderLogo}
           <div className={styles.stockInfo}>

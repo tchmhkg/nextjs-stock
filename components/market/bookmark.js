@@ -7,6 +7,9 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const IconWrapper = styled(motion.div)`
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  right: 0;
+  top: -30px;
 `;
 
 const iconStyles = () => {

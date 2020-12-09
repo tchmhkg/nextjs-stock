@@ -2,13 +2,16 @@ import React, {useState, useEffect, memo, useMemo, useCallback} from 'react';
 import moment from 'moment';
 import SocketIOClient from 'socket.io-client';
 import styled from 'styled-components';
+import ScheduleIcon from '@material-ui/icons/Schedule';
+
 import useTranslation from '~/hooks/useTranslation';
 import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
 import styles from "~/components/market/latest-price.module.scss";
 
 const Price = styled.span`
-    font-size: 26px;
-    font-weight: bold;
+  font-size: 26px;
+  font-weight: bold;
+  margin-left: 5px;
 `;
 
 const Diff = styled.span`
@@ -20,7 +23,13 @@ const LastUpdateText = styled.div`
     margin-bottom: 10px;
 `;
 
-const PriceContainer = memo(({price = 0, closePrice = 0}) => {
+const PriceWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const PriceContainer = memo(({price = 0, closePrice = 0, isDelayed}) => {
   const getPriceColor = useCallback(() => {
     if (price === 0) {
       return '';
@@ -51,7 +60,10 @@ const PriceContainer = memo(({price = 0, closePrice = 0}) => {
     const formattedPrice = useMemo(() => `${dollarFormat(price || closePrice, 3)}`, [price, closePrice, dollarFormat]);
     return (
         <div className={styles.stockPrice}>
-          <Price className={getPriceColor()}>{formattedPrice}</Price>
+          <PriceWrapper>
+            {isDelayed && <ScheduleIcon fontSize="small" />}
+            <Price className={getPriceColor()}>{formattedPrice}</Price>
+          </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
         </div>
     )
@@ -65,9 +77,9 @@ const LastUpdate = memo(({lastUpdateTime = ''}) => {
     )
 })
 
-const LatestPrice = ({symbol = '', ...props}) => {
-    const [price, setPrice] = useState(0);
-    const [closePrice, setClosePrice] = useState(0);
+const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
+    const [price, setPrice] = useState(data.lastPrice || 0);
+    const [closePrice, setClosePrice] = useState(data.closePrice || 0);
     const [lastUpdateTime, setLastUpdateTime] = useState(null);
 
     useEffect(() => {
@@ -91,7 +103,7 @@ const LatestPrice = ({symbol = '', ...props}) => {
 
     return (
         <div>
-            <PriceContainer price={price} closePrice={closePrice}/>
+            <PriceContainer price={price} closePrice={closePrice} isDelayed={isDelayed}/>
             {lastUpdateTime && <LastUpdate lastUpdateTime={lastUpdateTime} />}
         </div>
     )

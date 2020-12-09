@@ -1,7 +1,7 @@
 .stockPrice {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  align-items: flex-end;
 }
 .positive {
   color: #4DBD33;

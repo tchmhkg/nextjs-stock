@@ -3,10 +3,11 @@ import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import styled from 'styled-components';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+
 import useTranslation from '~/hooks/useTranslation';
 import { getLocalizationProps } from '~/context/LanguageContext';
-
+import { getLastAndClosePriceFromYahoo } from '~/utils';
 import Layout from '~/components/layout';
 import Spinner from '~/components/spinner';
 
@@ -32,19 +33,20 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const Symbol = styled(motion.span)`
+const Symbol = styled.span`
   font-size: 24px;
   font-weight: bold;
   display: inline-block;
 `;
 
 const Name = styled.span`
-  font-size: 18px;
+  font-size: 14px;
+  color: ${(props) => props.theme.inactiveLegend};
 `;
 
 const SymbolNameWrapper = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
 `;
 
 const DescWrapper = styled.div`
@@ -55,23 +57,27 @@ const DescWrapper = styled.div`
   }
 `;
 
-const StickyWrapper = styled.div`
+const StickyWrapper = styled(motion.div)`
   position: sticky;
   top: 70px;
   left: 0;
   background-color: ${(props) => props.theme.background};
   padding: 5px 0;
   z-index: 10;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const HeaderContainer = memo(({ symbol, name }) => {
   return (
     <Header>
       <SymbolNameWrapper>
-        <Symbol layoutId={symbol}>{symbol} </Symbol>
+        <Symbol>{symbol} </Symbol>
         {name && <Name>({name})</Name>}
       </SymbolNameWrapper>
-      <Bookmark symbol={symbol} />
     </Header>
   );
 });
@@ -81,22 +87,23 @@ const CompanyDesc = memo(({ description = '' }) => {
   return (
     <div>
       <h3>{t('Company Info')}</h3>
-      <DescWrapper><p>{description}</p></DescWrapper>
+      <DescWrapper>
+        <p>{description}</p>
+      </DescWrapper>
     </div>
   );
 });
 
-const Stock = ({symbol}) => {
-  {/* const router = useRouter(); */}
-  {/* const {symbol} = router.query; */}
+const Stock = ({ symbol, data = [] }) => {
   const [loading, setLoading] = useState(true);
   const [news, setNews] = useState([]);
   const [stockInfo, setStockInfo] = useState([]);
+  const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(data);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        if(!symbol) {
+        if (!symbol) {
           return;
         }
         const res = await axios.get('/api/market/stockInfo', {
@@ -122,9 +129,10 @@ const Stock = ({symbol}) => {
       <Head>
         <title>{symbol}</title>
       </Head>
-      <StickyWrapper>
-        <HeaderContainer symbol={symbol} name={stockInfo?.name} />
-        <LatestPrice symbol={symbol} />
+      <StickyWrapper layoutId={symbol}>
+        <HeaderContainer symbol={symbol} name={data?.longName || stockInfo?.name} />
+        <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} isDelayed={data?.quoteSourceName === 'Delayed Quote'}/>
+        <Bookmark symbol={symbol} />
       </StickyWrapper>
       {loading ? (
         <Spinner />
@@ -132,7 +140,6 @@ const Stock = ({symbol}) => {
         <>
           <CompanyDesc description={stockInfo?.description} />
           <Charts symbol={symbol} />
-          {/* {`!! TODO: Display candlestick chart, historical data`} */}
           <NewsList news={news} />
         </>
       )}
@@ -143,14 +150,25 @@ const Stock = ({symbol}) => {
 export async function getServerSideProps(ctx) {
   const localization = getLocalizationProps(ctx);
   const { symbol } = ctx.query || '';
-  return {
-    props: {
-      localization,
-      symbol,
-    },
-  };
+  const url = new URL(ctx.req.url, `http://${ctx.req.headers.host}`);
+  try {
+    const res = await axios.get(url.origin +'/api/market/quotes', {params: {symbol}})
+    return {
+      props: {
+        localization,
+        symbol,
+        data: res?.data?.data?.[0]
+      },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      props: {
+        localization,
+        symbol,
+      },
+    };
+  }
 }
-
-
 
 export default Stock;

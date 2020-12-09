@@ -158,7 +158,7 @@ const getOptions = ({ symbol = '', colors = {} }) => {
         tooltip: {
           valueDecimals: 2,
           pointFormat:
-            '{point.y}'
+            '<strong>{point.y}</strong>'
         },
         lineColor: colors.primary1,
         fillColor: {
