@@ -3,6 +3,8 @@ const withPlugins = require('next-compose-plugins');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
     enabled: process.env.ANALYZE === 'true',
 })
+// var DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin");
+const path = require('path');
 const webpack = require('webpack');
 
 module.exports = withPlugins(
@@ -38,6 +40,17 @@ module.exports = withPlugins(
             ],
           }) */
           config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),)
+          // config.plugins.push(new DuplicatePackageCheckerPlugin())
+          config.resolve.alias['@babel/runtime'] = path.resolve(
+            __dirname,
+            'node_modules',
+            '@babel/runtime',
+          )
+          config.resolve.alias['strip-ansi'] = path.resolve(
+            __dirname,
+            'node_modules',
+            'strip-ansi',
+          )
           return config
         },
         env: {

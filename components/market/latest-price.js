@@ -1,12 +1,13 @@
 import React, {useState, useEffect, memo, useMemo, useCallback} from 'react';
 import moment from 'moment';
+import dynamic from 'next/dynamic';
 import SocketIOClient from 'socket.io-client';
 import styled from 'styled-components';
-import ScheduleIcon from '@material-ui/icons/Schedule';
 
 import useTranslation from '~/hooks/useTranslation';
 import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
 import styles from "~/components/market/latest-price.module.scss";
+const ScheduleIcon = dynamic(import('@material-ui/icons/Schedule'));
 
 const Price = styled.span`
   font-size: 26px;

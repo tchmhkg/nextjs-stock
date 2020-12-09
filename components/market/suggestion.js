@@ -1,7 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import SuggestionItem from "~/components/market/suggestion-item";
+import dynamic from 'next/dynamic';
+
+const SuggestionItem = dynamic({
+  loader: () => import('~/components/market/suggestion-item'),
+});
 
 const Container = styled.div`
   background-color: ${(props) => props.theme.backgroundAlt};

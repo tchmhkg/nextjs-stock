@@ -1,5 +1,4 @@
 import { useCallback, memo, useState, useEffect } from "react";
-import styled from "styled-components";
 import { motion } from "framer-motion";
 
 import { useTheme } from "~/theme";

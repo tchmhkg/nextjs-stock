@@ -16,6 +16,9 @@ const Container = styled.div`
   justify-content: space-between;
   height: 70px;
   background-color: ${props => props.theme.background};
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
   z-index: 20;
   @media (min-width: 768px) {
     padding-right: 15px;

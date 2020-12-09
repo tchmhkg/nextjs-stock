@@ -13,6 +13,9 @@ const InputWrapper = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   background-color: ${(props) => props.theme.background};
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
   position: relative;
   height: 40px;
   margin-bottom: 10px;
@@ -23,6 +26,9 @@ const Input = styled.input`
   font-size: 16px;
   width: 100%;
   background-color: ${props => props.theme.background};
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
   color: ${props => props.theme.text};
   border: 1px solid ${props => props.theme.borderAlt};
 `;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FavoriteBorder as BorderIcon, Favorite as Icon } from '@material-ui/icons';
-import _ from 'lodash';
+import _filter from 'lodash/filter';
+import _find from 'lodash/find';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { makeStyles } from "@material-ui/core/styles";
@@ -8,7 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const IconWrapper = styled(motion.div)`
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   position: absolute;
-  right: 0;
+  right: 15px;
   top: -30px;
 `;
 
@@ -34,7 +35,7 @@ const Bookmark = ({symbol}) => {
       const existing = await window.localStorage.getItem('symbols');
 
       const existingJson = existing ? JSON.parse(existing) : [];
-      const isExisted = _.find(existingJson, ['symbol', symbol]);
+      const isExisted = _find(existingJson, ['symbol', symbol]);
       if (isExisted) {
         return;
       }
@@ -55,7 +56,7 @@ const Bookmark = ({symbol}) => {
       const existing = await window.localStorage.getItem('symbols');
 
       const existingJson = existing ? JSON.parse(existing) : [];
-      const newList = _.filter(
+      const newList = _filter(
         existingJson,
         (stock) => stock.symbol !== symbol,
       );

@@ -11,21 +11,10 @@ import { getLastAndClosePriceFromYahoo } from '~/utils';
 import Layout from '~/components/layout';
 import Spinner from '~/components/spinner';
 
-const LatestPrice = dynamic({
-  loader: () => import('~/components/market/latest-price'),
-});
-
-const NewsList = dynamic({
-  loader: () => import('~/components/market/news-list'),
-});
-
-const Bookmark = dynamic({
-  loader: () => import('~/components/market/bookmark'),
-});
-
-const Charts = dynamic({
-  loader: () => import('~/components/market/charts'),
-});
+const LatestPrice = dynamic(import('~/components/market/latest-price'));
+const NewsList = dynamic(import('~/components/market/news-list'));
+const Bookmark = dynamic(import('~/components/market/bookmark'));
+const Charts = dynamic(import('~/components/market/charts'));
 
 const Header = styled.div`
   display: flex;
@@ -62,7 +51,11 @@ const StickyWrapper = styled(motion.div)`
   top: 70px;
   left: 0;
   background-color: ${(props) => props.theme.background};
-  padding: 5px 0;
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
+  padding: 5px 15px;
+  margin: 0 -15px;
   z-index: 10;
   display: flex;
   flex: 1;

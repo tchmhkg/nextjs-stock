@@ -4,13 +4,8 @@ import dynamic from 'next/dynamic';
 
 import useTranslation from '~/hooks/useTranslation';
 
-const AreaChart = dynamic({
-  loader: () => import('~/components/market/area-chart'),
-});
-
-const CandleStickChart = dynamic({
-  loader: () => import('~/components/market/candlestick-chart'),
-});
+const AreaChart = dynamic(import('~/components/market/area-chart'));
+const CandleStickChart = dynamic(import('~/components/market/candlestick-chart'));
 
 const OptionsGroup = styled.div`
   display: flex;

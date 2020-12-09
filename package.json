@@ -48,7 +48,8 @@
     "styled-components": "^5"
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^1.11.1"
+    "babel-plugin-styled-components": "^1.11.1",
+    "duplicate-package-checker-webpack-plugin": "^3.0.0"
   },
   "engines": {
     "node": "^14.15.0",

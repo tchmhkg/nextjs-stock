@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import axios from 'axios';
 import styled from 'styled-components';
-import ScheduleIcon from '@material-ui/icons/Schedule';
 import { motion } from 'framer-motion';
 
 import styles from '~/components/market/item.module.scss';
 import useTranslation from '~/hooks/useTranslation';
 import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
+const ScheduleIcon = dynamic(import('@material-ui/icons/Schedule'));
 
 const Container = styled(motion.div)`
   display: flex;

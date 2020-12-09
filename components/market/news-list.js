@@ -2,9 +2,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import useTranslation from '~/hooks/useTranslation';
 
-const NewsItem = dynamic({
-  loader: () => import('~/components/market/news-item'),
-});
+const NewsItem = dynamic(import('~/components/market/news-item'));
 
 const NewsList = ({ news }) => {
   const { t } = useTranslation();

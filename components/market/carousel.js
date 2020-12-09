@@ -7,6 +7,9 @@ const Container = styled.div`
   position: sticky;
   top: 70px;
   background-color: ${props => props.theme.background};
+  -webkit-transition: background-color 200ms linear;
+  -ms-transition: background-color 200ms linear;
+  transition: background-color 200ms linear;
   z-index: 10;
   margin: 0 -15px;
 `;
