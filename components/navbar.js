@@ -17,6 +17,9 @@ const Container = styled.div`
   height: 70px;
   background-color: ${props => props.theme.background};
   z-index: 20;
+  @media (min-width: 768px) {
+    padding-right: 15px;
+  }
 `;
 
 const RightWrapper = styled.div`
