@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
 import Highcharts from 'highcharts/highstock';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
-import useTranslation from '~/hooks/useTranslation';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useTheme } from '~/theme';
 
@@ -17,27 +16,32 @@ const formatDateTime = (timestamp) =>
 
 function parseData(data) {
   let ohlc = [];
-  const dataLength = data?.length ? data?.timestamp?.length : 0;
+  const dataLength = data ? data?.timestamp?.length : 0;
   if(!dataLength) {
     return { ohlc };
   }
-  for (let i = 0; i < dataLength; i += 1) {
+  const closePriceArr = data.indicators.quote[0]['close'];
+  let lastValidClosePrice = null;
+  for (let i = 0; i < dataLength; i++) {
+    lastValidClosePrice = closePriceArr[i] || lastValidClosePrice;
     ohlc.push([
       formatDateTime(data.timestamp[i]), // the date
-      data.indicators.quote[0]['close'][i], // close
+      closePriceArr[i] || lastValidClosePrice, // close
     ]);
   }
-
-  const dummyArray = Array(391 - dataLength)
-    .fill()
-    .map((_, i) => [ohlc[dataLength - 1][0] + 60000 * i, null]);
+  const lastTradingTime = formatDateTime(data.meta.currentTradingPeriod.regular.end);
+  let dummyArray = [];
+  for(let i = 0; i < (391 - dataLength); i++) {
+    const timestamp = ohlc[dataLength - 1][0] + 60000 * i;
+    if(timestamp < lastTradingTime) {
+      dummyArray.push([timestamp, null]);
+    }
+  }
   ohlc = [...ohlc, ...dummyArray];
-
   return { ohlc };
 }
 
 const AreaChart = ({ symbol, ...props }) => {
-  const { t } = useTranslation();
   const { colors } = useTheme();
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState(getOptions({ symbol, colors }));

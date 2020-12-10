@@ -38,21 +38,25 @@ const GitHubIconWrapper = styled.div`
   height: 30px;
 `;
 
+const GitHubButton = memo(() => (
+  <GitHubIconWrapper>
+    <a href="https://github.com/tchmhkg/nextjs-app" target="_blank">
+      <Image 
+        src="/images/github.png"
+        width={30}
+        height={30}
+        alt="GitHub Icon"
+      />
+    </a>
+  </GitHubIconWrapper>
+))
+
 const Header = () => {
   return (
     <Container>
       <Menu />
       <RightWrapper>
-        <GitHubIconWrapper>
-          <a href="https://github.com/tchmhkg/nextjs-app" target="_blank">
-            <Image 
-              src="/images/github.png"
-              width={30}
-              height={30}
-              alt="GitHub Icon"
-            />
-          </a>
-        </GitHubIconWrapper>
+        <GitHubButton />
         <LanguageSwitcher />
         <ThemeSwitcher />
       </RightWrapper>

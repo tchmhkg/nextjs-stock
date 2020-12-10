@@ -5,7 +5,8 @@ import styles from './Menu.module.scss';
 import useTranslation from '~/hooks/useTranslation';
 
 const ItemText = styled.div`
-  font-size: 24px;
+  font-size: 18px;
+  color: ${({theme})=>theme.text}
 `;
 
 const variants = {
@@ -37,7 +38,7 @@ export const MenuItem = ({ item, index }) => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      <ItemText style={style}>{t(item.label)}</ItemText>
+      <ItemText>{t(item.label)}</ItemText>
     </motion.li>
   );
 };

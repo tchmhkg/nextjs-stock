@@ -18,7 +18,8 @@ function parseData(data) {
   let ohlc = [];
   let volume = [];
 
-  const dataLength = data?.length ? data?.timestamp?.length : 0;
+  const dataLength = data ? data?.timestamp?.length : 0;
+
   if(!dataLength) {
     return { ohlc, volume };
   }
@@ -65,7 +66,7 @@ const CandleStickChart = ({ symbol, ...props }) => {
         params: {
           symbol,
           params: JSON.stringify({
-            range: 'max',
+            range: '3mo',
             interval: '1d',
           })
         },

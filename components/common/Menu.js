@@ -61,6 +61,12 @@ const LinearGradientBg = styled(motion.div)`
   top: 10px;
 `;
 
+const NavBar = styled(motion.nav)`
+  @media (max-width: 767px) {
+    width: ${({isOpen}) => isOpen ? '100%' : '100px'};
+  }
+`;
+
 export const Menu = () => {
   const [isOpen, toggleOpen] = useCycle(false, true);
   const containerRef = useRef(null);
@@ -74,9 +80,9 @@ export const Menu = () => {
   }, [isOpen]);
 
   return (
-    <motion.nav
-      layout
+    <NavBar
       className={styles.nav}
+      isOpen={isOpen}
       initial={false}
       animate={isOpen ? 'open' : 'closed'}
       ref={containerRef}
@@ -90,6 +96,6 @@ export const Menu = () => {
       <LinearGradientBg variants={bgVariants} />
       <Nav toggle={toggleOpen}/>
       <MenuToggle isOpen={isOpen} toggle={() => toggleOpen()} />
-    </motion.nav>
+    </NavBar>
   );
 };
