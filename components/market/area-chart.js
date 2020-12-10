@@ -17,7 +17,10 @@ const formatDateTime = (timestamp) =>
 
 function parseData(data) {
   let ohlc = [];
-  const dataLength = data.timestamp.length;
+  const dataLength = data?.length ? data?.timestamp?.length : 0;
+  if(!dataLength) {
+    return { ohlc };
+  }
   for (let i = 0; i < dataLength; i += 1) {
     ohlc.push([
       formatDateTime(data.timestamp[i]), // the date
@@ -72,7 +75,10 @@ const AreaChart = ({ symbol, ...props }) => {
       });
 
       const { ohlc } = parseData(res.data?.data);
-      setOptions(prevOptions => ({ ...prevOptions, series: [{ ...prevOptions.series[0], data: ohlc }] }));
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        series: [{ ...prevOptions.series[0], data: ohlc }],
+      }));
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -100,8 +106,8 @@ const getOptions = ({ symbol = '', colors = {} }) => {
   const options = {
     plotOptions: {
       series: {
-          lineWidth: 1
-      }
+        lineWidth: 1,
+      },
     },
     lang: {
       decimalPoint: '.',
@@ -156,8 +162,7 @@ const getOptions = ({ symbol = '', colors = {} }) => {
         threshold: null,
         tooltip: {
           valueDecimals: 2,
-          pointFormat:
-            '<strong>{point.y}</strong>'
+          pointFormat: '<strong>{point.y}</strong>',
         },
         lineColor: colors.primary1,
         fillColor: {
@@ -169,12 +174,7 @@ const getOptions = ({ symbol = '', colors = {} }) => {
           },
           stops: [
             [0, colors.primary1],
-            [
-              1,
-              Highcharts.color(colors.primary2)
-                .setOpacity(0.3)
-                .get('rgba'),
-            ],
+            [1, Highcharts.color(colors.primary2).setOpacity(0.3).get('rgba')],
           ],
         },
       },

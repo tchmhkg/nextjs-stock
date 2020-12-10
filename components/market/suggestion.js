@@ -3,9 +3,7 @@ import styled from "styled-components";
 import axios from "axios";
 import dynamic from 'next/dynamic';
 
-const SuggestionItem = dynamic({
-  loader: () => import('~/components/market/suggestion-item'),
-});
+const SuggestionItem = dynamic(import('~/components/market/suggestion-item'));
 
 const Container = styled.div`
   background-color: ${(props) => props.theme.backgroundAlt};
