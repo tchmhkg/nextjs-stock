@@ -17,7 +17,13 @@ const formatDateTime = (timestamp) =>
 function parseData(data) {
   let ohlc = [];
   let volume = [];
-  for (let i = 0; i < data.timestamp.length; i += 1) {
+
+  const dataLength = data?.length ? data?.timestamp?.length : 0;
+  if(!dataLength) {
+    return { ohlc, volume };
+  }
+
+  for (let i = 0; i < dataLength; i ++) {
     ohlc.push([
       formatDateTime(data.timestamp[i]), // the date
       data.indicators.quote[0]['open'][i], // open
@@ -64,8 +70,6 @@ const CandleStickChart = ({ symbol, ...props }) => {
           })
         },
       });
-
-      // console.log('res => ',res?.data);
 
       const { ohlc, volume } = parseData(res.data?.data);
       setOptions(getOptions({ symbol, ohlc, volume }));
@@ -129,8 +133,8 @@ const getOptions = ({ symbol = '', ohlc = [], volume = [] }) => {
       enabled: false,
     },
     xAxis: {
-      min: ohlc[ohlc.length - 28][0],
-      max: ohlc[ohlc.length - 1][0],
+      min: ohlc?.[ohlc.length - 28]?.[0],
+      max: ohlc?.[ohlc.length - 1]?.[0],
       labels: {
         formatter: function() {
           return moment(this.value).format('YYYY/MM');

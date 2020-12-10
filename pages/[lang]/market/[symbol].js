@@ -146,11 +146,16 @@ export async function getServerSideProps(ctx) {
   const url = new URL(ctx.req.url, `http://${ctx.req.headers.host}`);
   try {
     const res = await axios.get(url.origin +'/api/market/quotes', {params: {symbol}})
+    let data = [];
+    if(res?.data?.length) {
+      data = res?.data?.data?.[0]
+    }
+
     return {
       props: {
         localization,
         symbol,
-        data: res?.data?.data?.[0]
+        data
       },
     };
   } catch (err) {
