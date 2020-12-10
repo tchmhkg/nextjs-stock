@@ -8,7 +8,6 @@ const callApi = async (url, params) => {
     if (apiResponse?.data) {
       const result = apiResponse?.data?.chart?.result?.[0];
       if(!result?.meta?.validRanges?.includes(paramsJson.range)) {
-        console.log('not includes',paramsJson.range);
         const minRange = result?.meta?.validRanges?.[0] || '1d';
         paramsJson.range = minRange;
         if(minRange === '1d') {
@@ -31,7 +30,6 @@ export default async function handler(req, res) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?includePrePost=false`;
   try {
     const data = await callApi(url, params);
-    console.log('api',data);
     if (data) {
       res.json({data});
       return;

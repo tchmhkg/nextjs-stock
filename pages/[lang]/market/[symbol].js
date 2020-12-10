@@ -147,7 +147,8 @@ export async function getServerSideProps(ctx) {
   try {
     const res = await axios.get(url.origin +'/api/market/quotes', {params: {symbol}})
     let data = [];
-    if(res?.data?.length) {
+
+    if(res?.data?.success && res?.data?.data.length) {
       data = res?.data?.data?.[0]
     }
 
