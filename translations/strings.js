@@ -30,6 +30,7 @@ const strings = {
     "Chart": "Chart",
     "Time Frame": "Time Frame",
     "1d": "1D",
+    "Home": "Home",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -62,6 +63,7 @@ const strings = {
     "Chart": "圖表",
     "Time Frame": "分時",
     "1d": "日K",
+    "Home": "首頁",
   },
 };
 

@@ -21,9 +21,9 @@ const LocaleButton = styled.div`
   background: ${({selected, theme}) =>
     selected ? theme.primary1 : 'transparent'};
   background: ${({selected, theme}) =>
-    selected ? `-webkit-linear-gradient(to right, ${theme.primary2}, ${theme.primary1});` : 'transparent'};
+    selected ? `-webkit-linear-gradient(to right, ${theme.primary2}, ${theme.primary1})` : 'transparent'};
   background: ${({selected, theme}) =>
-    selected ? `linear-gradient(to right, ${theme.primary2}, ${theme.primary1});` : 'transparent'};
+    selected ? `linear-gradient(to right, ${theme.primary2}, ${theme.primary1})` : 'transparent'};
 `;
 
 const LanguageSwitcher = () => {

@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import LanguageSwitcher from '~/components/language-switcher';
 import ThemeSwitcher from "~/components/theme-switcher";
-import Menu from "~/components/menu";
+// import Menu from "~/components/menu";
+import { Menu } from "~/components/common/Menu";
 import Image from 'next/image';
 
 const Container = styled.div`
@@ -13,7 +14,7 @@ const Container = styled.div`
   left: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   height: 70px;
   background-color: ${props => props.theme.background};
   -webkit-transition: background-color 200ms linear;
