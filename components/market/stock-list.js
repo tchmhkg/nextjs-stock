@@ -163,7 +163,8 @@ const StockList = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{marginTop: 75}}>
+      <hr />
       <SearchInput 
         value={symbol}
         onChange={onChangeSymbol}

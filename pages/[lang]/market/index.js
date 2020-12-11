@@ -14,7 +14,6 @@ const Market = () => {
         <title>{t('US Market')}</title>
       </Head>
       <MarketIndices />
-      <hr />
       <StockList />
     </Layout>
   );
