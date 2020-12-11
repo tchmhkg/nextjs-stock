@@ -16,6 +16,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   bottom: 0;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const Carousel = ({ children }) => {
