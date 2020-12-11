@@ -10,13 +10,13 @@ const Wrapper = styled.div`
 `;
 
 const Price = styled.span`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   display: flex;
 `;
 
 const PriceDiff = styled.span`
-  font-size: 13px;
+  font-size: 12px;
 `;
 
 // custom hook for getting previous value 

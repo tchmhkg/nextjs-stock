@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import Marquee from "react-marquee-slider";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -11,20 +10,27 @@ const Container = styled.div`
   -ms-transition: background-color 200ms linear;
   transition: background-color 200ms linear;
   z-index: 10;
-  ${'' /* margin: 0 -15px; */}
+  margin: 0 -15px;
+`;
+
+const Wrapper = styled.div`
+  -webkit-overflow-scrolling: touch;
   overflow-x: auto;
   display: flex;
   align-items: center;
-  bottom: 0;
-  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Carousel = ({ children }) => {
   return (
     <Container>
-      {/* <Marquee> */}
+      <Wrapper>
         {children}
-      {/* </Marquee> */}
+      </Wrapper>
     </Container>
   );
 };
