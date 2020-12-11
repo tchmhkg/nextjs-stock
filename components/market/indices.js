@@ -12,8 +12,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 0 0 0 15px;
-  min-width: ${(props) => (props.isFuture ? '175px' : '120px')};
-  max-width: ${(props) => (props.isFuture ? '175px' : '120px')};
+  min-width: ${(props) => (props.isFuture ? '130px' : '120px')};
+  max-width: ${(props) => (props.isFuture ? '130px' : '120px')};
   &:last-child {
     padding-right: 15px;
   }

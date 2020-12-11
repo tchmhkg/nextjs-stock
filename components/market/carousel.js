@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import styled from "styled-components";
-import { motion } from 'framer-motion';
 
 const Container = styled.div`
   height: 85px;
@@ -15,7 +14,7 @@ const Container = styled.div`
   margin: 0 -15px;
 `;
 
-const Wrapper = styled(motion.div)`
+const Wrapper = styled.div`
   display: flex;
   align-items: center;
   overflow-x: auto;
@@ -28,8 +27,8 @@ const Wrapper = styled(motion.div)`
 
 const Carousel = ({ children }) => {
   return (
-    <Container>
-      <Wrapper  onPan={(e, pointInfo) => {console.log(e, pointInfo)}}>
+    <Container className="noselect">
+      <Wrapper>
         {children}
       </Wrapper>
     </Container>
