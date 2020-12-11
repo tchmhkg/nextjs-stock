@@ -12,9 +12,10 @@ const Container = styled.div`
   transition: background-color 200ms linear;
   z-index: 10;
   ${'' /* margin: 0 -15px; */}
-  overflow-x: scroll;
+  overflow-x: auto;
   display: flex;
   align-items: center;
+  bottom: 0;
 `;
 
 const Carousel = ({ children }) => {
