@@ -14,7 +14,6 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  -webkit-overflow-scrolling: touch;
   overflow-x: auto;
   display: flex;
   align-items: center;
