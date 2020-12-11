@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
   height: 85px;
+  width: 100vw;
   position: sticky;
   position: -webkit-sticky;
   top: 70px;
@@ -13,13 +14,13 @@ const Container = styled.div`
   transition: background-color 200ms linear;
   z-index: 10;
   margin: 0 -15px;
-  overflow-x: auto;
+  ${'' /* overflow-x: auto; */}
   transform: translate3d(0,0,0);
 
 `;
 
 const Wrapper = styled.div`
-  overflow-x: auto;
+  ${'' /* overflow-x: auto; */}
   display: flex;
   align-items: center;
   -ms-overflow-style: none;
