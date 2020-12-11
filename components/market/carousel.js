@@ -12,7 +12,7 @@ const Container = styled.div`
   transition: background-color 200ms linear;
   z-index: 10;
   ${'' /* margin: 0 -15px; */}
-  overflow-x: auto;
+  overflow-x: scroll;
   display: flex;
   align-items: center;
 `;
