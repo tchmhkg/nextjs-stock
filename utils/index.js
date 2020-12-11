@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export const dollarFormat = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
     try {
       decimalCount = Math.abs(decimalCount);
@@ -36,4 +38,28 @@ export const getLastAndClosePriceFromYahoo = item => {
     closePrice = item?.regularMarketPreviousClose;
   }
   return {lastPrice, closePrice};
+}
+
+
+export const differenceBetweenValues = ({oldValue, newValue, controls, theme = {}}) =>{  
+  const themeTextColor = theme.text;
+  const variants = {
+    rest: { color: [themeTextColor] },
+    up: {color: [themeTextColor, '#4DBD33', themeTextColor], transition: {duration: 1}},
+    down: {color: [themeTextColor, '#fd1050', themeTextColor], transition: {duration: 1}}
+  };
+
+  let oldText = oldValue.toString();
+  let newText = newValue.toString();
+  let text = [];
+  newText.split('').forEach(function(val, i){
+    if (val != oldText.charAt(i))
+      text.push(<motion.span
+        style={{display: 'inline-block'}}
+        variants={variants}
+        animate={controls}>{val}</motion.span>);  
+    else
+      text.push(val);
+  });
+  return text;
 }

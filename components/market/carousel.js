@@ -11,15 +11,18 @@ const Container = styled.div`
   -ms-transition: background-color 200ms linear;
   transition: background-color 200ms linear;
   z-index: 10;
-  margin: 0 -15px;
+  ${'' /* margin: 0 -15px; */}
+  overflow-x: auto;
+  display: flex;
+  align-items: center;
 `;
 
 const Carousel = ({ children }) => {
   return (
     <Container>
-      <Marquee>
+      {/* <Marquee> */}
         {children}
-      </Marquee>
+      {/* </Marquee> */}
     </Container>
   );
 };

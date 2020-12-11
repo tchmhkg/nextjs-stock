@@ -12,8 +12,13 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   min-width: 250px;
+  max-width: 250px;
+  ${'' /* &:not(:last-child) {
+    ${'' /* margin-right: 15px; */}
+  } */}
   @media (max-width: 768px) {
-    min-width: ${props => props.isFuture ? '180px' : '150px'};
+    min-width: ${props => props.isFuture ? '150px' : '120px'};
+    max-width: ${props => props.isFuture ? '150px' : '120px'};
   }
 `;
 

@@ -174,7 +174,7 @@ const StockItem = ({ item }) => {
             <Price className={getPriceColor()}>{formattedPrice}</Price>
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
-          {['PRE', 'POSTPOST', 'CLOSED'].includes(marketState) && (
+          {['PRE', 'POSTPOST', 'CLOSED', 'PREPRE', 'PREPARE'].includes(marketState) && (
             <Remark>{t(marketState)}</Remark>
           )}
         </div>
