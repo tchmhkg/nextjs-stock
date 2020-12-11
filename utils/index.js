@@ -52,14 +52,17 @@ export const differenceBetweenValues = ({oldValue, newValue, controls, theme = {
   let oldText = oldValue.toString();
   let newText = newValue.toString();
   let text = [];
+  let isDiff = false;
   newText.split('').forEach(function(val, i){
-    if (val != oldText.charAt(i))
+    if (val != oldText.charAt(i) || isDiff) {
+      isDiff = true;
       text.push(<motion.span
         style={{display: 'inline-block'}}
         variants={variants}
         animate={controls}>{val}</motion.span>);  
-    else
+    } else {
       text.push(val);
+    }
   });
   return text;
 }

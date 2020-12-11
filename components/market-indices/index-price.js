@@ -63,6 +63,8 @@ const IndexPrice = ({ priceObj = {}, isFuture = false }) => {
     theme: colors
   });
 
+  const startAnimation = async (type) => await controls.start(type);
+
   useEffect(() => {
     if(prevLastPrice === '0.00') {
       return;
@@ -74,7 +76,7 @@ const IndexPrice = ({ priceObj = {}, isFuture = false }) => {
     } else if (difference < 0) {
       type = 'down';
     }
-    controls.start(type);
+    startAnimation(type);
   }, [prices])
 
   const getPriceColor = useCallback(() => {
