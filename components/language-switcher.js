@@ -7,6 +7,9 @@ import { LanguageContext } from "~/context/LanguageContext";
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
+  @media (max-width: 374px) {
+    display: none;
+  }
 `;
 
 const LocaleButton = styled.div`

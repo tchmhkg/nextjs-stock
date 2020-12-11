@@ -36,6 +36,9 @@ const GitHubIconWrapper = styled.div`
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  @media (max-width: 374px) {
+    margin-right: 15px;
+  }
 `;
 
 const GitHubButton = memo(() => (

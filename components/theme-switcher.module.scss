@@ -14,6 +14,9 @@ $white: #fff;
   cursor: pointer;
   margin: 0 10px 0 5px;
   align-items: center;
+  @media (max-width: 374px) {
+    display: none;
+  }
 
   &[data-enabled='true'] {
     justify-content: flex-end;

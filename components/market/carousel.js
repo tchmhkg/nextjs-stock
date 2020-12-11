@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const Container = styled.div`
   height: 85px;
-  width: 100%;
+  width: calc(100vw + 1px);
   ${'' /* position: sticky; */}
   ${'' /* position: -webkit-sticky; */}
   position: fixed;
