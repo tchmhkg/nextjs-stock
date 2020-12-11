@@ -14,6 +14,7 @@ body {
   transition: background-color 200ms linear;
   -webkit-overflow-scrolling: touch;
   position:relative;
+  overflow-x: hidden;
 }
 
 * {
