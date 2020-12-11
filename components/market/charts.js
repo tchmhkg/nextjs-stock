@@ -77,11 +77,13 @@ const Charts = ({ symbol }) => {
         </Option>
       </OptionsGroup>
     </AnimateSharedLayout>
+    <div className="noselect">
       {view === 'time' ? (
         <AreaChart symbol={symbol} />
       ) : (
         <CandleStickChart symbol={symbol} />
       )}
+    </div>
     </div>
   );
 };

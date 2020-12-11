@@ -1,7 +1,9 @@
 import { memo } from 'react';
 import NextHead from 'next/head';
+import { useTheme } from '~/theme';
 
 const Head = ({ children }) => {
+  const {mode} = useTheme();
   return (
     <NextHead>
       <meta charSet="UTF-8" />
@@ -30,6 +32,7 @@ const Head = ({ children }) => {
       <link rel="apple-touch-icon" href="/assets/apple-icon-180.png" />
 
       <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content={mode === 'dark' ? 'black-translucent' : 'default'} />
 
       <link
         rel="apple-touch-startup-image"

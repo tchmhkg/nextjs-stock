@@ -21,6 +21,7 @@ const bgVariants = {
 const sidebar = {
   open: () => {
     return {
+      display: 'block',
       clipPath: `circle(5000px at 40px 40px)`,
       transition: {
         type: 'spring',
@@ -36,6 +37,7 @@ const sidebar = {
         stiffness: 400,
         damping: 40,
       },
+      transitionEnd: { display: 'none' },
     };
   },
 };
