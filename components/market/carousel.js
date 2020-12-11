@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
   height: 85px;
   position: sticky;
+  position: -webkit-sticky;
   top: 70px;
   background-color: ${props => props.theme.background};
   -webkit-transition: background-color 200ms linear;
@@ -11,6 +12,7 @@ const Container = styled.div`
   transition: background-color 200ms linear;
   z-index: 10;
   margin: 0 -15px;
+  overflow: hidden;
 `;
 
 const Wrapper = styled.div`
@@ -19,6 +21,7 @@ const Wrapper = styled.div`
   align-items: center;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
   &::-webkit-scrollbar {
     display: none;
   }
