@@ -11,7 +11,7 @@ const Container = styled.div`
   -webkit-transition: background-color 200ms linear;
   -ms-transition: background-color 200ms linear;
   transition: background-color 200ms linear;
-  z-index: 14;
+  z-index: 15;
   margin: 0 -15px;
 `;
 
