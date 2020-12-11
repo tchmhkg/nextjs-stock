@@ -67,15 +67,17 @@ const NavBar = styled(motion.nav)`
   }
 `;
 
-export const Menu = () => {
+export const Menu = ({setShouldUpdateZIndex, shouldUpdateZIndex}) => {
   const [isOpen, toggleOpen] = useCycle(false, true);
   const containerRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflowY = 'hidden';
+      setShouldUpdateZIndex(true);
     } else {
       document.body.style.overflowY = 'auto';
+      setTimeout(() => setShouldUpdateZIndex(false), 300);
     }
   }, [isOpen]);
 

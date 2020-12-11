@@ -13,10 +13,6 @@ export const name = "Truman";
 
 const Container = styled.div`
   min-height: calc(100vh - 70px);
-  min-height: -webkit-calc(100vh - 70px);
-  min-height: -moz-calc(100vh - 70px);
-  min-height: -ms-calc(100vh - 70px);
-  min-height: -o-calc(100vh - 70px);
   top: 70px;
   padding: 15px;
   position: relative;

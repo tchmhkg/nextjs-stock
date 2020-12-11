@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import styled from 'styled-components';
 
 import LanguageSwitcher from '~/components/language-switcher';
@@ -20,7 +20,7 @@ const Container = styled.div`
   -webkit-transition: background-color 200ms linear;
   -ms-transition: background-color 200ms linear;
   transition: background-color 200ms linear;
-  z-index: 20;
+  z-index: ${({shouldUpdateZIndex}) => shouldUpdateZIndex ? 20 : 15};
   @media (min-width: 768px) {
     padding-right: 15px;
   }
@@ -55,9 +55,11 @@ const GitHubButton = memo(() => (
 ))
 
 const Header = () => {
+  const [shouldUpdateZIndex, setShouldUpdateZIndex] = useState(false);
+
   return (
-    <Container>
-      <Menu />
+    <Container shouldUpdateZIndex={shouldUpdateZIndex}>
+      <Menu setShouldUpdateZIndex={setShouldUpdateZIndex} />
       <RightWrapper>
         <GitHubButton />
         <LanguageSwitcher />
