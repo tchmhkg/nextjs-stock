@@ -6,13 +6,16 @@ const Container = styled.div`
   position: sticky;
   position: -webkit-sticky;
   top: 70px;
+  bottom: 0;
   background-color: ${props => props.theme.background};
   -webkit-transition: background-color 200ms linear;
   -ms-transition: background-color 200ms linear;
   transition: background-color 200ms linear;
   z-index: 10;
   margin: 0 -15px;
-  overflow: hidden;
+  overflow-x: auto;
+  transform: translate3d(0,0,0);
+
 `;
 
 const Wrapper = styled.div`
