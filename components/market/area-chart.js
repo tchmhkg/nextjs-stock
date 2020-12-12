@@ -6,6 +6,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useTheme } from '~/theme';
+import { ChartSkeleton } from '../ui/chart-skeleton';
 
 if (typeof Highcharts === 'object') {
   HighchartsExporting(Highcharts);
@@ -92,14 +93,14 @@ const AreaChart = ({ symbol, ...props }) => {
 
   return (
     <div>
-      {!loading && (
+      {!loading ? (
         <HighchartsReact
           options={options}
           highcharts={Highcharts}
           constructorType="stockChart"
           containerProps={{ className: 'chartContainer' }}
         />
-      )}
+      ) : <ChartSkeleton />}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
 import useTranslation from '~/hooks/useTranslation';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
+import { ChartSkeleton } from '../ui/chart-skeleton';
 
 if (typeof Highcharts === 'object') {
   HighchartsExporting(Highcharts);
@@ -83,14 +84,14 @@ const CandleStickChart = ({ symbol, ...props }) => {
 
   return (
     <div>
-      {!loading && (
+      {!loading ? (
         <HighchartsReact
           options={options}
           highcharts={Highcharts}
           constructorType="stockChart"
           containerProps={{ className: 'chartContainer' }}
         />
-      )}
+      ) : <ChartSkeleton />}
     </div>
   );
 };
