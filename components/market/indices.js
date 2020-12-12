@@ -6,6 +6,7 @@ import useTranslation from '~/hooks/useTranslation';
 import IndexPrice from '~/components/market-indices/index-price';
 import Carousel from '~/components/market/carousel';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
+import { useMounted } from '~/hooks/useMounted';
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,13 +34,14 @@ const LabelContainer = memo(({ label = '' }) => {
 const MarketIndices = () => {
   const [prices, setPrices] = useState([]);
   const isVisible = usePageVisibility();
+  const isMounted = useMounted();
 
   useEffect(() => {
     const interval = setInterval(() => {
       getQuotes();
     }, 1500);
     return () => clearInterval(interval);
-  }, [isVisible]);
+  }, [isVisible, isMounted]);
 
   const getQuotes = useCallback(async () => {
     try {
@@ -49,7 +51,7 @@ const MarketIndices = () => {
       }
 
       const res = await axios.get('/api/market/indices');
-      if (res?.data && res?.data?.data) {
+      if (res?.data && res?.data?.data && isMounted) {
         setPrices(Object.values(res?.data?.data));
       }
     } catch (thrown) {
@@ -60,7 +62,7 @@ const MarketIndices = () => {
         console.log(thrown?.response);
       }
     }
-  }, [prices, isVisible]);
+  }, [prices, isVisible, isMounted]);
 
   const renderIndexContent = useCallback(
     (priceObj) => {
