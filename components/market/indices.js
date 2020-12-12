@@ -6,6 +6,7 @@ import useTranslation from '~/hooks/useTranslation';
 import IndexPrice from '~/components/market-indices/index-price';
 import Carousel from '~/components/market/carousel';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
+import { useMounted } from '~/hooks/useMounted';
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,13 +34,14 @@ const LabelContainer = memo(({ label = '' }) => {
 const MarketIndices = () => {
   const [prices, setPrices] = useState([]);
   const isVisible = usePageVisibility();
+  const isMounted = useMounted();
 
   useEffect(() => {
     const interval = setInterval(() => {
       getQuotes();
     }, 1500);
     return () => clearInterval(interval);
-  }, [isVisible]);
+  }, [isVisible, isMounted]);
 
   const getQuotes = useCallback(async () => {
     try {
