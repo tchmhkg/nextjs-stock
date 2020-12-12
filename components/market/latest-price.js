@@ -96,10 +96,8 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
           if (res?.data) {
             const result = res?.data?.data?.[0] || {};
             const { lastPrice, closePrice: apiClosePrice } = getLastAndClosePriceFromYahoo(result);
-            if(isMounted) {
-              setPrice(lastPrice);
-              setClosePrice(apiClosePrice)
-            }
+            setPrice(lastPrice);
+            setClosePrice(apiClosePrice)
           }
         })
         .catch(function (thrown) {
