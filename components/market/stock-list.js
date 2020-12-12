@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import axios from "axios";
-import styled from "styled-components";
-import dynamic from "next/dynamic";
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import axios from 'axios';
+import styled from 'styled-components';
+import dynamic from 'next/dynamic';
 
 import SearchInput from '~/components/market/input';
 
-import useTranslation from "~/hooks/useTranslation";
-import { usePageVisibility } from "~/hooks/usePageVisibility";
-import Refresh from "~/components/refresh";
+import useTranslation from '~/hooks/useTranslation';
+import { usePageVisibility } from '~/hooks/usePageVisibility';
+import Refresh from '~/components/refresh';
+import StockItemSkeleton from '../ui/stock-item-skeleton';
 
 const StockItem = dynamic(import('~/components/market/item'));
 
@@ -20,7 +21,7 @@ const EmptyContainer = styled.div`
 
 const EmptyDataText = styled.span`
   font-size: 24px;
-  color: ${props => props.theme.text};
+  color: ${(props) => props.theme.text};
 `;
 
 const HeaderWrapper = styled.div`
@@ -30,49 +31,48 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
 `;
 
-// const DelayReminder = styled.span`
-//   font-size: 14px;
-// `;
-
 const StockList = () => {
   const { locale, t } = useTranslation();
   const isVisible = usePageVisibility();
 
   const [stocks, setStocks] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   let isCancelled = useRef(false);
-  const [symbol, setSymbol] = useState("");
+  const [symbol, setSymbol] = useState('');
 
   const onChangeSymbol = (e) => {
     setSymbol(e.target.value?.toUpperCase());
-  }
+  };
 
   const resetSymbol = () => {
     setSymbol('');
-  }
+  };
 
   useEffect(() => {
-    const getFromStorage = async() => {
+    const getFromStorage = async () => {
       try {
+        setLoading(true);
         let data = await window.localStorage.getItem('symbols');
         let jsonData = [];
-        if(data !== null) {
+        if (data !== null) {
           jsonData = JSON.parse(data);
           if (jsonData?.length) {
             setStocks(jsonData);
-            const symbolsString = jsonData.map(({ symbol }) => symbol).join(",");
+            const symbolsString = jsonData
+              .map(({ symbol }) => symbol)
+              .join(',');
             getQuotes(symbolsString);
+            setLoading(false);
           }
         }
       } catch (e) {
+        setLoading(false);
         console.log(e);
       }
-    }
+    };
     getFromStorage();
   }, []);
-
-
 
   useEffect(() => {
     const fetchStocks = async () => {
@@ -82,18 +82,19 @@ const StockList = () => {
           // console.log(JSON.parse(data));
           const jsonData = JSON.parse(data);
           if (jsonData?.length) {
-            const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
+            const symbolsString = jsonData
+              .map(({ symbol }) => symbol)
+              .join(',');
             getQuotes(symbolsString);
           } else {
-            if(isRefreshing) {
+            if (isRefreshing) {
               setIsRefreshing(false);
             }
           }
-          // setStocks(JSON.parse(data));
         }
       } catch (e) {
         console.log(e);
-        if(isRefreshing) {
+        if (isRefreshing) {
           setIsRefreshing(false);
         }
       }
@@ -101,7 +102,7 @@ const StockList = () => {
     if (isRefreshing) {
       fetchStocks();
     }
-  }, [isRefreshing])
+  }, [isRefreshing]);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -110,17 +111,19 @@ const StockList = () => {
         if (data !== null) {
           const jsonData = JSON.parse(data);
           if (jsonData?.length) {
-            const symbolsString = jsonData.map(({symbol}) => symbol).join(',');
+            const symbolsString = jsonData
+              .map(({ symbol }) => symbol)
+              .join(',');
             getQuotes(symbolsString);
           } else {
-            if(isRefreshing) {
+            if (isRefreshing) {
               setIsRefreshing(false);
             }
           }
         }
       } catch (e) {
         console.log(e);
-        if(isRefreshing) {
+        if (isRefreshing) {
           setIsRefreshing(false);
         }
       }
@@ -129,28 +132,25 @@ const StockList = () => {
   }, [isVisible]);
 
   const getQuotes = (symbols) => {
-    if(!isVisible) {
+    if (!isVisible) {
       console.log('stock list page not visible, quit');
       return;
     }
     axios
       .get('/api/market/quotes', {
         params: {
-          symbol: symbols
-        }
+          symbol: symbols,
+        },
       })
       .then((res) => {
         if (res?.data && !isCancelled.current) {
-          // console.log(res.data);
           setStocks(res?.data?.data);
-          // setStocks(Object.values(res?.data));
-          // console.log(Object.values(res?.data));
         }
         setIsRefreshing(false);
       })
       .catch(function (thrown) {
         if (axios.isCancel(thrown)) {
-          console.log("Request canceled", thrown.message);
+          console.log('Request canceled', thrown.message);
         } else {
           console.log(thrown);
         }
@@ -164,25 +164,29 @@ const StockList = () => {
 
   return (
     <div>
-      <SearchInput 
+      <SearchInput
         value={symbol}
         onChange={onChangeSymbol}
         onSearchClear={resetSymbol}
       />
-      {stocks && stocks.length ? (
-      <>
-        <HeaderWrapper>
-          <span>{t('Saved Stock List')}</span>
-          <Refresh onClick={onClickRefresh} />
-          {/* <DelayReminder>{t('Delay +20 min.')}</DelayReminder> */}
-        </HeaderWrapper>
-        {stocks?.map((stock) => (
-          <StockItem key={stock.symbol} item={stock} />
-        ))}
-      </>
+      {loading ? (
+        Array(4)
+          .fill()
+          .map((_, i) => <StockItemSkeleton key={i} />)
+      ) : stocks && stocks.length ? (
+        <>
+          <HeaderWrapper>
+            <span>{t('Saved Stock List')}</span>
+            <Refresh onClick={onClickRefresh} />
+            {/* <DelayReminder>{t('Delay +20 min.')}</DelayReminder> */}
+          </HeaderWrapper>
+          {stocks?.map((stock) => (
+            <StockItem key={stock.symbol} item={stock} />
+          ))}
+        </>
       ) : (
         <EmptyContainer>
-          <EmptyDataText>{t('It\'s empty here.')}</EmptyDataText>
+          <EmptyDataText>{t("It's empty here.")}</EmptyDataText>
         </EmptyContainer>
       )}
     </div>

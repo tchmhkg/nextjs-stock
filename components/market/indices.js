@@ -7,6 +7,7 @@ import IndexPrice from '~/components/market-indices/index-price';
 import Carousel from '~/components/market/carousel';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useMounted } from '~/hooks/useMounted';
+import IndicesSkeleton from '~/components/ui/indices-skeleton';
 
 const Wrapper = styled.div`
   display: flex;
@@ -90,13 +91,13 @@ const MarketIndices = () => {
 
   return (
     <Carousel>
-      {prices?.map((priceObj) => {
+      {prices?.length ? prices?.map((priceObj) => {
         if (priceObj.assetType === 'INDEX') {
           return renderIndexContent(priceObj);
         } else {
           return renderFutureContent(priceObj);
         }
-      })}
+      }) : <IndicesSkeleton />}
     </Carousel>
   );
 };
