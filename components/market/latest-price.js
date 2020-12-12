@@ -1,12 +1,12 @@
 import React, {useState, useEffect, memo, useMemo, useCallback} from 'react';
-import moment from 'moment';
 import dynamic from 'next/dynamic';
-import SocketIOClient from 'socket.io-client';
 import styled from 'styled-components';
-
-import useTranslation from '~/hooks/useTranslation';
-import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
+import axios from 'axios';
 import styles from "~/components/market/latest-price.module.scss";
+import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
+import { usePageVisibility } from '~/hooks/usePageVisibility';
+import { useMounted } from '~/hooks/useMounted';
+
 const ScheduleIcon = dynamic(import('@material-ui/icons/Schedule'));
 
 const Price = styled.span`
@@ -17,11 +17,6 @@ const Price = styled.span`
 
 const Diff = styled.span`
   font-size: 16px;
-`;
-
-const LastUpdateText = styled.div`
-    font-size: 14px;
-    margin-bottom: 10px;
 `;
 
 const PriceWrapper = styled.div`
@@ -70,42 +65,51 @@ const PriceContainer = memo(({price = 0, closePrice = 0, isDelayed}) => {
     )
 })
 
-const LastUpdate = memo(({lastUpdateTime = ''}) => {
-    const { t } = useTranslation();
-    const formattedTime = useMemo(() => lastUpdateTime ? moment(lastUpdateTime).format('YYYY-MM-DD HH:mm:ss') : '', [lastUpdateTime, moment])
-    return (
-        <LastUpdateText>{t('Last update time')}: {formattedTime}</LastUpdateText>
-    )
-})
-
 const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
     const [price, setPrice] = useState(data.lastPrice || 0);
     const [closePrice, setClosePrice] = useState(data.closePrice || 0);
-    const [lastUpdateTime, setLastUpdateTime] = useState(null);
+    const isVisible = usePageVisibility();
+    const isMounted = useMounted();
 
     useEffect(() => {
+      const interval = setInterval(async () => {
+        getQuotes();
+      }, 1000);
+      return () => clearInterval(interval);
+    }, [isVisible, symbol, isMounted]);
+  
+    const getQuotes = () => {
       if(!symbol) {
         return;
       }
-      const socket = SocketIOClient({
-        query: {
-          symbol,
-        },
-      });
-      socket.on("FromAPI", data => {
-        // console.log('from api data => ',data)
-        const { lastPrice, closePrice: apiClosePrice } = getLastAndClosePriceFromYahoo(data[0]);
-        setPrice(lastPrice);
-        setClosePrice(apiClosePrice)
-        // setLastUpdateTime(data);
-      });
-      return () => socket.disconnect();
-    }, [symbol])
+      if(!isVisible) {
+        console.log('stock detail page not visible, quit');
+        return;
+      }
+      axios
+        .get('/api/market/quotes', {
+          params: {
+            symbol
+          }
+        })
+        .then((res) => {
+          if (res?.data) {
+            const result = res?.data?.data?.[0] || {};
+            const { lastPrice, closePrice: apiClosePrice } = getLastAndClosePriceFromYahoo(result);
+            if(isMounted) {
+              setPrice(lastPrice);
+              setClosePrice(apiClosePrice)
+            }
+          }
+        })
+        .catch(function (thrown) {
+            console.log(thrown);
+        });
+    };
 
     return (
         <div>
             <PriceContainer price={price} closePrice={closePrice} isDelayed={isDelayed}/>
-            {lastUpdateTime && <LastUpdate lastUpdateTime={lastUpdateTime} />}
         </div>
     )
 }
