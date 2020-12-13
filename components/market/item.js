@@ -4,11 +4,13 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 
 import styles from '~/components/market/item.module.scss';
 import useTranslation from '~/hooks/useTranslation';
-import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
+import { differenceBetweenValues, dollarFormat, getAnimationType, getLastAndClosePriceFromYahoo } from '~/utils';
+import { useTheme } from '~/theme';
+import { usePrevious } from '~/hooks/usePrevious';
 const ScheduleIcon = dynamic(import('@material-ui/icons/Schedule'));
 
 const Container = styled(motion.div)`
@@ -40,13 +42,14 @@ const PriceWrapper = styled.div`
 `;
 
 const Price = styled.span`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   margin-left: 5px;
 `;
 
 const Diff = styled.span`
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: bold;
 `;
 
 const ProfileWrapper = styled.div`
@@ -85,16 +88,20 @@ const Remark = styled.div`
 `;
 
 const StockItem = ({ item }) => {
+  const { colors } = useTheme();
   const { locale, t } = useTranslation();
   const [profile, setProfile] = useState({});
   const { marketState, longName } = item;
   const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(item);
+  const prevLastPrice = usePrevious(lastPrice);
+  const controls = useAnimation();
 
-  const formattedPrice = useMemo(() => dollarFormat(lastPrice || 0, 3), [
-    dollarFormat,
-    lastPrice,
-    closePrice,
-  ]);
+  const pricesArray = differenceBetweenValues({
+    oldValue: prevLastPrice, 
+    newValue: lastPrice,
+    controls,
+    theme: colors
+  });
 
   useEffect(() => {
     if (item?.symbol) {
@@ -102,6 +109,13 @@ const StockItem = ({ item }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const type = getAnimationType(lastPrice, prevLastPrice);
+    if(type) {
+      startAnimation(type);
+    }
+  }, [item, prevLastPrice, lastPrice])
+    
   const getQuote = async () => {
     try {
       const res = await axios.get('/api/market/quote', {
@@ -152,6 +166,11 @@ const StockItem = ({ item }) => {
   );
 
   const SymbolContainer = memo(({ symbol }) => <Symbol>{symbol}</Symbol>);
+  const startAnimation = async (type) => await controls.start(type);
+
+  const renderLastPrice = useCallback(() => {
+    return <Price>{pricesArray.map((priceChar, index) => <span key={index}>{priceChar}</span>)}</Price>;
+  }, [lastPrice, pricesArray]);
 
   return (
     <Link
@@ -171,7 +190,7 @@ const StockItem = ({ item }) => {
             {item?.quoteSourceName === 'Delayed Quote' && (
               <ScheduleIcon fontSize="small" />
             )}
-            <Price className={getPriceColor()}>{formattedPrice}</Price>
+            {renderLastPrice()}
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
           {['PRE', 'POSTPOST', 'CLOSED', 'PREPRE', 'PREPARE'].includes(marketState) && (

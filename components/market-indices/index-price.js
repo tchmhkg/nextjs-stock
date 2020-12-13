@@ -2,31 +2,9 @@ import React, { useCallback, memo, useMemo, useState, useEffect, useRef } from "
 import styled from "styled-components";
 import { useAnimation } from 'framer-motion';
 import styles from "~/components/market-indices/index-price.module.scss";
-import { differenceBetweenValues } from "~/utils";
+import { differenceBetweenValues, getAnimationType } from "~/utils";
 import { useTheme } from "~/theme";
-
-const Wrapper = styled.div`
-  justify-content: flex-end;
-`;
-
-const Price = styled.span`
-  font-size: 18px;
-  font-weight: bold;
-  display: flex;
-`;
-
-const PriceDiff = styled.span`
-  font-size: 12px;
-`;
-
-// custom hook for getting previous value 
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
+import { usePrevious } from "~/hooks/usePrevious";
 
 const getLastPrice = (priceObj, isFuture) => {
   return parseFloat((isFuture ? priceObj?.lastPriceInDouble : priceObj?.lastPrice) || 0).toFixed(2)
@@ -66,17 +44,10 @@ const IndexPrice = ({ priceObj = {}, isFuture = false }) => {
   const startAnimation = async (type) => await controls.start(type);
 
   useEffect(() => {
-    if(prevLastPrice === '0.00') {
-      return;
+    const type = getAnimationType(lastPrice, prevLastPrice);
+    if(type) {
+      startAnimation(type);
     }
-    const difference = lastPrice - prevLastPrice;
-    let type = 'rest';
-    if(difference > 0) {
-      type = 'up';
-    } else if (difference < 0) {
-      type = 'down';
-    }
-    startAnimation(type);
   }, [prices])
 
   const getPriceColor = useCallback(() => {
@@ -109,21 +80,21 @@ const IndexPrice = ({ priceObj = {}, isFuture = false }) => {
 
   const renderLastPrice = useCallback(() => {
     // const price = parseFloat((lastPrice ? lastPrice : closePrice))?.toFixed(2);
-    return <Price>{pricesArray.map((priceChar, index) => <span key={index}>{priceChar}</span>)}</Price>;
+    return <div className={styles.price}>{pricesArray.map((priceChar, index) => <span key={index}>{priceChar}</span>)}</div>;
   }, [lastPrice, closePrice, pricesArray]);
 
   const renderPriceDiff = useCallback(() => {
     return (
-      <Price className={getPriceColor()}>
-        <PriceDiff>{getPriceDiff()}</PriceDiff>
-      </Price>
+      <div className={`${styles.price} ${getPriceColor()}`}>
+        <div className={styles.priceDiff}>{getPriceDiff()}</div>
+      </div>
     );
   }, [lastPrice, closePrice]);
 
   return (
-    <Wrapper>
+    <div className={styles.wrapper}>
       {renderLastPrice()} {renderPriceDiff()}
-    </Wrapper>
+    </div>
   );
 };
 

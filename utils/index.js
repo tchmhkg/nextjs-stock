@@ -40,8 +40,9 @@ export const getLastAndClosePriceFromYahoo = item => {
   return {lastPrice, closePrice};
 }
 
+const spanStyle = {display: 'inline-block'};
 
-export const differenceBetweenValues = ({oldValue, newValue, controls, theme = {}}) =>{  
+export const differenceBetweenValues = ({oldValue = 0, newValue = 0, controls, theme = {}}) =>{  
   const themeTextColor = theme.text;
   const variants = {
     rest: { color: [themeTextColor] },
@@ -49,15 +50,15 @@ export const differenceBetweenValues = ({oldValue, newValue, controls, theme = {
     down: {color: [themeTextColor, '#fd1050', themeTextColor], transition: {duration: 1.4}}
   };
 
-  let oldText = oldValue.toString();
-  let newText = newValue.toString();
+  let oldText = parseFloat(oldValue).toFixed(2);
+  let newText = parseFloat(newValue).toFixed(2);
   let text = [];
   let isDiff = false;
   newText.split('').forEach(function(val, i){
     if (val != oldText.charAt(i) || isDiff) {
       isDiff = true;
       text.push(<motion.span
-        style={{display: 'inline-block'}}
+        style={spanStyle}
         variants={variants}
         animate={controls}>{val}</motion.span>);  
     } else {
@@ -65,6 +66,20 @@ export const differenceBetweenValues = ({oldValue, newValue, controls, theme = {
     }
   });
   return text;
+}
+
+export const getAnimationType = (lastPrice, prevLastPrice) => {
+  if(!prevLastPrice || prevLastPrice === '0.00') {
+    return;
+  }
+  const difference = lastPrice - prevLastPrice;
+  let type = 'rest';
+  if(difference > 0) {
+    type = 'up';
+  } else if (difference < 0) {
+    type = 'down';
+  }
+  return type;
 }
 
 export const convertHexToRGBA = (hexCode, opacity = 1) => {

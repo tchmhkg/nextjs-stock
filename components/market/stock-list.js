@@ -127,7 +127,7 @@ const StockList = () => {
           setIsRefreshing(false);
         }
       }
-    }, 5000);
+    }, 3000);
     return () => clearInterval(interval);
   }, [isVisible]);
 

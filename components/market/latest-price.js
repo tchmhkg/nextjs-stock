@@ -3,20 +3,24 @@ import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import axios from 'axios';
 import styles from "~/components/market/latest-price.module.scss";
-import { dollarFormat, getLastAndClosePriceFromYahoo } from '~/utils';
+import { useAnimation } from 'framer-motion';
+import { differenceBetweenValues, dollarFormat, getAnimationType, getLastAndClosePriceFromYahoo } from '~/utils';
+import { useTheme } from '~/theme';
+import { usePrevious } from '~/hooks/usePrevious';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useMounted } from '~/hooks/useMounted';
 
 const ScheduleIcon = dynamic(import('@material-ui/icons/Schedule'));
 
 const Price = styled.span`
-  font-size: 26px;
+  font-size: 24px;
   font-weight: bold;
   margin-left: 5px;
 `;
 
 const Diff = styled.span`
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: bold;
 `;
 
 const PriceWrapper = styled.div`
@@ -26,6 +30,25 @@ const PriceWrapper = styled.div`
 `;
 
 const PriceContainer = memo(({price = 0, closePrice = 0, isDelayed}) => {
+  const { colors } = useTheme();
+  const prevLastPrice = usePrevious(price);
+  const controls = useAnimation();
+  const startAnimation = async (type) => await controls.start(type);
+
+  const pricesArray = differenceBetweenValues({
+    oldValue: prevLastPrice, 
+    newValue: price,
+    controls,
+    theme: colors
+  });
+
+  useEffect(() => {
+    const type = getAnimationType(price, prevLastPrice);
+    if(type) {
+      startAnimation(type);
+    }
+  }, [prevLastPrice, price])
+
   const getPriceColor = useCallback(() => {
     if (price === 0) {
       return '';
@@ -53,12 +76,11 @@ const PriceContainer = memo(({price = 0, closePrice = 0, isDelayed}) => {
     }
   }, [price, closePrice]);
 
-    const formattedPrice = useMemo(() => `${dollarFormat(price || closePrice, 3)}`, [price, closePrice, dollarFormat]);
     return (
         <div className={styles.stockPrice}>
           <PriceWrapper>
             {isDelayed && <ScheduleIcon fontSize="small" />}
-            <Price className={getPriceColor()}>{formattedPrice}</Price>
+            <Price>{pricesArray.map((priceChar, index) => <span key={index}>{priceChar}</span>)}</Price>
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
         </div>

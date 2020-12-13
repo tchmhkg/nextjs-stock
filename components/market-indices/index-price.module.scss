@@ -4,3 +4,17 @@
 .negative {
   color: #FD1050;
 }
+
+.wrapper {
+  justify-content: flex-end;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+}
+
+.priceDiff {
+  font-size: 12px;
+}
