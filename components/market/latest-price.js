@@ -10,7 +10,9 @@ import { usePrevious } from '~/hooks/usePrevious';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useMounted } from '~/hooks/useMounted';
 
-const ScheduleIcon = dynamic(import('@material-ui/icons/Schedule'));
+const ClockIcon = dynamic(() =>
+  import('~/components/ui/icon').then((mod) => mod.ClockIcon)
+)
 
 const Price = styled.span`
   font-size: 24px;
@@ -79,7 +81,7 @@ const PriceContainer = memo(({price = 0, closePrice = 0, isDelayed}) => {
     return (
         <div className={styles.stockPrice}>
           <PriceWrapper>
-            {isDelayed && <ScheduleIcon fontSize="small" />}
+            {isDelayed && <ClockIcon />}
             <Price>{pricesArray.map((priceChar, index) => <span key={index}>{priceChar}</span>)}</Price>
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>

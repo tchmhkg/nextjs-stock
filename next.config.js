@@ -6,6 +6,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // var DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin");
 const path = require('path');
 const webpack = require('webpack');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 module.exports = withPlugins(
     [
@@ -39,7 +40,12 @@ module.exports = withPlugins(
               },
             ],
           }) */
+          config.plugins.push(new MomentLocalesPlugin())
           config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),)
+          config.plugins.push(new webpack.NormalModuleReplacementPlugin(
+            /moment-timezone\/data\/packed\/latest\.json/,
+            require.resolve('./misc/timezone-definitions')
+          ),)
           // config.plugins.push(new DuplicatePackageCheckerPlugin())
           config.resolve.alias['@babel/runtime'] = path.resolve(
             __dirname,
@@ -50,6 +56,11 @@ module.exports = withPlugins(
             __dirname,
             'node_modules',
             'strip-ansi',
+          )
+          config.resolve.alias['highcharts$'] = path.resolve(
+            __dirname,
+            'node_modules',
+            'highcharts/highstock.js',
           )
           return config
         },

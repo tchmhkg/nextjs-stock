@@ -1,8 +1,9 @@
 import Head from "next/head";
 
 import Layout from "~/components/layout";
-import HKIndices from "~/components/market/hk/indices";
 import useTranslation from "~/hooks/useTranslation";
+
+const HKIndices = dynamic(import('~/components/market/hk/indices'));
 
 const HKMarket = () => {
   const { t } = useTranslation();

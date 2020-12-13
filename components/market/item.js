@@ -8,10 +8,13 @@ import { motion, useAnimation } from 'framer-motion';
 
 import styles from '~/components/market/item.module.scss';
 import useTranslation from '~/hooks/useTranslation';
-import { differenceBetweenValues, dollarFormat, getAnimationType, getLastAndClosePriceFromYahoo } from '~/utils';
+import { differenceBetweenValues, getAnimationType, getLastAndClosePriceFromYahoo } from '~/utils';
 import { useTheme } from '~/theme';
 import { usePrevious } from '~/hooks/usePrevious';
-const ScheduleIcon = dynamic(import('@material-ui/icons/Schedule'));
+
+const ClockIcon = dynamic(() =>
+  import('~/components/ui/icon').then((mod) => mod.ClockIcon)
+)
 
 const Container = styled(motion.div)`
   display: flex;
@@ -188,7 +191,7 @@ const StockItem = ({ item }) => {
         <div className={styles.stockPrice}>
           <PriceWrapper>
             {item?.quoteSourceName === 'Delayed Quote' && (
-              <ScheduleIcon fontSize="small" />
+              <ClockIcon />
             )}
             {renderLastPrice()}
           </PriceWrapper>
