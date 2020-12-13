@@ -1,5 +1,6 @@
 import Head from "next/head";
 
+import dynamic from 'next/dynamic';
 import Layout from "~/components/layout";
 import useTranslation from "~/hooks/useTranslation";
 
