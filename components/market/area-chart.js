@@ -1,51 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
-import Highcharts from 'highcharts/highstock';
-import HighchartsExporting from 'highcharts/modules/exporting';
-import HighchartsReact from 'highcharts-react-official';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useTheme } from '~/theme';
-import { ChartSkeleton } from '../ui/chart-skeleton';
-
-if (typeof Highcharts === 'object') {
-  HighchartsExporting(Highcharts);
-}
-
-const formatDateTime = (timestamp) =>
-  parseFloat(moment.unix(timestamp).format('x'));
-
-function parseData(data) {
-  let ohlc = [];
-  const dataLength = data ? data?.timestamp?.length : 0;
-  if(!dataLength) {
-    return { ohlc };
-  }
-  const closePriceArr = data.indicators.quote[0]['close'];
-  let lastValidClosePrice = null;
-  for (let i = 0; i < dataLength; i++) {
-    lastValidClosePrice = closePriceArr[i] || lastValidClosePrice;
-    ohlc.push([
-      formatDateTime(data.timestamp[i]), // the date
-      closePriceArr[i] || lastValidClosePrice, // close
-    ]);
-  }
-  const lastTradingTime = formatDateTime(data.meta.currentTradingPeriod.regular.end);
-  let dummyArray = [];
-  for(let i = 0; i < (391 - dataLength); i++) {
-    const timestamp = ohlc[dataLength - 1][0] + 60000 * i;
-    if(timestamp < lastTradingTime) {
-      dummyArray.push([timestamp, null]);
-    }
-  }
-  ohlc = [...ohlc, ...dummyArray];
-  return { ohlc };
-}
+import { ChartSkeleton } from '~/components/ui/chart-skeleton';
+import { AreaHighChart } from '~/components/ui/highcharts';
+import { getAreaChartOptions, parseAreaChartData } from '~/utils/chart';
 
 const AreaChart = ({ symbol, ...props }) => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(true);
-  const [options, setOptions] = useState(getOptions({ symbol, colors }));
+  const [options, setOptions] = useState(getAreaChartOptions({ symbol, colors }));
   const isVisible = usePageVisibility();
 
   useEffect(() => {
@@ -78,8 +43,7 @@ const AreaChart = ({ symbol, ...props }) => {
           }),
         },
       });
-
-      const { ohlc } = parseData(res.data?.data);
+      const { ohlc } = parseAreaChartData(res.data?.data);
       setOptions((prevOptions) => ({
         ...prevOptions,
         series: [{ ...prevOptions.series[0], data: ohlc }],
@@ -94,11 +58,8 @@ const AreaChart = ({ symbol, ...props }) => {
   return (
     <div>
       {!loading ? (
-        <HighchartsReact
+        <AreaHighChart
           options={options}
-          highcharts={Highcharts}
-          constructorType="stockChart"
-          containerProps={{ className: 'chartContainer' }}
         />
       ) : <ChartSkeleton />}
     </div>
@@ -106,84 +67,3 @@ const AreaChart = ({ symbol, ...props }) => {
 };
 
 export default AreaChart;
-
-const getOptions = ({ symbol = '', colors = {} }) => {
-  const options = {
-    plotOptions: {
-      series: {
-        lineWidth: 1,
-      },
-    },
-    lang: {
-      decimalPoint: '.',
-      thousandsSeparator: ',',
-    },
-    chart: {
-      backgroundColor: 'transparent',
-      height: 300,
-    },
-    exporting: {
-      enabled: false,
-    },
-    time: {
-      timezone: 'America/New_York',
-    },
-    rangeSelector: {
-      enabled: false,
-    },
-    scrollbar: {
-      enabled: false,
-    },
-    navigator: {
-      enabled: false,
-    },
-    xAxis: {
-      lineWidth: 0,
-    },
-    yAxis: [
-      {
-        lineWidth: 0,
-        opposite: false,
-        offset: 0,
-        tickPosition: 'inside',
-        zoomEnabled: false,
-        crosshair: true,
-        gridLineWidth: 0.5,
-        gridLineColor: '#9f9f9f',
-      },
-    ],
-    tooltip: {
-      split: true,
-      borderColor: 'black',
-      borderWidth: 0,
-    },
-
-    series: [
-      {
-        type: 'area',
-        name: symbol,
-        data: [],
-        id: symbol,
-        threshold: null,
-        tooltip: {
-          valueDecimals: 2,
-          pointFormat: '<strong>{point.y}</strong>',
-        },
-        lineColor: colors.primary1,
-        fillColor: {
-          linearGradient: {
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: 1,
-          },
-          stops: [
-            [0, colors.primary1],
-            [1, Highcharts.color(colors.primary2).setOpacity(0.3).get('rgba')],
-          ],
-        },
-      },
-    ],
-  };
-  return options;
-};
