@@ -1,18 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import _filter from 'lodash/filter';
 import _find from 'lodash/find';
-import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { HeartFullIcon, HeartBorderIcon } from '~/components/ui/icon';
-
-const IconWrapper = styled(motion.div)`
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  position: absolute;
-  right: 15px;
-  top: -25px;
-  width: 22px;
-  height: 22px;
-`;
+import styles from './bookmark.module.scss';
 
 const iconAnimConfig = { scale: 1.3 };
 
@@ -38,7 +29,7 @@ const Bookmark = ({symbol}) => {
     } catch (e) {
       console.log(e);
     }
-  }, [symbol, saved]);
+  }, [symbol]);
 
   const onPressRemoveSymbol = useCallback(async () => {
     try {
@@ -55,23 +46,25 @@ const Bookmark = ({symbol}) => {
     } catch (e) {
       console.log(e);
     }
-  }, [symbol, saved]);
+  }, [symbol]);
 
   useEffect(() => {
     const getStatusFromStorage = async () => {
       const existing = await window.localStorage.getItem('symbols');
       const existingJson = existing ? JSON.parse(existing) : [];
       const isExisted = existingJson.find(item => item.symbol === symbol);
-      setSaved(isExisted ? true : false);
+      if(isExisted) {
+        setSaved(true);
+      }
     };
     getStatusFromStorage();
-  }, [symbol]);
+  }, []);
 
   // TODO: merge to single function
   return (
-    <IconWrapper whileTap={iconAnimConfig} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
+    <motion.div className={styles.wrapper} whileTap={iconAnimConfig} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
         {saved ? <HeartFullIcon  /> : <HeartBorderIcon />}
-    </IconWrapper>
+    </motion.div>
   );
 };
 

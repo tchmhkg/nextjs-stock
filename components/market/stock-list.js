@@ -63,9 +63,9 @@ const StockList = () => {
               .map(({ symbol }) => symbol)
               .join(',');
             getQuotes(symbolsString);
-            setLoading(false);
           }
         }
+        setLoading(false);
       } catch (e) {
         setLoading(false);
         console.log(e);
@@ -173,7 +173,7 @@ const StockList = () => {
         Array(4)
           .fill()
           .map((_, i) => <StockItemSkeleton key={i} />)
-      ) : stocks && stocks.length ? (
+      ) : (stocks && stocks.length ? (
         <>
           <HeaderWrapper>
             <span>{t('Saved Stock List')}</span>
@@ -188,7 +188,7 @@ const StockList = () => {
         <EmptyContainer>
           <EmptyDataText>{t("It's empty here.")}</EmptyDataText>
         </EmptyContainer>
-      )}
+      ))}
     </div>
   );
 };

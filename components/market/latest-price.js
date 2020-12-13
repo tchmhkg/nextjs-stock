@@ -96,8 +96,10 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
           if (res?.data) {
             const result = res?.data?.data?.[0] || {};
             const { lastPrice, closePrice: apiClosePrice } = getLastAndClosePriceFromYahoo(result);
-            setPrice(lastPrice);
-            setClosePrice(apiClosePrice)
+            if(result.marketState !== 'CLOSED') {
+              setPrice(lastPrice);
+              setClosePrice(apiClosePrice)
+            }
           }
         })
         .catch(function (thrown) {
