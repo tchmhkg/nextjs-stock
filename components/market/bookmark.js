@@ -1,34 +1,23 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FavoriteBorder as BorderIcon, Favorite as Icon } from '@material-ui/icons';
 import _filter from 'lodash/filter';
 import _find from 'lodash/find';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { makeStyles } from "@material-ui/core/styles";
+import { HeartFullIcon, HeartBorderIcon } from '~/components/ui/icon';
 
 const IconWrapper = styled(motion.div)`
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   position: absolute;
   right: 15px;
-  top: -30px;
+  top: -25px;
+  width: 22px;
+  height: 22px;
 `;
-
-const iconStyles = () => {
-  return {
-    activeIcon: {
-      color: "#E100FF",
-    },
-    inactiveIcon: {
-      color: "#b2b2b2",
-    },
-  };
-}
 
 const iconAnimConfig = { scale: 1.3 };
 
 const Bookmark = ({symbol}) => {
   const [saved, setSaved] = useState(null);
-  const classes = makeStyles(iconStyles)();
 
   const onPressSaveSymbol = useCallback(async () => {
     try {
@@ -81,7 +70,7 @@ const Bookmark = ({symbol}) => {
   // TODO: merge to single function
   return (
     <IconWrapper whileTap={iconAnimConfig} onClick={saved ? onPressRemoveSymbol : onPressSaveSymbol}>
-        {saved ? <Icon className={classes.activeIcon} /> : <BorderIcon />}
+        {saved ? <HeartFullIcon  /> : <HeartBorderIcon />}
     </IconWrapper>
   );
 };

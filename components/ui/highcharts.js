@@ -9,7 +9,7 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsExporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
 import { useTheme } from '~/theme';
-import { getAreaChartOptions, parseAreaChartData } from '~/utils/chart';
+// import { getAreaChartOptions, parseAreaChartData } from '~/utils/chart';
 import { convertHexToRGBA } from '~/utils';
 
 if (typeof Highcharts === 'object') {
@@ -40,7 +40,7 @@ export const AreaHighChart = forwardRef(
         },
       ],
     };
-    console.log('render')
+    // console.log('render')
     // const [options, setOptions] = useState(getAreaChartOptions({ symbol, colors, highCharts: Highcharts, data  }));
 
     // useImperativeHandle(ref, () => ({
@@ -82,3 +82,23 @@ export const AreaHighChart = forwardRef(
     );
   }
 );
+
+
+
+export const CandleStickHighChart = forwardRef(
+  (
+    { symbol, options, ...props },
+    ref
+  ) => {
+
+    return (
+      <HighchartsReact
+        ref={ref}
+        options={options}
+        highcharts={Highcharts}
+        constructorType="stockChart"
+        containerProps={{ className: 'chartContainer' }}
+      />
+    );
+  }
+)
