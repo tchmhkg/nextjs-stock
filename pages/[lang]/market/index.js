@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Layout from "~/components/layout";
 import useTranslation from "~/hooks/useTranslation";
 
-const MarketIndices = dynamic(import('~/components/market/indices'));
+const MarketIndices = dynamic(import('~/components/market/indicesV2'));
 const StockList = dynamic(import('~/components/market/stock-list'));
 const Market = () => {
   const { t } = useTranslation();
