@@ -51,6 +51,8 @@ const getBlockWidth = (size) => {
       return '200px';
     case 'xlarge':
       return '250px';
+    case 'full':
+      return '100%';
     default:
       return '150px';
   }

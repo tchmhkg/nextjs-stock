@@ -10,6 +10,7 @@ import { getLocalizationProps } from '~/context/LanguageContext';
 import { getLastAndClosePriceFromYahoo } from '~/utils';
 import Layout from '~/components/layout';
 import Spinner from '~/components/spinner';
+import { BlockSkeleton } from '~/components/ui/skeleton';
 
 const LatestPrice = dynamic(import('~/components/market/latest-price'));
 const NewsList = dynamic(import('~/components/market/news-list'));
@@ -31,6 +32,12 @@ const Symbol = styled.span`
 const Name = styled.span`
   font-size: 14px;
   color: ${(props) => props.theme.inactiveLegend};
+`;
+
+const Title = styled.div`
+  font-size: 22px;
+  font-weight: bold;
+  margin: 5px 0;
 `;
 
 const SymbolNameWrapper = styled.div`
@@ -79,9 +86,11 @@ const CompanyDesc = memo(({ description = '' }) => {
   const { t } = useTranslation();
   return (
     <div>
-      <h3>{t('Company Info')}</h3>
+      <Title>{t('Company Info')}</Title>
       <DescWrapper>
-        <p>{description}</p>
+        {description ? (<div>{description}</div>) : <>
+          {Array(6).fill().map((_, i) => <BlockSkeleton key={i} size="full" style={{marginBottom: 8}}/>)}
+        </>}
       </DescWrapper>
     </div>
   );
@@ -127,15 +136,15 @@ const Stock = ({ symbol, data = [] }) => {
         <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} isDelayed={data?.quoteSourceName === 'Delayed Quote'}/>
         <Bookmark symbol={symbol} />
       </StickyWrapper>
-      {loading ? (
+      {/* {loading ? (
         <Spinner />
-      ) : (
+      ) : ( */}
         <>
           <CompanyDesc description={stockInfo?.description} />
           <Charts symbol={symbol} />
-          <NewsList news={news} />
+          <NewsList news={news} loading={loading} />
         </>
-      )}
+      {/* )} */}
     </Layout>
   );
 };
