@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         },
       });
       if(apiRes?.data) {
-        results.push({symbol, data: apiRes?.data});
+        results.push({symbol, data: apiRes?.data?.attr});
       }
     }
     // console.log(apiRes?.data);

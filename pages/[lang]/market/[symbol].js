@@ -111,7 +111,7 @@ const CompanyDesc = memo(({ description = '' }) => {
 const Stock = ({ symbol, data = [] }) => {
   const [loading, setLoading] = useState(true);
   const [news, setNews] = useState([]);
-  const [stockInfo, setStockInfo] = useState([]);
+  const [desc, setDesc] = useState(null);
   const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(data);
 
   useEffect(() => {
@@ -126,10 +126,10 @@ const Stock = ({ symbol, data = [] }) => {
           },
         });
         const newsData = res?.data?.feeds;
-        const stockInfoData = res?.data?.metaInfo;
+        const desc = res?.data?.desc;
         setLoading(false);
         setNews(newsData);
-        setStockInfo(stockInfoData);
+        setDesc(desc);
       } catch (err) {
         console.log(err);
         setLoading(false);
@@ -144,7 +144,7 @@ const Stock = ({ symbol, data = [] }) => {
         <title>{symbol}</title>
       </Head>
       <StickyWrapper layout layoutId={symbol}>
-        <HeaderContainer symbol={symbol} name={data?.longName || stockInfo?.name} />
+        <HeaderContainer symbol={symbol} name={data?.longName} />
         <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} isDelayed={data?.quoteSourceName === 'Delayed Quote'}/>
         <Bookmark symbol={symbol} />
       </StickyWrapper>
@@ -152,7 +152,7 @@ const Stock = ({ symbol, data = [] }) => {
         <Spinner />
       ) : ( */}
         <>
-          <CompanyDesc description={stockInfo?.description} />
+          <CompanyDesc description={desc} />
           <Charts symbol={symbol} />
           <NewsList news={news} loading={loading} />
         </>

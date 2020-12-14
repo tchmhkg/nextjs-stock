@@ -66,10 +66,9 @@ const HKIndices = () => {
   }, [prices, isVisible]);
 
   const renderQuoteContent = useCallback(data => {
-    const { attr } = data?.data;
     const priceObj = {
-      lastPrice: attr?.last_value,
-      closePrice: attr?.last_close_value,
+      lastPrice: data?.data?.last_value,
+      closePrice: data?.data?.last_close_value,
     };
 
     return (

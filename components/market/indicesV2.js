@@ -40,7 +40,7 @@ const MarketIndices = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       getQuotes();
-    }, 3000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [isVisible, isMounted]);
 
@@ -66,10 +66,9 @@ const MarketIndices = () => {
   }, [prices, isVisible]);
 
   const renderQuoteContent = useCallback(data => {
-    const { attr } = data?.data;
     const priceObj = {
-      lastPrice: attr?.last_value,
-      closePrice: attr?.last_close_value,
+      lastPrice: data?.data?.last_value,
+      closePrice: data?.data?.last_close_value,
     };
 
     return (

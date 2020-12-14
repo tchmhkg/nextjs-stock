@@ -21,7 +21,7 @@ const AreaChart = ({ symbol, ...props }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchStock();
-    }, 2000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [symbol, isVisible]);
 
