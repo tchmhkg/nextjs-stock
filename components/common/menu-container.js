@@ -3,7 +3,7 @@ import { motion, useCycle } from 'framer-motion';
 import styled from 'styled-components';
 import { MenuToggle } from './menu-toggle';
 import { Nav } from './menu-nav';
-import styles from './menu.module.scss';
+import styles from './menu-container.module.scss';
 
 const bgVariants = {
   closed: {

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import LanguageSwitcher from '~/components/language-switcher';
 import ThemeSwitcher from "~/components/theme-switcher";
 // import Menu from "~/components/menu";
-import { Menu } from "~/components/common/Menu";
+import { Menu } from "~/components/common/menu-container";
 import Image from 'next/image';
 
 const Container = styled.div`

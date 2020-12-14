@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { MenuItem } from './menu-item';
-import styles from './menu.module.scss';
+import styles from './menu-container.module.scss';
 import Link from 'next/link';
 import useTranslation from '~/hooks/useTranslation';
 
