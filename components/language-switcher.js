@@ -35,10 +35,11 @@ const LanguageSwitcher = () => {
 
   const handleLocaleChange = React.useCallback(
     (locale) => {
+      if(currentLocale === locale) return;
       const regex = new RegExp(`^/(${locales.join("|")})`);
       router.push(router.pathname, router.asPath.replace(regex, `/${locale}`));
     },
-    [router]
+    [router, currentLocale]
   );
 
   return (

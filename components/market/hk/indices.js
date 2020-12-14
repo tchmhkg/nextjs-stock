@@ -6,6 +6,7 @@ import useTranslation from '~/hooks/useTranslation';
 // import { dollarFormat } from '~/utils';
 import IndexPrice from '~/components/market-indices/index-price';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
+import IndicesSkeleton from '~/components/ui/indices-skeleton';
 
 const Container = styled.div`
   height: 85px;
@@ -82,21 +83,30 @@ const HKIndices = () => {
     }
   }, [prices, isVisible]);
 
+  const renderQuoteContent = useCallback(data => {
+    const { attr } = data?.data;
+    const priceObj = {
+      lastPrice: attr?.last_value,
+      closePrice: attr?.last_close_value,
+    };
+
+    return (
+      <Wrapper>
+        <LabelContainer label={data?.symbol} />
+        <IndexPrice priceObj={priceObj} />
+      </Wrapper>
+    );
+  }, [prices])
+
   return (
     <Container>
-      {prices?.map((price) => {
-        const { candles, attr } = price?.data;
-        const priceObj = {
-          lastPrice: attr?.last_value,
-          closePrice: candles[candles.length - 2][4],
-        };
+      {prices?.length ? prices?.map((price) => {
         return (
-          <Wrapper key={price?.symbol}>
-            <LabelContainer label={price?.symbol} />
-            <IndexPrice priceObj={priceObj} />
-          </Wrapper>
-        );
-      })}
+          <React.Fragment key={price?.symbol}>
+            {renderQuoteContent(price)}
+          </React.Fragment>
+        )
+      }) : <IndicesSkeleton />}
     </Container>
   );
 };
