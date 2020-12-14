@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import useTranslation from '~/hooks/useTranslation';
 import styled from 'styled-components';
@@ -15,13 +15,20 @@ const Title = styled.div`
 
 const NewsList = ({ loading, news }) => {
   const { t } = useTranslation();
+  const renderSkeleton = useCallback(() => {
+    let result = [];
+    for(let i = 0; i < 5; i++) {
+      result.push(<NewsItemSkeleton key={i}/>)
+    }
+    return result
+  }, [])
   return (
     <>
       <Title>{t('news')}</Title>
       {!loading ? news?.map((item) => (
         <NewsItem key={item.guid} item={item} />
       )) : (<>
-        {Array(5).fill().map((_, i) => <NewsItemSkeleton key={i}/>)}
+        {renderSkeleton()}
       </>)}
     </>
   );

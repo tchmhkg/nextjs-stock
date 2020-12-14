@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
@@ -53,6 +53,10 @@ const DescWrapper = styled.div`
   }
 `;
 
+const DescSkeleton = styled(BlockSkeleton)`
+  margin-bottom: 8px;
+`;
+
 const StickyWrapper = styled(motion.div)`
   position: sticky;
   top: 70px;
@@ -84,12 +88,20 @@ const HeaderContainer = memo(({ symbol, name }) => {
 
 const CompanyDesc = memo(({ description = '' }) => {
   const { t } = useTranslation();
+  const renderSkeleton = useCallback(() => {
+    let result = [];
+    for(let i = 0; i < 6; i++) {
+      result.push(<DescSkeleton key={i} size="full"/>)
+    }
+    return result
+  }, [])
+
   return (
     <div>
       <Title>{t('Company Info')}</Title>
       <DescWrapper>
         {description ? (<div>{description}</div>) : <>
-          {Array(6).fill().map((_, i) => <BlockSkeleton key={i} size="full" style={{marginBottom: 8}}/>)}
+          {renderSkeleton()}
         </>}
       </DescWrapper>
     </div>
