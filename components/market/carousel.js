@@ -17,6 +17,7 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
+  margin-right: 15px;
   overflow-x: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;

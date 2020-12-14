@@ -3,12 +3,17 @@ import axios from 'axios';
 const MAPPINGS = {
   'HSI': 179,
   'HSI-F': 8984,
-  'NQ-F': 8874
+  '$DJI': 169,
+  '$COMPX': 20,
+  '$SPX.X': 166,
+  '/YM': 8873,
+  '/NQ': 8874,
+  '/ES': 8839
 }
 
 const MARKET_MAPPINGS = [
   {market: 'HK', symbols: ['HSI', 'HSI-F']},
-  {market: 'US', symbols: ['NQ-F']}
+  {market: 'US', symbols: ['$DJI','$COMPX','$SPX.X','/YM','/NQ','/ES']}
 ]
 
 export default async function handler(req, res) {
@@ -23,21 +28,21 @@ export default async function handler(req, res) {
     const symbols = MARKET_MAPPINGS.find(m => m.market === market).symbols;
     let results = [];
     for (const symbol of symbols) {
-      const url =
-        'https://www.investing.com/common/modules/js_instrument_chart/api/data.php';
+      const url = 'https://www.investing.com/common/modules/js_instrument_chart/api/data.php';
+      // const url = 'https://m.investing.com/instrument/services/getChart';
       const apiRes = await axios.get(url, {
         headers: {
           Referer: 'https://www.investing.com/',
           'X-Requested-With': 'XMLHttpRequest',
         },
         params: {
-          pair_id: MAPPINGS[symbol], // 8874: NQ future, 8984: HSI future, 179: HSI
-          pair_interval: 86400,
+          pair_id: MAPPINGS[symbol],
+          pair_interval: 900,
           chart_type: 'candlestick',
           candle_count: 90,
-          period: '1-year',
+          // period: '1-year',
           // volume_series: 'no',
-          // events: 'yes'
+          events: 'no'
         },
       });
       if(apiRes?.data) {

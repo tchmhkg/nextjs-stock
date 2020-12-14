@@ -95,3 +95,10 @@ export const convertHexToRGBA = (hexCode, opacity = 1) => {
 
   return `rgba(${r},${g},${b},${opacity})`;
 };
+
+export const getLastClosePriceChangeFromHtml = code => {
+  var div = document.createElement('div');
+  div.innerHTML = code;
+  const changeText = document.getElementById('chart-info-change')?.innerText || 0;
+  return parseFloat(changeText);
+}
