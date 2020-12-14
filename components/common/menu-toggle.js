@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion } from "framer-motion";
-import styles from './Menu.module.scss';
+import styles from './menu.module.scss';
 import { useTheme } from "~/theme";
 
 const Path = props => (

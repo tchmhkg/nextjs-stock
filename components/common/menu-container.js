@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, useCycle } from 'framer-motion';
 import styled from 'styled-components';
-import { MenuToggle } from './MenuToggle';
-import { Nav } from './Nav';
-import styles from './Menu.module.scss';
+import { MenuToggle } from './menu-toggle';
+import { Nav } from './menu-nav';
+import styles from './menu.module.scss';
 
 const bgVariants = {
   closed: {
