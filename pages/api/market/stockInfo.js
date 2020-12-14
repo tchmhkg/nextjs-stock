@@ -17,9 +17,9 @@ export default async function handler(req, res) {
 
     cancelToken = axios.CancelToken.source();
 
-    const latestPriceRes = await axios.get(getLatestPrice(symbol), {
-      cancelToken: cancelToken.token,
-    });
+    // const latestPriceRes = await axios.get(getLatestPrice(symbol), {
+    //   cancelToken: cancelToken.token,
+    // });
 
     const metaInfoRes = await axios.get(getMetaInfo(symbol), {
       cancelToken: cancelToken.token,
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     res.json({
       success: true,
       feeds: feed?.items || [],
-      latestPrice: latestPriceRes?.data || [],
+      // latestPrice: latestPriceRes?.data || [],
       metaInfo: metaInfoRes?.data || []
     });
   } catch (error) {
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     res.json({
       success: false,
       feeds: [],
-      latestPrice: [],
+      // latestPrice: [],
       metaInfo: []
     });
   }
