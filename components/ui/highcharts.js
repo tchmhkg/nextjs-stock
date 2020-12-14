@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { useTheme } from '~/theme';
 import { convertHexToRGBA } from '~/utils';
-
+import { useWindowSize } from '~/hooks/useWindowSize';
 export const AreaHighChart = forwardRef(
   (
     { symbol, data = [], type, callback = () => {}, options, ...props },
@@ -60,3 +60,29 @@ export const CandleStickHighChart = forwardRef(
     );
   }
 )
+
+export const LineHighChart = forwardRef(
+  (
+    { symbol, data = [], type, callback = () => {}, options, ...props },
+    ref
+  ) => {
+    const { width: windowWidth } = useWindowSize();
+    options = {
+      ...options,
+      chart: {
+        ...options.chart,
+        width: windowWidth <= 768 ? 80 : 160
+      }
+    }
+
+    return (
+      <HighchartsReact
+        ref={ref}
+        options={options}
+        highcharts={Highcharts}
+        constructorType="stockChart"
+        containerProps={{ className: 'chartContainer' }}
+      />
+    );
+  }
+);

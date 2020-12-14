@@ -14,10 +14,10 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 0 0 0 15px;
-  min-width: ${(props) => (props.isFuture ? '130px' : '120px')};
-  max-width: ${(props) => (props.isFuture ? '130px' : '120px')};
+  min-width: 125px;
+  max-width: 125px;
   &:last-child {
-    padding-right: 15px;
+    margin-right: 15px;
   }
 `;
 
@@ -40,7 +40,7 @@ const MarketIndices = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       getQuotes();
-    }, 1500);
+    }, 3000);
     return () => clearInterval(interval);
   }, [isVisible, isMounted]);
 

@@ -7,26 +7,14 @@ import useTranslation from '~/hooks/useTranslation';
 import IndexPrice from '~/components/market-indices/index-price';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import IndicesSkeleton from '~/components/ui/indices-skeleton';
-
-const Container = styled.div`
-  height: 85px;
-  position: sticky;
-  top: 70px;
-  background-color: ${props => props.theme.background};
-  -webkit-transition: background-color 200ms linear;
-  -ms-transition: background-color 200ms linear;
-  transition: background-color 200ms linear;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
+import Carousel from '~/components/market/carousel';
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-width: 250px;
+  padding: 0 15px;
   @media (max-width: 768px) {
     min-width: ${(props) => (props.isFuture ? '180px' : '150px')};
   }
@@ -42,12 +30,6 @@ const LabelContainer = memo(({ label = '' }) => {
   const { t } = useTranslation();
   return <Label>{t(label)}</Label>;
 });
-
-const Price = styled.span`
-  font-size: 20px;
-  font-weight: bold;
-  display: flex;
-`;
 
 const HKIndices = () => {
   const [prices, setPrices] = useState([]);
@@ -99,7 +81,7 @@ const HKIndices = () => {
   }, [prices])
 
   return (
-    <Container>
+    <Carousel>
       {prices?.length ? prices?.map((price) => {
         return (
           <React.Fragment key={price?.symbol}>
@@ -107,7 +89,7 @@ const HKIndices = () => {
           </React.Fragment>
         )
       }) : <IndicesSkeleton />}
-    </Container>
+    </Carousel>
   );
 };
 

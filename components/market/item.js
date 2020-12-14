@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import React, { useEffect, useCallback, memo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import axios from 'axios';
 import styled from 'styled-components';
 import { motion, useAnimation } from 'framer-motion';
 
@@ -11,6 +9,8 @@ import useTranslation from '~/hooks/useTranslation';
 import { differenceBetweenValues, getAnimationType, getLastAndClosePriceFromYahoo } from '~/utils';
 import { useTheme } from '~/theme';
 import { usePrevious } from '~/hooks/usePrevious';
+import LineChart from './line-chart';
+import { useWindowSize } from '~/hooks/useWindowSize';
 
 const ClockIcon = dynamic(() =>
   import('~/components/ui/icon').then((mod) => mod.ClockIcon)
@@ -19,7 +19,7 @@ const ClockIcon = dynamic(() =>
 const Container = styled(motion.div)`
   display: flex;
   flex: 1;
-  padding: 10px;
+  padding: 10px 0;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -32,6 +32,9 @@ const Container = styled(motion.div)`
 const Name = styled.span`
   font-size: 14px;
   color: ${(props) => props.theme.inactiveLegend};
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 const Symbol = styled.span`
@@ -57,33 +60,14 @@ const Diff = styled.span`
 
 const ProfileWrapper = styled.div`
   display: flex;
-  flex: 0.6;
+  width: 45%;
   flex-direction: row;
   align-items: center;
 `;
 
-const LogoWrapper = styled.div`
-  min-width: 35px;
-  min-height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  border-radius: 50%;
-`;
-
-const Logo = styled(Image)`
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  object-fit: contain;
-`;
-
-const Placeholder = styled.div`
-  min-width: 35px;
-  min-height: 35px;
-  border-radius: 50%;
-  background: ${(props) => props.theme.chartDataZoomBackground};
+const LineChartWrapper = styled.div`
+  pointer-events: none;
+  width: 25%;
 `;
 
 const Remark = styled.div`
@@ -93,11 +77,11 @@ const Remark = styled.div`
 const StockItem = ({ item }) => {
   const { colors } = useTheme();
   const { locale, t } = useTranslation();
-  const [profile, setProfile] = useState({});
   const { marketState, longName } = item;
   const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(item);
   const prevLastPrice = usePrevious(lastPrice);
   const controls = useAnimation();
+  const {width: windowWidth} = useWindowSize();
 
   const pricesArray = differenceBetweenValues({
     oldValue: prevLastPrice, 
@@ -107,30 +91,11 @@ const StockItem = ({ item }) => {
   });
 
   useEffect(() => {
-    if (item?.symbol) {
-      getQuote(item.symbol);
-    }
-  }, []);
-
-  useEffect(() => {
     const type = getAnimationType(lastPrice, prevLastPrice);
     if(type) {
       startAnimation(type);
     }
   }, [item, prevLastPrice, lastPrice])
-    
-  const getQuote = async () => {
-    try {
-      const res = await axios.get('/api/market/quote', {
-        params: { symbol: item.symbol },
-      });
-      if (res?.data) {
-        setProfile(res?.data?.profile);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const getPriceColor = useCallback(() => {
     if (lastPrice > closePrice) {
@@ -156,18 +121,6 @@ const StockItem = ({ item }) => {
     }
   }, [lastPrice, closePrice]);
 
-  const renderLogo = useMemo(
-    () =>
-      profile?.logo ? (
-        <LogoWrapper>
-          <Logo src={profile?.logo} width={35} height={35} />
-        </LogoWrapper>
-      ) : (
-        <Placeholder />
-      ),
-    [profile?.logo]
-  );
-
   const SymbolContainer = memo(({ symbol }) => <Symbol>{symbol}</Symbol>);
   const startAnimation = async (type) => await controls.start(type);
 
@@ -182,23 +135,25 @@ const StockItem = ({ item }) => {
     >
       <Container layoutId={item.symbol} initial={false}>
         <ProfileWrapper>
-          {renderLogo}
           <div className={styles.stockInfo}>
             <SymbolContainer symbol={item.symbol} />
             <Name>{longName}</Name>
           </div>
         </ProfileWrapper>
+        {!(windowWidth < 375) && (
+          <LineChartWrapper>
+            <LineChart symbol={item.symbol} />
+          </LineChartWrapper>
+        )}
         <div className={styles.stockPrice}>
           <PriceWrapper>
-            {item?.quoteSourceName === 'Delayed Quote' && (
-              <ClockIcon />
-            )}
+            {item?.quoteSourceName === 'Delayed Quote' && <ClockIcon />}
             {renderLastPrice()}
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
-          {['PRE', 'POSTPOST', 'CLOSED', 'PREPRE', 'PREPARE'].includes(marketState) && (
-            <Remark>{t(marketState)}</Remark>
-          )}
+          {['PRE', 'POSTPOST', 'CLOSED', 'PREPRE', 'PREPARE'].includes(
+            marketState
+          ) && <Remark>{t(marketState)}</Remark>}
         </div>
       </Container>
     </Link>

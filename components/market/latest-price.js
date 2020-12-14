@@ -98,7 +98,7 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
     useEffect(() => {
       const interval = setInterval(async () => {
         getQuotes();
-      }, 1000);
+      }, 2500);
       return () => clearInterval(interval);
     }, [isVisible, symbol, isMounted]);
   

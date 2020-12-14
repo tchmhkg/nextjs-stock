@@ -8,11 +8,11 @@
 .stockInfo {
   display: flex;
   flex-direction: column;
-  margin-left: 10px;
+  width: 100%;
 }
 .stockPrice {
   display: flex;
-  flex: 0.4;
+  width: 30%;
   flex-direction: column;
   align-items: flex-end;
 }

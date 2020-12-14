@@ -39,6 +39,9 @@ export const getAreaChartOptions = ({ symbol = '', colors = {}, highCharts, data
         lineWidth: 1,
       },
     },
+    credits: {
+        enabled: false
+    },
     lang: {
       decimalPoint: '.',
       thousandsSeparator: ',',
@@ -46,6 +49,8 @@ export const getAreaChartOptions = ({ symbol = '', colors = {}, highCharts, data
     chart: {
       backgroundColor: 'transparent',
       height: 300,
+      panning: false,
+      pinchType: null,
     },
     exporting: {
       enabled: false,
@@ -146,6 +151,9 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
       decimalPoint: '.',
       thousandsSeparator: ','
     },
+    credits: {
+        enabled: false
+    },
     chart: {
       backgroundColor: 'transparent',
       height: 300
@@ -240,6 +248,100 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
         name: 'Volume',
         data: volume,
         yAxis: 1,
+      },
+    ],
+  };
+  return options;
+};
+
+
+export const parseLineChartData = (data) => {
+  let ohlc = [];
+  const dataLength = data ? data?.timestamp?.length : 0;
+  if(!dataLength) {
+    return { ohlc };
+  }
+  const closePriceArr = data.indicators.quote[0]['close'];
+  let lastValidClosePrice = null;
+  for (let i = 0; i < dataLength; i++) {
+    lastValidClosePrice = closePriceArr[i] || lastValidClosePrice;
+    ohlc.push([
+      formatDateTime(data.timestamp[i]), // the date
+      closePriceArr[i] || lastValidClosePrice, // close
+    ]);
+  }
+  return { ohlc };
+}
+
+export const getLineChartOptions = ({ symbol = '', colors = {}, data }) => {
+  const options = {
+    plotOptions: {
+      series: {
+        lineWidth: 1,
+      },
+    },
+    credits: {
+        enabled: false
+    },
+    lang: {
+      decimalPoint: '.',
+      thousandsSeparator: ',',
+    },
+    chart: {
+      backgroundColor: 'transparent',
+      height: 50,
+      width: 80,
+      panning: false,
+      pinchType: null,
+    },
+    exporting: {
+      enabled: false,
+    },
+    rangeSelector: {
+      enabled: false,
+    },
+    scrollbar: {
+      enabled: false,
+    },
+    navigator: {
+      enabled: false,
+    },
+    xAxis: {
+      visible: false
+    },
+    yAxis: {
+      visible: false
+    },
+    tooltip: {
+      enabled: false
+    },
+
+    series: [
+      {
+        name: symbol,
+        data: data,
+        id: symbol,
+        states: {
+          hover: {
+              enabled: false
+          },
+          enableMouseTracking: false,
+          market: {
+            enabled: false
+          }
+        },
+        color: {
+          linearGradient: {
+            x1: 0,
+            y1: 1,
+            x2: 0,
+            y2: 0,
+          },
+          stops: [
+            [0, colors.primary2],
+            [1, colors.primary1]
+          ]
+        }
       },
     ],
   };
