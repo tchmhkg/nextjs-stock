@@ -9,7 +9,7 @@ import useTranslation from '~/hooks/useTranslation';
 import { getLocalizationProps } from '~/context/LanguageContext';
 import { getLastAndClosePriceFromYahoo } from '~/utils';
 import Layout from '~/components/layout';
-import Spinner from '~/components/spinner';
+// import Spinner from '~/components/spinner';
 import { BlockSkeleton } from '~/components/ui/skeleton';
 
 const LatestPrice = dynamic(import('~/components/market/latest-price'));
