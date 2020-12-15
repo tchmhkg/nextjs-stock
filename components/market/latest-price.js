@@ -5,14 +5,43 @@ import axios from 'axios';
 import useSWR from 'swr';
 import styles from "~/components/market/latest-price.module.scss";
 import { useAnimation } from 'framer-motion';
-import { differenceBetweenValues, getAnimationType, getLastAndClosePriceFromYahoo } from '~/utils';
+import { differenceBetweenValues, getAnimationType, getPricesFromYahoo } from '~/utils';
 import { useTheme } from '~/theme';
 import { usePrevious } from '~/hooks/usePrevious';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
+import DayHighLow from '~/components/market/day-high-low';
 
 const ClockIcon = dynamic(() =>
   import('~/components/ui/icon').then((mod) => mod.ClockIcon)
 )
+
+const Container = styled.div`
+  width: 100%;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Name = styled.span`
+  font-size: 14px;
+  color: ${(props) => props.theme.inactiveLegend};
+`;
+
+const Symbol = styled.span`
+  font-size: 24px;
+  font-weight: bold;
+  display: inline-block;
+`;
 
 const Price = styled.span`
   font-size: 24px;
@@ -29,6 +58,11 @@ const PriceWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+const SymbolNameWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const PriceContainer = memo(({price = 0, closePrice = 0, isDelayed}) => {
@@ -90,19 +124,24 @@ const PriceContainer = memo(({price = 0, closePrice = 0, isDelayed}) => {
 })
 
 const fetcher = (url, params) => axios.get(url, {params}).then(res => {
-  const result = res?.data?.data?.[0] || {};
-  const { lastPrice, closePrice: apiClosePrice } = getLastAndClosePriceFromYahoo(result);
-  return {lastPrice, apiClosePrice, marketState: result.marketState};
+  const result = res?.data?.data || {};
+
+  const { lastPrice, closePrice: apiClosePrice } = getPricesFromYahoo(result);
+  const {marketState, longName, regularMarketDayHigh, regularMarketDayLow} = result;
+  return {lastPrice, apiClosePrice, marketState, longName, regularMarketDayHigh, regularMarketDayLow};
 });
 
 const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
     const [price, setPrice] = useState(data.lastPrice || 0);
     const [closePrice, setClosePrice] = useState(data.closePrice || 0);
+    const [name, setName] = useState(null);
     const isVisible = usePageVisibility();
     const params = useMemo(() => ({symbol}), [symbol]);
-    const { data: prices, error } = useSWR([(isVisible && symbol) ? '/api/market/quotes' : null, params], fetcher, {refreshInterval: 2500})
-
+    const { data: prices, error } = useSWR([(isVisible && symbol) ? '/api/market/price' : null, params], fetcher, {refreshInterval: 2500})
     useEffect(() => {
+      if(prices?.longName) {
+        setName(prices?.longName)
+      }
       if(prices?.marketState !== 'CLOSED') {
         setPrice(prices?.lastPrice);
         setClosePrice(prices?.apiClosePrice);
@@ -110,10 +149,25 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
     }, [prices?.lastPrice, prices?.apiClosePrice, prices?.marketState])
 
     return (
-        <div>
+        <Container>
+          <Wrapper>
+            <HeaderContainer symbol={symbol} name={name} />
             <PriceContainer price={price} closePrice={closePrice} isDelayed={isDelayed}/>
-        </div>
+          </Wrapper>
+          <DayHighLow high={prices?.regularMarketDayHigh?.raw} low={prices?.regularMarketDayLow?.raw}/>
+        </Container>
     )
 }
+
+const HeaderContainer = memo(({ symbol, name }) => {
+  return (
+    <Header>
+      <SymbolNameWrapper>
+        <Symbol>{symbol} </Symbol>
+        {name && <Name>{name}</Name>}
+      </SymbolNameWrapper>
+    </Header>
+  );
+});
 
 export default LatestPrice;

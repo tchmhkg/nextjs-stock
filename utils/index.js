@@ -40,6 +40,29 @@ export const getLastAndClosePriceFromYahoo = item => {
   return {lastPrice, closePrice};
 }
 
+export const getPricesFromYahoo = item => {
+  let lastPrice = 0;
+  let closePrice = 0;
+  if(!item) {
+    return {lastPrice, closePrice};
+  }
+  const { marketState } = item;
+  if(marketState === 'PRE') {
+    lastPrice = item?.preMarketPrice.raw || item?.regularMarketPrice.raw;
+    closePrice = item?.regularMarketPrice.raw;
+  } else if (['POSTPOST', 'PREPRE', 'PREPARE'].includes(marketState)) {
+    lastPrice = item?.postMarketPrice.raw;
+    closePrice = item?.regularMarketPrice.raw;
+  } else if (marketState === 'CLOSED') {
+    lastPrice = item?.postMarketPrice.raw;
+    closePrice = item?.regularMarketPreviousClose.raw;
+  } else {
+    lastPrice = item?.regularMarketPrice.raw;
+    closePrice = item?.regularMarketPreviousClose.raw;
+  }
+  return {lastPrice, closePrice};
+}
+
 const spanStyle = {display: 'inline-block'};
 
 export const differenceBetweenValues = ({oldValue = 0, newValue = 0, controls, theme = {}}) =>{  

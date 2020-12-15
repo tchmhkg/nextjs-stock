@@ -33,6 +33,8 @@ const strings = {
     "Time Frame": "Time Frame",
     "1d": "1D",
     "Home": "Home",
+    "Day high": "Day high",
+    "Day low": "Day low",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -68,6 +70,8 @@ const strings = {
     "Time Frame": "分時",
     "1d": "日K",
     "Home": "首頁",
+    "Day high": "全日高位",
+    "Day low": "全日低位",
   },
 };
 
