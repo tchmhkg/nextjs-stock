@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import moment from 'moment';
+import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components';
 import styles from '~/components/market/news-item.module.scss';
 import useTranslation from '~/hooks/useTranslation';
@@ -40,7 +40,7 @@ const PublishDate = memo(({ date }) => {
   return (
     <div className={`${styles.row} ${styles.metadataRow}`}>
       <Text>
-        {t('Published at')}: {moment(date).fromNow()}
+        {t('Published at')}: {formatDistanceToNow(new Date(date), { addSuffix: true })}
       </Text>
     </div>
   );

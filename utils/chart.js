@@ -1,8 +1,8 @@
-import moment from 'moment-timezone';
+import { fromUnixTime, format } from "date-fns";
 import { convertHexToRGBA } from './index';
 
 const formatDateTime = (timestamp) =>
-parseFloat(moment.unix(timestamp).format('x'));
+parseFloat(format(fromUnixTime(timestamp), 'T'));
 
 export const parseAreaChartData = (data) => {
   let ohlc = [];
@@ -56,7 +56,9 @@ export const getAreaChartOptions = ({ symbol = '', colors = {}, highCharts, data
       enabled: false,
     },
     time: {
-      timezone: 'America/New_York',
+      // timezone: 'America/New_York',
+      timezoneOffset: 60 * 5,
+      // useUTC: true,
     },
     rangeSelector: {
       enabled: false,
@@ -173,7 +175,8 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
       enabled: false,
     },
     time: {
-      timezone: 'America/New_York',
+      // timezone: 'America/New_York',
+      timezoneOffset: 60 * 5,
     },
     rangeSelector: {
       enabled: false,
@@ -189,7 +192,7 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
       max: ohlc?.[ohlc.length - 1]?.[0],
       labels: {
         formatter: function() {
-          return moment(this.value).format('YYYY/MM');
+          return format(this.value, 'YYYY/MM');
         }
       },
       tickInterval: 24 * 3600 * 1000 * 30.5,

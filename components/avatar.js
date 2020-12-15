@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { memo } from "react";
 import styles from "~/components/avatar.module.scss";
-import utilStyles from "~/styles/utils.module.scss";
 import { name } from "~/components/layout";
 import useTranslation from "~/hooks/useTranslation";
 import styled from 'styled-components';
@@ -21,14 +20,14 @@ const Avatar = () => {
             src="/images/profile.png"
             width={70 / 2}
             height={87.5 / 2}
-            className={`${styles.headerImage} ${utilStyles.borderCircle}`}
+            className={`${styles.headerImage} ${styles.borderCircle}`}
             alt={name}
           />
         </a>
       </Link>
       <h2 className={styles.name}>
         <Link href="/[lang]" as={`/${locale}`}>
-          <Name className={utilStyles.colorInherit}>{name}</Name>
+          <Name className={styles.colorInherit}>{name}</Name>
         </Link>
       </h2>
     </div>

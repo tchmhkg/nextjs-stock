@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import styles from './menu-container.module.scss';
+import styles from './menu-item.module.scss';
 import useTranslation from '~/hooks/useTranslation';
 
 const ItemText = styled.div`

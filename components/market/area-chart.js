@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import moment from 'moment-timezone';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useTheme } from '~/theme';
 import { ChartSkeleton } from '~/components/ui/chart-skeleton';
@@ -14,7 +13,6 @@ const AreaChart = ({ symbol, ...props }) => {
   const isVisible = usePageVisibility();
 
   useEffect(() => {
-    window.moment = moment;
     fetchStock();
   }, []);
 

@@ -4,7 +4,7 @@ const MAPPINGS = {
   'HSI': 179,
   'HSI-F': 8984,
   '$DJI': 169,
-  '$COMPX': 20,
+  '$COMPX': 14958,
   '$SPX.X': 166,
   '/YM': 8873,
   '/NQ': 8874,
@@ -37,16 +37,18 @@ export default async function handler(req, res) {
         },
         params: {
           pair_id: MAPPINGS[symbol],
-          pair_interval: 900,
+          pair_interval: 86400,
           chart_type: 'candlestick',
-          candle_count: 90,
+          candle_count: 40,
           // period: '1-year',
-          // volume_series: 'no',
+          volume_series: 'no',
           events: 'no'
         },
       });
       if(apiRes?.data) {
-        results.push({symbol, data: apiRes?.data?.attr});
+        let data = apiRes?.data;
+        data.attr.last_close_value = apiRes?.data?.candles[apiRes?.data?.candles.length - 2][4]
+        results.push({symbol, data: data.attr});
       }
     }
     // console.log(apiRes?.data);
