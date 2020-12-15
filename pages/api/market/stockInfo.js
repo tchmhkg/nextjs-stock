@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     //   cancelToken: cancelToken.token,
     // });
 
-    const profileUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=assetProfile`;
+    const profileUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=summaryProfile`;
 
     const metaInfoRes = await axios.get(profileUrl, {
       cancelToken: cancelToken.token,
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       success: true,
       feeds: feed?.items || [],
       // latestPrice: latestPriceRes?.data || [],
-      desc: metaInfoRes?.data?.quoteSummary?.result?.[0]?.assetProfile.longBusinessSummary
+      desc: metaInfoRes?.data?.quoteSummary?.result?.[0]?.summaryProfile.longBusinessSummary
     });
   } catch (error) {
     console.log(error);

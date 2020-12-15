@@ -15,32 +15,10 @@ const NewsContainer = dynamic(import('~/components/market/news-container'));
 const Bookmark = dynamic(import('~/components/market/bookmark'));
 const Charts = dynamic(import('~/components/market/charts'));
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Symbol = styled.span`
-  font-size: 24px;
-  font-weight: bold;
-  display: inline-block;
-`;
-
-const Name = styled.span`
-  font-size: 14px;
-  color: ${(props) => props.theme.inactiveLegend};
-`;
-
 const Title = styled.div`
   font-size: 22px;
   font-weight: bold;
   margin: 5px 0;
-`;
-
-const SymbolNameWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 const DescWrapper = styled.div`
@@ -57,7 +35,7 @@ const DescSkeleton = styled(BlockSkeleton)`
 
 const StickyWrapper = styled(motion.div)`
   position: sticky;
-  top: 70px;
+  top: 69px;
   left: 0;
   background-color: ${(props) => props.theme.background};
   -webkit-transition: background-color 200ms linear;
@@ -73,16 +51,6 @@ const StickyWrapper = styled(motion.div)`
   justify-content: space-between;
 `;
 
-const HeaderContainer = memo(({ symbol, name }) => {
-  return (
-    <Header>
-      <SymbolNameWrapper>
-        <Symbol>{symbol} </Symbol>
-        {name && <Name>({name})</Name>}
-      </SymbolNameWrapper>
-    </Header>
-  );
-});
 
 const CompanyDesc = memo(({ description = '' }) => {
   const { t } = useTranslation();
@@ -122,7 +90,7 @@ const Stock = ({ symbol, data = [] }) => {
             symbol,
           },
         });
-        const desc = res?.data?.desc;
+        const {desc} = res?.data;
         setLoading(false);
         setDesc(desc);
       } catch (err) {
@@ -139,7 +107,6 @@ const Stock = ({ symbol, data = [] }) => {
         <title>{symbol}</title>
       </Head>
       <StickyWrapper layout layoutId={symbol}>
-        <HeaderContainer symbol={symbol} name={data?.longName} />
         <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} isDelayed={data?.quoteSourceName === 'Delayed Quote'}/>
         <Bookmark symbol={symbol} />
       </StickyWrapper>
