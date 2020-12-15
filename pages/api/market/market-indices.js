@@ -47,8 +47,7 @@ export default async function handler(req, res) {
       });
       if(apiRes?.data) {
         let data = apiRes?.data;
-        data.attr.last_close_value = apiRes?.data?.candles[apiRes?.data?.candles.length - 2][4]
-        results.push({symbol, data: data.attr});
+        results.push({symbol, data: data.attr, html: data.html.chart_info});
       }
     }
     // console.log(apiRes?.data);

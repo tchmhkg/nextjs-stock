@@ -8,6 +8,7 @@ import IndexPrice from '~/components/market-indices/index-price';
 import Carousel from '~/components/market/carousel';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import IndicesSkeleton from '~/components/ui/indices-skeleton';
+import { getLastClosePriceFromHtml } from '~/utils';
 
 const Wrapper = styled.div`
   display: flex;
@@ -42,7 +43,7 @@ const MarketIndices = () => {
   const renderQuoteContent = useCallback(data => {
     const priceObj = {
       lastPrice: data?.data?.last_value,
-      closePrice: data?.data?.last_close_value,
+      closePrice: getLastClosePriceFromHtml(data?.data?.last_value, data?.html),
     };
 
     return (
