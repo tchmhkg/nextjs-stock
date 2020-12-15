@@ -6,10 +6,8 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 import useTranslation from '~/hooks/useTranslation';
-import { getLocalizationProps } from '~/context/LanguageContext';
 import { getLastAndClosePriceFromYahoo } from '~/utils';
 import Layout from '~/components/layout';
-// import Spinner from '~/components/spinner';
 import { BlockSkeleton } from '~/components/ui/skeleton';
 
 const LatestPrice = dynamic(import('~/components/market/latest-price'));
@@ -148,47 +146,22 @@ const Stock = ({ symbol, data = [] }) => {
         <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} isDelayed={data?.quoteSourceName === 'Delayed Quote'}/>
         <Bookmark symbol={symbol} />
       </StickyWrapper>
-      {/* {loading ? (
-        <Spinner />
-      ) : ( */}
-        <>
-          <CompanyDesc description={desc} />
-          <Charts symbol={symbol} />
-          <NewsList news={news} loading={loading} />
-        </>
-      {/* )} */}
+
+      <CompanyDesc description={desc} />
+      <Charts symbol={symbol} />
+      <NewsList news={news} loading={loading} />
+
     </Layout>
   );
 };
 
 export async function getServerSideProps(ctx) {
-  const localization = getLocalizationProps(ctx);
   const { symbol } = ctx.query || '';
-  const url = new URL(ctx.req.url, `http://${ctx.req.headers.host}`);
-  try {
-    const res = await axios.get(url.origin +'/api/market/quotes', {params: {symbol}})
-    let data = [];
-
-    if(res?.data?.success && res?.data?.data.length) {
-      data = res?.data?.data?.[0]
-    }
-
-    return {
-      props: {
-        localization,
-        symbol,
-        data
-      },
-    };
-  } catch (err) {
-    console.log(err);
-    return {
-      props: {
-        localization,
-        symbol,
-      },
-    };
-  }
+  return {
+    props: {
+      symbol,
+    },
+  };
 }
 
 export default Stock;
