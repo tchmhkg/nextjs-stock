@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import styled from 'styled-components';
 import styles from "~/components/layout.module.scss";
-import utilStyles from "~/styles/utils.module.scss";
 import useTranslation from '~/hooks/useTranslation'
 
 import Head from "~/components/head";
@@ -38,10 +37,10 @@ const Layout = ({ children, home, showAvatar = true, back = false, showBackToHom
               src="/images/profile.png"
               width={100}
               height={125}
-              className={`${styles.headerHomeImage} ${utilStyles.borderCircle}`}
+              className={`${styles.headerHomeImage} ${styles.borderCircle}`}
               alt={name}
             />
-            <h1 className={utilStyles.headingXl}>{name}</h1>
+            <h1 className={styles.headingXl}>{name}</h1>
           </>
         ) : (
           <>
@@ -51,14 +50,14 @@ const Layout = ({ children, home, showAvatar = true, back = false, showBackToHom
                   src="/images/profile.png"
                   width={70}
                   height={87.5}
-                  className={`${styles.headerImage} ${utilStyles.borderCircle}`}
+                  className={`${styles.headerImage} ${styles.borderCircle}`}
                   alt={name}
                 />
               </a>
             </Link>
-            <h2 className={utilStyles.headingLg}>
+            <h2 className={styles.headingLg}>
               <Link href="/[lang]" as={`/${locale}`}>
-                <a className={utilStyles.colorInherit}>{name}</a>
+                <a className={styles.colorInherit}>{name}</a>
               </Link>
             </h2>
           </>
