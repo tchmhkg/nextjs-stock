@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import moment from 'moment-timezone';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { ChartSkeleton } from '../ui/chart-skeleton';
 import { getCandleStickOptions, parseCandleStickChartData } from '~/utils/chart';
@@ -12,7 +11,6 @@ const CandleStickChart = ({ symbol, ...props }) => {
   const isVisible = usePageVisibility();
 
   useEffect(() => {
-    window.moment = moment;
     fetchStock();
   }, [symbol, isVisible]);
 
