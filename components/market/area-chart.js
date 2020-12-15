@@ -26,7 +26,6 @@ const AreaChart = ({ symbol, ...props }) => {
   const fetchStock = async () => {
     try {
       if (!isVisible) {
-        console.log('page not visible, quit');
         return;
       }
       if (!symbol) {

@@ -7,17 +7,19 @@ const NewsItem = dynamic(import('~/components/market/news-item'));
 const NewsList = ({ loading, news }) => {
   const renderSkeleton = useCallback(() => {
     let result = [];
-    for(let i = 0; i < 5; i++) {
-      result.push(<NewsItemSkeleton key={i}/>)
+    for (let i = 0; i < 5; i++) {
+      result.push(<NewsItemSkeleton key={i} />);
     }
-    return result
-  }, [])
-  return (
-    !loading ? news?.map((item) => (
-      <NewsItem key={item.guid} item={item} />
-    )) : (<>
-      {renderSkeleton()}
-    </>)
+    return result;
+  }, []);
+  return news ? (
+    <>
+      {news?.map((item) => (
+        <NewsItem key={item.guid} item={item} />
+      ))}
+    </>
+  ) : (
+    <>{renderSkeleton()}</>
   );
 };
 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
+import useSWR from 'swr';
 import styled from 'styled-components';
 import useTranslation from '~/hooks/useTranslation';
 
@@ -12,38 +13,17 @@ const Title = styled.div`
   margin: 5px 0;
 `;
 
+const fetcher = (url, params) => axios.get(url, {params}).then(res => res?.data?.feeds);
+
 const NewsContainer = ({ symbol }) => {
   const { t } = useTranslation();
-  const [news, setNews] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        if (!symbol) {
-          return;
-        }
-        setLoading(true);
-        const res = await axios.get('/api/market/news', {
-          params: {
-            symbol,
-          },
-        });
-        const newsData = res?.data?.feeds;
-        setNews(newsData);
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-        setLoading(false);
-      }
-    };
-    getData();
-  }, [symbol]);
+  const params = useMemo(() => ({symbol}), [symbol]);
+  const { data: news, error } = useSWR([symbol ? '/api/market/news' : null, params], fetcher);
 
   return (
     <>
       <Title>{t('news')}</Title>
-      <NewsList loading={loading} news={news} />
+      <NewsList news={news} />
     </>
   );
 };
