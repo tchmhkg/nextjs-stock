@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import dynamic from 'next/dynamic';
+import useSWR from "swr";
 
 const SuggestionItem = dynamic(import('~/components/market/suggestion-item'));
 
@@ -18,33 +19,15 @@ const Container = styled.div`
   width: -o-calc(100vw - 31px);
   overflow-y: auto;
 `;
+const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.data);
 
 const Suggestion = ({ symbol, ...props }) => {
-  const [suggestion, setSuggestion] = useState([]);
-
-  const getSuggestion = useCallback(async () => {
-    if(!symbol) {
-      return;
-    }
-    const results = await axios.get("/api/market/getSuggestion", {
-      params: {
-        symbol,
-      },
-    });
-    setSuggestion(results?.data?.data);
-  }, [symbol]);
-
-  useEffect(() => {
-    if (!symbol) {
-      setSuggestion([]);
-      return;
-    }
-    getSuggestion();
-  }, [symbol]);
+  const params = useMemo(() => ({symbol}), [symbol]);
+  const { data: suggestion, error } = useSWR([symbol ? '/api/market/getSuggestion' : null, params], fetcher);
 
   return (
     <Container>
-      {suggestion.map((item) => <SuggestionItem key={item.symbol} item={item} />)}
+      {suggestion && suggestion.map((item) => <SuggestionItem key={item.symbol} item={item} />)}
     </Container>
   );
 };

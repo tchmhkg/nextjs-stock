@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
+import React, { useMemo, useCallback, memo } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import useSWR from 'swr';
 
 import useTranslation from '~/hooks/useTranslation';
-// import { dollarFormat } from '~/utils';
 import IndexPrice from '~/components/market-indices/index-price';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import IndicesSkeleton from '~/components/ui/indices-skeleton';
@@ -31,39 +31,12 @@ const LabelContainer = memo(({ label = '' }) => {
   return <Label>{t(label)}</Label>;
 });
 
+const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.data);
+
 const HKIndices = () => {
-  const [prices, setPrices] = useState([]);
   const isVisible = usePageVisibility();
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getQuotes();
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [isVisible]);
-
-  const getQuotes = useCallback(async () => {
-    try {
-      if (!isVisible) {
-        console.log('page not visible, quit');
-        return;
-      }
-      const res = await axios.get('/api/market/market-indices', {
-        params: { market: 'HK' },
-      });
-      if (res?.data && res?.data?.data) {
-        // console.log(res?.data?.data);
-        setPrices(res?.data?.data);
-      }
-    } catch (thrown) {
-      if (axios.isCancel(thrown)) {
-        console.log('Request canceled', thrown.message);
-      } else {
-        console.log(thrown);
-        console.log(thrown?.response);
-      }
-    }
-  }, [prices, isVisible]);
+  const params = useMemo(() => ({market: 'HK'}), []);
+  const { data: prices, error } = useSWR([isVisible ? '/api/market/market-indices' : null, params], fetcher, {refreshInterval: 2000})
 
   const renderQuoteContent = useCallback(data => {
     const priceObj = {
