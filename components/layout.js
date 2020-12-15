@@ -1,12 +1,13 @@
-import Link from "next/link";
-import Image from "next/image";
+import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import styles from "~/components/layout.module.scss";
 import useTranslation from '~/hooks/useTranslation'
 
-import Head from "~/components/head";
-import Navbar from "~/components/navbar";
-import BackButton from "~/components/back";
+const Head = dynamic(import('~/components/head'));
+const Navbar = dynamic(import('~/components/navbar'));
+const BackButton = dynamic(import('~/components/back'));
+const Image = dynamic(import('next/image'));
+const Link = dynamic(import('next/link'));
 
 export const name = "Truman";
 

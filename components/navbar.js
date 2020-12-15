@@ -1,12 +1,13 @@
+import dynamic from 'next/dynamic';
 import { memo, useState } from 'react';
 import styled from 'styled-components';
-
-import LanguageSwitcher from '~/components/language-switcher';
-import ThemeSwitcher from "~/components/theme-switcher";
 // import Menu from "~/components/menu";
-import { Menu } from "~/components/common/menu-container";
-import Image from 'next/image';
-
+const LanguageSwitcher = dynamic(import('~/components/language-switcher'));
+const ThemeSwitcher = dynamic(import('~/components/theme-switcher'));
+const Image = dynamic(import('next/image'));
+const Menu = dynamic(() =>
+  import('~/components/common/menu-container').then((mod) => mod.Menu)
+)
 const Container = styled.div`
   position: fixed;
   width: 100vw;
