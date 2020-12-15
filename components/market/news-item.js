@@ -56,7 +56,7 @@ const PublishDate = memo(({ date }) => {
 const TitleContainer = memo(({ title, link }) => {
   return (
     <TitleWrapper>
-      <a href={link} target="_blank">
+      <a href={link} rel="noopener" target="_blank">
         <Title>{title}</Title>
       </a>
     </TitleWrapper>
