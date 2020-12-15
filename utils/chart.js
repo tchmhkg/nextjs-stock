@@ -192,7 +192,7 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
       max: ohlc?.[ohlc.length - 1]?.[0],
       labels: {
         formatter: function() {
-          return format(this.value, 'YYYY/MM');
+          return format(this.value, 'yyyy/MM');
         }
       },
       tickInterval: 24 * 3600 * 1000 * 30.5,
