@@ -3,7 +3,7 @@ import Layout from "~/components/layout";
 import { getLocalizationProps } from "~/context/LanguageContext";
 import { getAllPostIds, getPostData } from "~/lib/posts";
 import { locales } from '~/translations/config'
-import Head from "~/components/post/post-detail";
+import PostDetail from "~/components/post/post-detail";
 
 const Post = ({ postData }) => {
   return (
