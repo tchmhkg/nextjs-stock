@@ -11,7 +11,7 @@ import Layout from '~/components/layout';
 import { BlockSkeleton } from '~/components/ui/skeleton';
 
 const LatestPrice = dynamic(import('~/components/market/latest-price'));
-const NewsList = dynamic(import('~/components/market/news-list'));
+const NewsContainer = dynamic(import('~/components/market/news-container'));
 const Bookmark = dynamic(import('~/components/market/bookmark'));
 const Charts = dynamic(import('~/components/market/charts'));
 
@@ -108,7 +108,6 @@ const CompanyDesc = memo(({ description = '' }) => {
 
 const Stock = ({ symbol, data = [] }) => {
   const [loading, setLoading] = useState(true);
-  const [news, setNews] = useState([]);
   const [desc, setDesc] = useState(null);
   const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(data);
 
@@ -123,10 +122,8 @@ const Stock = ({ symbol, data = [] }) => {
             symbol,
           },
         });
-        const newsData = res?.data?.feeds;
         const desc = res?.data?.desc;
         setLoading(false);
-        setNews(newsData);
         setDesc(desc);
       } catch (err) {
         console.log(err);
@@ -149,7 +146,7 @@ const Stock = ({ symbol, data = [] }) => {
 
       <CompanyDesc description={desc} />
       <Charts symbol={symbol} />
-      <NewsList news={news} loading={loading} />
+      <NewsContainer symbol={symbol} />
 
     </Layout>
   );

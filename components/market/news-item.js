@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components';
-import styles from '~/components/market/news-item.module.scss';
 import useTranslation from '~/hooks/useTranslation';
 
 const Container = styled.div`
@@ -35,14 +34,22 @@ const Text = styled.span`
   font-size: 14px;
 `;
 
+const PublicDateWrapper = styled.div`
+  margin-top: 10px;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
+
 const PublishDate = memo(({ date }) => {
   const { t } = useTranslation();
   return (
-    <div className={`${styles.row} ${styles.metadataRow}`}>
+    <PublicDateWrapper>
       <Text>
         {t('Published at')}: {formatDistanceToNow(new Date(date), { addSuffix: true })}
       </Text>
-    </div>
+    </PublicDateWrapper>  
   );
 });
 
