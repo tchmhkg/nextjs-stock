@@ -38,7 +38,7 @@ export const AreaHighChart = forwardRef(
         options={options}
         highcharts={Highcharts}
         constructorType="stockChart"
-        containerProps={{ className: 'chartContainer' }}
+        callback={callback}
       />
     );
   }
@@ -58,7 +58,6 @@ export const CandleStickHighChart = forwardRef(
         options={options}
         highcharts={Highcharts}
         constructorType="stockChart"
-        containerProps={{ className: 'chartContainer' }}
       />
     );
   }
@@ -84,7 +83,6 @@ export const LineHighChart = forwardRef(
         options={options}
         highcharts={Highcharts}
         constructorType="stockChart"
-        containerProps={{ className: 'chartContainer' }}
       />
     );
   }

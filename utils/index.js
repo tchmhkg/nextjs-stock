@@ -69,7 +69,7 @@ export const differenceBetweenValues = ({oldValue = 0, newValue = 0, controls, t
   const themeTextColor = theme.text;
   const variants = {
     rest: { color: [themeTextColor] },
-    up: {color: [themeTextColor, '#4DBD33', themeTextColor], transition: {duration: 1.4}},
+    up: {color: [themeTextColor, '#0cce6b', themeTextColor], transition: {duration: 1.4}},
     down: {color: [themeTextColor, '#fd1050', themeTextColor], transition: {duration: 1.4}}
   };
 
