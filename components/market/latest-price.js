@@ -10,10 +10,19 @@ import { useTheme } from '~/theme';
 import { usePrevious } from '~/hooks/usePrevious';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import DayHighLow from '~/components/market/day-high-low';
+import useTranslation from '~/hooks/useTranslation';
 
 const ClockIcon = dynamic(() =>
   import('~/components/ui/icon').then((mod) => mod.ClockIcon)
 )
+
+const MarketState = styled.div`
+  position: absolute;
+  right: 50px;
+  top: -25px;
+  font-size: 14px;
+  color: ${props => props.theme.text}
+`;
 
 const Container = styled.div`
   width: 100%;
@@ -132,6 +141,7 @@ const fetcher = (url, params) => axios.get(url, {params}).then(res => {
 });
 
 const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
+    const {t} = useTranslation();
     const [price, setPrice] = useState(data.lastPrice || 0);
     const [closePrice, setClosePrice] = useState(data.closePrice || 0);
     const [name, setName] = useState(null);
@@ -153,6 +163,7 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
           <Wrapper>
             <HeaderContainer symbol={symbol} name={name} />
             <PriceContainer price={price} closePrice={closePrice} isDelayed={isDelayed}/>
+            <MarketState>{t(prices?.marketState)}</MarketState>
           </Wrapper>
           <DayHighLow high={prices?.regularMarketDayHigh?.raw} low={prices?.regularMarketDayLow?.raw}/>
         </Container>

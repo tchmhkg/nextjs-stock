@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
@@ -8,6 +8,7 @@ const LineHighChart = dynamic(import('~/components/ui/highcharts').then(mod => m
 
 const LineChart = ({ symbol, ...props }) => {
   const { colors } = useTheme();
+  const chartRef = useRef();
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState(getLineChartOptions({ symbol, colors }));
   const isVisible = usePageVisibility();
@@ -52,11 +53,17 @@ const LineChart = ({ symbol, ...props }) => {
     }
   };
 
+  const redrawChart = (chart) => {
+    chart.redraw(true);
+  }
+
   return (
     <div>
       {!loading ? (
         <LineHighChart
+          ref={chartRef}
           options={options}
+          callback={redrawChart}
         />
       ) :  null}
     </div>
