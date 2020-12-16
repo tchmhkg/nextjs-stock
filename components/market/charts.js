@@ -5,9 +5,10 @@ import { motion, AnimateSharedLayout } from "framer-motion";
 
 import useTranslation from '~/hooks/useTranslation';
 import { useTheme } from '~/theme';
+// import CandleStickChart from '~/components/market/candlestick-chartV2';
 
 const AreaChart = dynamic(import('~/components/market/area-chart'));
-const CandleStickChart = dynamic(import('~/components/market/candlestick-chart'));
+const CandleStickChart = dynamic(import('~/components/chart/chart-container'));
 
 const MotionBg = styled(motion.div)`
   position: absolute;

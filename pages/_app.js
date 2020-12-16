@@ -1,4 +1,5 @@
 import '~/styles/global.scss';
+import "~/styles/chart.scss";
 import { AnimateSharedLayout } from 'framer-motion';
 import NProgress from 'nprogress';
 import Router from 'next/router';
