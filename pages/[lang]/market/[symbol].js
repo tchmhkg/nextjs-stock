@@ -13,7 +13,7 @@ import { BlockSkeleton } from '~/components/ui/skeleton';
 const LatestPrice = dynamic(import('~/components/market/latest-price'));
 const NewsContainer = dynamic(import('~/components/market/news-container'));
 const Bookmark = dynamic(import('~/components/market/bookmark'));
-const Charts = dynamic(import('~/components/market/charts'));
+// const Charts = dynamic(import('~/components/market/charts'));
 
 const Title = styled.div`
   font-size: 22px;
@@ -112,7 +112,7 @@ const Stock = ({ symbol, data = [] }) => {
       </StickyWrapper>
 
       <CompanyDesc description={desc} />
-      <Charts symbol={symbol} />
+      {/* <Charts symbol={symbol} /> */}
       <NewsContainer symbol={symbol} />
 
     </Layout>
