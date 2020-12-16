@@ -68,14 +68,10 @@ const LineChartWrapper = styled.div`
   width: 25%;
 `;
 
-const Remark = styled.div`
-  font-size: 12px;
-`;
-
 const StockItem = ({ item }) => {
   const { colors } = useTheme();
   const { locale, t } = useTranslation();
-  const { marketState, longName } = item;
+  const { longName } = item;
   const { lastPrice, closePrice } = getLastAndClosePriceFromYahoo(item);
   const prevLastPrice = usePrevious(lastPrice);
   const controls = useAnimation();
@@ -149,9 +145,6 @@ const StockItem = ({ item }) => {
             {renderLastPrice()}
           </PriceWrapper>
           <Diff className={getPriceColor()}>{getPriceDiff()}</Diff>
-          {['PRE', 'POSTPOST', 'CLOSED', 'PREPRE', 'PREPARE'].includes(
-            marketState
-          ) && <Remark>{t(marketState)}</Remark>}
         </div>
       </Container>
     </Link>

@@ -31,6 +31,13 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
 `;
 
+const MarketState = styled.div`
+  font-size: 14px;
+  color: ${props => props.theme.text};
+  position: absolute;
+  right: 50px;
+`;
+
 const StockList = () => {
   const { locale, t } = useTranslation();
   const isVisible = usePageVisibility();
@@ -177,6 +184,7 @@ const StockList = () => {
         <>
           <HeaderWrapper>
             <span>{t('Saved Stock List')}</span>
+            {stocks?.[0]?.marketState && <MarketState>{t(stocks?.[0]?.marketState)}</MarketState>}
             <Refresh onClick={onClickRefresh} />
             {/* <DelayReminder>{t('Delay +20 min.')}</DelayReminder> */}
           </HeaderWrapper>
