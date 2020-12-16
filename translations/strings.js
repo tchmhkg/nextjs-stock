@@ -35,6 +35,7 @@ const strings = {
     "Home": "Home",
     "Day high": "Day high",
     "Day low": "Day low",
+    "REGULAR": "Market open",
   },
   zh: {
     "Back to home": "回到首頁",
@@ -72,6 +73,7 @@ const strings = {
     "Home": "首頁",
     "Day high": "全日高位",
     "Day low": "全日低位",
+    "REGULAR": "開市中",
   },
 };
 

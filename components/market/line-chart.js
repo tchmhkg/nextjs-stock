@@ -20,7 +20,7 @@ const LineChart = ({ symbol, ...props }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchStock();
-    }, 1000 * 60);
+    }, 1000 * 10);
     return () => clearInterval(interval);
   }, [symbol, isVisible]);
 

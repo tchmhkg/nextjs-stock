@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTheme } from '~/theme';
 import styles from '~/components/ui/icon.module.scss';
 

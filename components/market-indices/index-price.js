@@ -1,5 +1,4 @@
-import React, { useCallback, memo, useMemo, useState, useEffect, useRef } from "react";
-import styled from "styled-components";
+import { useCallback, memo, useMemo, useState, useEffect, useRef } from "react";
 import { useAnimation } from 'framer-motion';
 import styles from "~/components/market-indices/index-price.module.scss";
 import { differenceBetweenValues, getAnimationType } from "~/utils";

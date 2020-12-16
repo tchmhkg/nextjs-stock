@@ -1,8 +1,8 @@
-import React, { useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import styled from "styled-components";
 
-import Suggestion from "~/components/market/suggestion";
 import useTranslation from "~/hooks/useTranslation";
+const Suggestion = dynamic(import('~/components/market/suggestion'));
 
 const Container = styled.div`
   position: relative;

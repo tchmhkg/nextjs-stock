@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { MenuItem } from './menu-item';
 import styles from './menu-nav.module.scss';

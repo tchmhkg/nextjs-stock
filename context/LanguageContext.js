@@ -1,23 +1,23 @@
-import React from 'react'
+import {useEffect, createContext, useState} from 'react'
 import { useRouter } from 'next/router'
 import { isLocale } from '~/translations/types'
 
-export const LanguageContext = React.createContext({
+export const LanguageContext = createContext({
   locale: 'en',
   setLocale: () => null
 })
 
 export const LanguageProvider = ({ lang = 'en', children }) => {
-  const [locale, setLocale] = React.useState(lang)
+  const [locale, setLocale] = useState(lang)
   const { query } = useRouter()
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (locale !== window.localStorage.getItem('locale')) {
       window.localStorage.setItem('locale', locale)
     }
   }, [locale])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof query.lang === 'string' && isLocale(query.lang) && locale !== query.lang) {
       setLocale(query.lang)
     }

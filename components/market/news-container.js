@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import useSWR from 'swr';

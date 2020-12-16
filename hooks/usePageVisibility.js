@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState, useEffect} from 'react';
 
 export function getBrowserVisibilityProp() {
   if (typeof document === 'undefined') {
@@ -33,9 +33,9 @@ export function getIsDocumentHidden() {
 }
 
 export function usePageVisibility() {
-  const [isVisible, setIsVisible] = React.useState(getIsDocumentHidden());
+  const [isVisible, setIsVisible] = useState(getIsDocumentHidden());
   const onVisibilityChange = () => setIsVisible(getIsDocumentHidden());
-  React.useEffect(() => {
+  useEffect(() => {
     const visibilityChange = getBrowserVisibilityProp();
     document.addEventListener(visibilityChange, onVisibilityChange, false);
     return () => {

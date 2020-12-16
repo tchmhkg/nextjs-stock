@@ -1,9 +1,9 @@
-import React from "react";
+import {useEffect} from "react";
 import Head from "next/head";
 import { getInitialLocale } from "~/translations/getInitialLocale";
 
 const Index = () => {
-  React.useEffect(() => {
+  useEffect(() => {
     window.location.replace(`/${getInitialLocale()}`);
   });
 

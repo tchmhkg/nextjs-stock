@@ -1,4 +1,4 @@
-import React, {useState, useEffect, memo, useMemo, useCallback} from 'react';
+import {useState, useEffect, memo, useMemo, useCallback} from 'react';
 import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -163,7 +163,7 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
           <Wrapper>
             <HeaderContainer symbol={symbol} name={name} />
             <PriceContainer price={price} closePrice={closePrice} isDelayed={prices?.quoteSourceName === 'Delayed Quote'}/>
-            <MarketState>{t(prices?.marketState)}</MarketState>
+            {prices?.marketState && <MarketState>{t(prices?.marketState)}</MarketState>}
           </Wrapper>
           <DayHighLow high={prices?.regularMarketDayHigh?.raw} low={prices?.regularMarketDayLow?.raw}/>
         </Container>

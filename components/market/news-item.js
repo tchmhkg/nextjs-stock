@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import styled from 'styled-components';
 import useTranslation from '~/hooks/useTranslation';

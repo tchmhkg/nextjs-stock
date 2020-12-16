@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import NewsItemSkeleton from '~/components/ui/news-item-skeleton';
 

@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from 'react';
+import { useCallback, memo } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import styled from 'styled-components';

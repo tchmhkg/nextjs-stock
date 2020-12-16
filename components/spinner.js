@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from 'react';
+import { useEffect, memo } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '~/theme';
 import styles from './spinner.module.scss';

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, memo } from 'react';
+import { useEffect, useCallback, memo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import styled from 'styled-components';

@@ -5,9 +5,8 @@ import styled from 'styled-components';
 const LanguageSwitcher = dynamic(import('~/components/language-switcher'));
 const ThemeSwitcher = dynamic(import('~/components/theme-switcher'));
 const Image = dynamic(import('next/image'));
-const Menu = dynamic(() =>
-  import('~/components/common/menu-container').then((mod) => mod.Menu)
-)
+const Menu = dynamic(import('~/components/common/menu-container').then((mod) => mod.Menu));
+
 const Container = styled.div`
   position: fixed;
   width: 100vw;

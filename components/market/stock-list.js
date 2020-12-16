@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 
-import SearchInput from '~/components/market/input';
-
 import useTranslation from '~/hooks/useTranslation';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
-import Refresh from '~/components/refresh';
 import StockItemSkeleton from '../ui/stock-item-skeleton';
 
+const Refresh = dynamic(import('~/components/refresh'));
+const SearchInput = dynamic(import('~/components/market/input'));
 const StockItem = dynamic(import('~/components/market/item'));
 
 const EmptyContainer = styled.div`
