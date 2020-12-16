@@ -38,7 +38,7 @@ const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.
 const MarketIndices = () => {
   const isVisible = usePageVisibility();
   const params = useMemo(() => ({market: 'US'}), []);
-  const { data: prices, error } = useSWR([isVisible ? '/api/market/market-indices' : null, params], fetcher, {refreshInterval: 2000})
+  const { data: prices, error } = useSWR(['/api/market/market-indices', params], fetcher, {refreshInterval: 2000})
 
   const renderQuoteContent = useCallback(data => {
     const priceObj = {
