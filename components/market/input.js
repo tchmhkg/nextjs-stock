@@ -1,5 +1,6 @@
 import { useCallback, useRef } from "react";
 import styled from "styled-components";
+import dynamic from 'next/dynamic';
 
 import useTranslation from "~/hooks/useTranslation";
 const Suggestion = dynamic(import('~/components/market/suggestion'));
