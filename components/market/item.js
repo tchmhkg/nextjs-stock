@@ -65,7 +65,7 @@ const ProfileWrapper = styled.div`
 
 const LineChartWrapper = styled.div`
   pointer-events: none;
-  width: 25%;
+  width: 20%;
 `;
 
 const StockItem = ({ item }) => {

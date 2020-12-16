@@ -4,6 +4,8 @@ import { MenuItem } from './menu-item';
 import styles from './menu-nav.module.scss';
 import Link from 'next/link';
 import useTranslation from '~/hooks/useTranslation';
+import ThemeSwitcher from '~/components/theme-switcher';
+import LanguageSwitcher from '~/components/language-switcher';
 
 const variants = {
   open: {
@@ -32,6 +34,8 @@ export const Nav = ({ toggle }) => {
           </div>
         </Link>
       ))}
+      <MenuItem><ThemeSwitcher /></MenuItem>
+      <MenuItem><LanguageSwitcher /></MenuItem>
     </motion.ul>
   );
 };
@@ -50,5 +54,3 @@ const menuItems = [
     link: 'market/hk',
   },
 ];
-
-const itemIds = [0, 1, 2, 3, 4];

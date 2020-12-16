@@ -26,7 +26,7 @@ const variants = {
   },
 };
 
-export const MenuItem = ({ item, index }) => {
+export const MenuItem = ({ item, index, children }) => {
   const { t } = useTranslation();
   return (
     <motion.li
@@ -35,7 +35,7 @@ export const MenuItem = ({ item, index }) => {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      <ItemText>{t(item.label)}</ItemText>
+      {children ? children : <ItemText>{t(item.label)}</ItemText>}
     </motion.li>
   );
 };

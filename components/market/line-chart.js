@@ -54,7 +54,7 @@ const LineChart = ({ symbol, ...props }) => {
   };
 
   const redrawChart = (chart) => {
-    chart.redraw(true);
+    chart.reflow(true);
   }
 
   return (

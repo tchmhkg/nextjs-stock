@@ -164,11 +164,11 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
       candlestick: {
         color: '#fd1050',
         lineColor: '#fd1050',
-        upColor: '#4DBD33',
-        upLineColor: '#4DBD33',
+        upColor: '#0cce6b',
+        upLineColor: '#0cce6b',
       },
       column: {
-        color: 'gray',
+        color: '#b2b2b2',
       },
     },
     exporting: {
@@ -220,8 +220,10 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
         tickAmount: 4,
         tickPosition: 'inside',
         zoomEnabled: false,
-        gridLineWidth: 0.5,
-        gridLineColor: '#9f9f9f'
+        gridLineWidth: 1,
+        // labels: {
+          // enabled: false
+        // },
       },
     ],
     tooltip: {
@@ -245,6 +247,7 @@ export const getCandleStickOptions = ({ symbol = '', ohlc = [], volume = [] }) =
             'Open: {point.open}<br/>High: {point.high}<br/>Low: {point.low}<br/>Close: {point.close}<br/>',
         },
         zoomType: null,
+        zIndex: 1,
       },
       {
         type: 'column',
@@ -296,6 +299,7 @@ export const getLineChartOptions = ({ symbol = '', colors = {}, data }) => {
       width: 80,
       panning: false,
       pinchType: null,
+      spacing: [0,0,0,0]
     },
     exporting: {
       enabled: false,

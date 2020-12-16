@@ -1,4 +1,4 @@
-$label-colour: #bbb;
+$label-colour: #4d4d4d;
 $disabled-colour: #ddd;
 $toggle-colour: #2f855a;
 $white: #fff;
@@ -14,8 +14,16 @@ $white: #fff;
   cursor: pointer;
   margin: 0 10px 0 5px;
   align-items: center;
-  @media (max-width: 374px) {
-    display: none;
+
+  &[data-innavbar='true'] {
+    @media (max-width: 374px) {
+      display: none;
+    }
+  }
+  &[data-innavbar='false'] {
+    @media (min-width: 375px) {
+      display: none;
+    }
   }
 
   &[data-enabled='true'] {

@@ -63,8 +63,8 @@ const Header = () => {
       <Menu setShouldUpdateZIndex={setShouldUpdateZIndex} />
       <RightWrapper>
         <GitHubButton />
-        <LanguageSwitcher />
-        <ThemeSwitcher />
+        <LanguageSwitcher inNavbar/>
+        <ThemeSwitcher inNavbar/>
       </RightWrapper>
     </Container>
   )

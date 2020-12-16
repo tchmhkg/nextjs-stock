@@ -8,7 +8,10 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   @media (max-width: 374px) {
-    display: none;
+    display: ${({inNavbar}) => inNavbar ? 'none' : 'flex'};
+  }
+  @media (min-width: 375px) {
+    display: ${({inNavbar}) => inNavbar ? 'flex' : 'none'};
   }
 `;
 
@@ -29,7 +32,7 @@ const LocaleButton = styled.div`
     selected ? `linear-gradient(to right, ${theme.primary2}, ${theme.primary1})` : 'transparent'};
 `;
 
-const LanguageSwitcher = () => {
+const LanguageSwitcher = ({inNavbar = false}) => {
   const router = useRouter();
   const { locale: currentLocale } = React.useContext(LanguageContext);
 
@@ -43,7 +46,7 @@ const LanguageSwitcher = () => {
   );
 
   return (
-    <Wrapper>
+    <Wrapper inNavbar={inNavbar}>
       {locales.map((locale) => (
         <LocaleButton
           key={locale}
