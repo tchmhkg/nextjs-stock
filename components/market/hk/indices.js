@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import useSWR from 'swr';
 
 import useTranslation from '~/hooks/useTranslation';
-import IndexPrice from '~/components/market-indices/index-price';
-import { usePageVisibility } from '~/hooks/usePageVisibility';
-import IndicesSkeleton from '~/components/ui/indices-skeleton';
-import Carousel from '~/components/market/carousel';
 import { getLastClosePriceFromHtml } from '~/utils';
+
+const Carousel = dynamic(import('~/components/market/carousel'));
+const IndexPrice = dynamic(import('~/components/market-indices/index-price'));
+const IndicesSkeleton = dynamic(import('~/components/ui/indices-skeleton'));
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,9 +35,8 @@ const LabelContainer = memo(({ label = '' }) => {
 const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.data);
 
 const HKIndices = () => {
-  const isVisible = usePageVisibility();
   const params = useMemo(() => ({market: 'HK'}), []);
-  const { data: prices, error } = useSWR(['/api/market/market-indices', params], fetcher, {refreshInterval: 2000})
+  const { data: prices, error } = useSWR(['/api/market/market-indices', params], fetcher, {refreshInterval: 2000, refreshWhenHidden: false})
 
   const renderQuoteContent = useCallback(data => {
     const priceObj = {

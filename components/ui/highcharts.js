@@ -1,11 +1,12 @@
 import React, { forwardRef } from 'react';
 import dynamic from 'next/dynamic';
-import * as Highcharts from 'highcharts/highstock';
+// import * as Highcharts from 'highcharts/highstock';
 import { useTheme } from '~/theme';
 import { convertHexToRGBA } from '~/utils';
 import { useWindowSize } from '~/hooks/useWindowSize';
 
 const HighchartsReact = dynamic(import('highcharts-react-official'));
+const {default: Highcharts} = dynamic(import('highcharts/highstock'));
 
 export const AreaHighChart = forwardRef(
   (

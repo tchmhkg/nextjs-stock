@@ -1,10 +1,11 @@
 {
-  "theme_color": "#0ECD9D",
-  "background_color": "#eaeaeb",
+  "theme_color": "#7F00FF",
+  "background_color": "#FFFFFF",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
   "app_name": "NextStock",
+  "name": "NextStock",
   "short_name": "NextStock",
   "icons": [
     {

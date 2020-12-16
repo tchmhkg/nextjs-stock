@@ -123,7 +123,7 @@ export async function getServerSideProps(ctx) {
   const { symbol } = ctx.query || '';
   return {
     props: {
-      symbol,
+      symbol: symbol.toUpperCase(),
     },
   };
 }

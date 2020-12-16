@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
 import { useTheme } from '~/theme';
-import { LineHighChart } from '~/components/ui/highcharts';
 import { getLineChartOptions, parseLineChartData } from '~/utils/chart';
+const LineHighChart = dynamic(import('~/components/ui/highcharts').then(mod => mod.LineHighChart));
 
 const LineChart = ({ symbol, ...props }) => {
   const { colors } = useTheme();

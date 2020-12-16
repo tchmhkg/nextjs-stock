@@ -9,12 +9,10 @@ import useTranslation from '~/hooks/useTranslation';
 import { differenceBetweenValues, getAnimationType, getLastAndClosePriceFromYahoo } from '~/utils';
 import { useTheme } from '~/theme';
 import { usePrevious } from '~/hooks/usePrevious';
-import LineChart from './line-chart';
 import { useWindowSize } from '~/hooks/useWindowSize';
 
-const ClockIcon = dynamic(() =>
-  import('~/components/ui/icon').then((mod) => mod.ClockIcon)
-)
+const ClockIcon = dynamic(import('~/components/ui/icon').then((mod) => mod.ClockIcon));
+const LineChart = dynamic(import('./line-chart'));
 
 const Container = styled(motion.div)`
   display: flex;

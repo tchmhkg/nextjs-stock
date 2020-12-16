@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { usePageVisibility } from '~/hooks/usePageVisibility';
-import { ChartSkeleton } from '../ui/chart-skeleton';
 import { getCandleStickOptions, parseCandleStickChartData } from '~/utils/chart';
-import { CandleStickHighChart } from '~/components/ui/highcharts';
+
+const ChartSkeleton = dynamic(import('~/components/ui/chart-skeleton').then(mod => mod.ChartSkeleton));
+const CandleStickHighChart = dynamic(import('~/components/ui/highcharts').then(mod => mod.CandleStickHighChart));
 
 const CandleStickChart = ({ symbol, ...props }) => {
-  const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState({});
+  const [loading, setLoading] = useState(true);
   const isVisible = usePageVisibility();
 
   useEffect(() => {
@@ -45,11 +47,10 @@ const CandleStickChart = ({ symbol, ...props }) => {
 
   return (
     <div>
-      {!loading ? (
-        <CandleStickHighChart
-          options={options}
-        />
-      ) : <ChartSkeleton />}
+    {!loading ? 
+      <CandleStickHighChart
+        options={options}
+      /> : <ChartSkeleton />}
     </div>
   );
 };

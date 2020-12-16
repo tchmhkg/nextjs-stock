@@ -1,16 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, /*useMemo*/ } from 'react';
 import axios from 'axios';
-import { usePageVisibility } from '~/hooks/usePageVisibility';
+import dynamic from 'next/dynamic';
+// import useSWR from 'swr';
+
 import { useTheme } from '~/theme';
-import { ChartSkeleton } from '~/components/ui/chart-skeleton';
-import { AreaHighChart } from '~/components/ui/highcharts';
 import { getAreaChartOptions, parseAreaChartData } from '~/utils/chart';
+import { usePageVisibility } from '~/hooks/usePageVisibility';
+
+const ChartSkeleton = dynamic(import('~/components/ui/chart-skeleton').then(mod => mod.ChartSkeleton));
+const AreaHighChart = dynamic(import('~/components/ui/highcharts').then(mod => mod.AreaHighChart));
+
+// const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.data);
 
 const AreaChart = ({ symbol, ...props }) => {
   const { colors } = useTheme();
+  const chartRef = useRef(null);
+  const isVisible = usePageVisibility();
   const [loading, setLoading] = useState(true);
   const [options, setOptions] = useState(getAreaChartOptions({ symbol, colors }));
-  const isVisible = usePageVisibility();
+  // const params = useMemo(() => ({
+  //   symbol,
+  //   params: JSON.stringify({
+  //     interval: '1m',
+  //   }),
+  // }), [symbol]);
+
+  // const onSuccess = (data) => {
+  //   const { ohlc } = parseAreaChartData(data);
+  //   if(loading) {
+  //     setLoading(false);
+  //   }
+  //   setOptions((prevOptions) => ({
+  //     ...prevOptions,
+  //     series: [{ ...prevOptions.series[0], data: ohlc }],
+  //   }));
+  //   chartRef?.current?.chart?.redraw(true);
+  // }
+
+  // const { data, error } = useSWR([symbol ? '/api/market/get-hist' : null, params], fetcher, {onSuccess, refreshInterval: 2500})
 
   useEffect(() => {
     fetchStock();
@@ -54,11 +81,11 @@ const AreaChart = ({ symbol, ...props }) => {
 
   return (
     <div>
-      {!loading ? (
-        <AreaHighChart
-          options={options}
-        />
-      ) : <ChartSkeleton />}
+    {!loading ? 
+      <AreaHighChart
+        ref={chartRef}
+        options={options}
+      /> : <ChartSkeleton />}
     </div>
   );
 };
