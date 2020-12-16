@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, memo } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import useSWR from 'swr';
+import dynamic from 'next/dynamic';
 
 import useTranslation from '~/hooks/useTranslation';
 import { getLastClosePriceFromHtml } from '~/utils';
