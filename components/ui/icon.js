@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '~/theme';
+import styles from '~/components/ui/icon.module.scss';
 
 export const HeartFullIcon = () => {
   const { colors } = useTheme();
@@ -39,6 +40,7 @@ export const ClockIcon = () => {
       height="24"
       viewBox="0 0 24 24"
       width="24"
+      className={styles.clock}
     >
       <path d="M0 0h24v24H0V0z" fill="none" />
       <path

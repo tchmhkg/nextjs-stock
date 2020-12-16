@@ -107,7 +107,7 @@ const Stock = ({ symbol, data = [] }) => {
         <title>{symbol}</title>
       </Head>
       <StickyWrapper layoutId={symbol}>
-        <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} isDelayed={data?.quoteSourceName === 'Delayed Quote'}/>
+        <LatestPrice data={{lastPrice, closePrice}} symbol={symbol} />
         <Bookmark symbol={symbol} />
       </StickyWrapper>
 

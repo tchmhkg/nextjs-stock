@@ -136,8 +136,8 @@ const fetcher = (url, params) => axios.get(url, {params}).then(res => {
   const result = res?.data?.data || {};
 
   const { lastPrice, closePrice: apiClosePrice } = getPricesFromYahoo(result);
-  const {marketState, longName, regularMarketDayHigh, regularMarketDayLow} = result;
-  return {lastPrice, apiClosePrice, marketState, longName, regularMarketDayHigh, regularMarketDayLow};
+  const {marketState, longName, regularMarketDayHigh, regularMarketDayLow, quoteSourceName} = result;
+  return {lastPrice, apiClosePrice, marketState, longName, regularMarketDayHigh, regularMarketDayLow, quoteSourceName};
 });
 
 const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
@@ -162,7 +162,7 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
         <Container>
           <Wrapper>
             <HeaderContainer symbol={symbol} name={name} />
-            <PriceContainer price={price} closePrice={closePrice} isDelayed={isDelayed}/>
+            <PriceContainer price={price} closePrice={closePrice} isDelayed={prices?.quoteSourceName === 'Delayed Quote'}/>
             <MarketState>{t(prices?.marketState)}</MarketState>
           </Wrapper>
           <DayHighLow high={prices?.regularMarketDayHigh?.raw} low={prices?.regularMarketDayLow?.raw}/>
