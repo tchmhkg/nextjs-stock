@@ -5,7 +5,7 @@ import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 
 import useTranslation from '~/hooks/useTranslation';
-import { getLastClosePriceFromHtml } from '~/utils';
+import { getPricesFromHtml } from '~/utils';
 
 const Carousel = dynamic(import('~/components/market/carousel'));
 const IndexPrice = dynamic(import('~/components/market-indices/index-price'));
@@ -40,10 +40,7 @@ const HKIndices = () => {
   const { data: prices, error } = useSWR(['/api/market/market-indices', params], fetcher, {refreshInterval: 2000, refreshWhenHidden: false})
 
   const renderQuoteContent = useCallback(data => {
-    const priceObj = {
-      lastPrice: data?.data?.last_value,
-      closePrice: getLastClosePriceFromHtml(data?.data?.last_value, data?.html),
-    };
+    const priceObj = getPricesFromHtml(data?.html);
 
     return (
       <Wrapper>

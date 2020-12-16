@@ -119,9 +119,18 @@ export const convertHexToRGBA = (hexCode, opacity = 1) => {
   return `rgba(${r},${g},${b},${opacity})`;
 };
 
-export const getLastClosePriceFromHtml = (lastPrice = 0, code) => {
+export const getPricesFromHtml = code => {
+  if(!code) {
+    return {lastPrice: 0, closePrice: 0};
+  }
   var div = document.createElement('div');
   div.innerHTML = code;
+  const lastPriceText = (div?.childNodes?.[2]?.childNodes?.[2]?.innerText).replace(',','') || 0;
+  const lastPrice = parseFloat(lastPriceText);
   const changeText = div?.childNodes?.[2]?.childNodes?.[3]?.childNodes?.[0]?.innerText || 0;
-  return parseFloat(lastPrice) - parseFloat(changeText);
+  return {
+    lastPrice,
+    closePrice: lastPrice - parseFloat(changeText)
+  };
+
 }
