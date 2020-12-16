@@ -299,7 +299,7 @@ export const getLineChartOptions = ({ symbol = '', colors = {}, data }) => {
       width: 80,
       panning: false,
       pinchType: null,
-      spacing: [0,0,0,0]
+      spacing: [0,3,0,3]
     },
     exporting: {
       enabled: false,
