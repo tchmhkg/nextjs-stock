@@ -10,7 +10,7 @@ import { getLastAndClosePriceFromYahoo } from '~/utils';
 import Layout from '~/components/layout';
 import { BlockSkeleton } from '~/components/ui/skeleton';
 
-const LatestPrice = dynamic(import('~/components/market/latest-price'), {ssr: false});
+const LatestPrice = dynamic(import('~/components/market/latest-price'));
 const NewsContainer = dynamic(import('~/components/market/news-container'));
 const Bookmark = dynamic(import('~/components/market/bookmark'));
 const Charts = dynamic(import('~/components/market/charts'), {ssr: false});
