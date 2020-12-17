@@ -54,6 +54,7 @@ const SearchInput = (props) => {
           onChange={handleChange}
           ref={searchTextInput}
           placeholder={t(props.placeholder)}
+          aria-labelledBy={t(props.placeholder)}
         />
       </InputWrapper>
 
