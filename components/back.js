@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import styled from 'styled-components';
 import useTranslation from "~/hooks/useTranslation";

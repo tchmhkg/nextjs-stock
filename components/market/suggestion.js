@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import dynamic from 'next/dynamic';

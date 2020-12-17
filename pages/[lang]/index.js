@@ -1,3 +1,4 @@
+import React from 'react';
 import Layout from "~/components/layout";
 import { getSortedPostsData } from "~/lib/posts";
 import { getLocalizationProps } from "~/context/LanguageContext";

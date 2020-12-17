@@ -1,3 +1,4 @@
+import React from 'react';
 import Date from "~/components/date";
 import styles from "~/components/post/post-detail.module.scss";
 

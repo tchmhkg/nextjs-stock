@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import React from 'react';
 import NextHead from 'next/head';
 import { useTheme } from '~/theme';
 

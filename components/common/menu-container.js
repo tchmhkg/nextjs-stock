@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion, useCycle } from 'framer-motion';
 import styled from 'styled-components';
 import { MenuToggle } from './menu-toggle';

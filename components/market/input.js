@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import styled from "styled-components";
 import dynamic from 'next/dynamic';
 
@@ -54,7 +54,7 @@ const SearchInput = (props) => {
           onChange={handleChange}
           ref={searchTextInput}
           placeholder={t(props.placeholder)}
-          aria-labelledBy={t(props.placeholder)}
+          aria-labelledby={t(props.placeholder)}
         />
       </InputWrapper>
 

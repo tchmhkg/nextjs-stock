@@ -1,4 +1,4 @@
-import {useState, useEffect, memo, useMemo, useCallback} from 'react';
+import React, {useState, useEffect, memo, useMemo, useCallback} from 'react';
 import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import axios from 'axios';

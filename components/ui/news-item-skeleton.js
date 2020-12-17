@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { BlockSkeleton } from './skeleton';
 
 const SkeletonContainer = styled.div`

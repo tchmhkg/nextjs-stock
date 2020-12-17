@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, /*useMemo*/ } from 'react';
+import React, { useState, useEffect, useRef, /*useMemo*/ } from 'react';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 // import useSWR from 'swr';
@@ -70,7 +70,7 @@ const AreaChart = ({ symbol, ...props }) => {
       const { ohlc } = parseAreaChartData(res.data?.data);
       setOptions((prevOptions) => ({
         ...prevOptions,
-        series: [{ ...prevOptions.series[0], data: ohlc }],
+        series: [{ ...prevOptions?.series?.[0], data: ohlc }],
       }));
       setLoading(false);
     } catch (error) {

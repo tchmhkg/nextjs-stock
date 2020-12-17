@@ -1,3 +1,4 @@
+import React from 'react';
 import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import styles from "~/components/layout.module.scss";

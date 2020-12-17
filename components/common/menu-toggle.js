@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from "framer-motion";
 import styles from './menu-toggle.module.scss';
 import { useTheme } from "~/theme";

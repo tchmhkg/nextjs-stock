@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import React from 'react';
 import styles from '~/components/home.module.scss';
 import useTranslation from '~/hooks/useTranslation';
 import styled from 'styled-components';

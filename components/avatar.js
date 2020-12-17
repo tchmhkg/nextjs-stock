@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { memo } from "react";
+import React, { memo } from "react";
 import styles from "~/components/avatar.module.scss";
 import { name } from "~/components/layout";
 import useTranslation from "~/hooks/useTranslation";

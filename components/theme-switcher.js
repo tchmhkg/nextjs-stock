@@ -1,7 +1,7 @@
 import { useCallback, memo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-import { useTheme } from "~/theme";
+import React, { useTheme } from "~/theme";
 import styles from "~/components/theme-switcher.module.scss";
 
 const spring = {

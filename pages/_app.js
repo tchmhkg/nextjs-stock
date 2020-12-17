@@ -1,4 +1,5 @@
 import '~/styles/global.scss';
+import React from 'react';
 import { AnimateSharedLayout } from 'framer-motion';
 import NProgress from 'nprogress';
 import Router from 'next/router';

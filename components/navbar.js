@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import { memo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import styled from 'styled-components';
 // import Menu from "~/components/menu";
 const LanguageSwitcher = dynamic(import('~/components/language-switcher'));

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 import { motion, AnimateSharedLayout } from "framer-motion";
