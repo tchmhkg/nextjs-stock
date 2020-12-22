@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import useTranslation from '~/hooks/useTranslation';
 import IndexPrice from '~/components/market-indices/index-price';
 import Carousel from '~/components/market/carousel';
-import { usePageVisibility } from '~/hooks/usePageVisibility';
 import IndicesSkeleton from '~/components/ui/indices-skeleton';
 
 const Wrapper = styled.div`
@@ -35,8 +34,7 @@ const LabelContainer = memo(({ label = '' }) => {
 const fetcher = url => axios.get(url).then(res => Object.values(res.data?.data));
 
 const MarketIndices = () => {
-  const isVisible = usePageVisibility();
-  const { data: prices, error } = useSWR(isVisible ? '/api/market/indices' : null, fetcher, {refreshInterval: 1500})
+  const { data: prices, error } = useSWR('/api/market/indices', fetcher, {refreshInterval: 1500})
 
   const renderIndexContent = useCallback(
     (priceObj) => {
