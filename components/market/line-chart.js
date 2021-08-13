@@ -10,6 +10,7 @@ const LineChart = ({ symbol, ...props }) => {
   const { colors } = useTheme();
   const chartRef = useRef();
   const [loading, setLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [options, setOptions] = useState(getLineChartOptions({ symbol, colors }));
   const isVisible = usePageVisibility();
 
@@ -21,6 +22,7 @@ const LineChart = ({ symbol, ...props }) => {
     const interval = setInterval(() => {
       fetchStock();
     }, 1000 * 10);
+    if(isError) clearInterval(interval);
     return () => clearInterval(interval);
   }, [symbol, isVisible]);
 
@@ -47,9 +49,11 @@ const LineChart = ({ symbol, ...props }) => {
         series: [{ ...prevOptions.series[0], data: ohlc }],
       }));
       setLoading(false);
+      setIsError(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
+      setIsError(true);
     }
   };
 

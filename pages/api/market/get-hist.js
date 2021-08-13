@@ -37,7 +37,8 @@ export default async function handler(req, res) {
 
     res.json({ data: [] });
   } catch (error) {
-    console.log(error);
-    res.json({ data: [] });
+    // console.log(error);
+    console.log(error?.response?.status)
+    res.status(error?.response?.status || 500).json({ data: [] });
   }
 }

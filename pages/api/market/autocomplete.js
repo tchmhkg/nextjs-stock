@@ -8,13 +8,13 @@ export default async function handler(req, res) {
     const response = await axios.get(TIINGO_SEARCH_API, {
       params: {
         query: symbol,
-        columns: 'ticker,name,assetType'
+        columns: 'ticker,name,assetType,countryCode'
       }
     });
     console.log(response?.data);
     res.json({
       success: true,
-      result: response?.data?.filter(ticker => ticker.assetType === 'Stock')
+      result: response?.data?.filter(ticker => ticker.assetType === 'Stock' && ticker.countryCode === 'US')
     });
   } catch (error) {
     console.log(error);
