@@ -19,15 +19,14 @@ const Container = styled.div`
   width: -o-calc(100vw - 31px);
   overflow-y: auto;
 `;
-const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.data);
+const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.result);
 
 const Suggestion = ({ symbol, ...props }) => {
   const params = useMemo(() => ({symbol}), [symbol]);
-  const { data: suggestion, error } = useSWR([symbol ? '/api/market/getSuggestion' : null, params], fetcher);
-
+  const { data, error } = useSWR([symbol ? '/api/market/autocomplete' : null, params], fetcher);
   return (
     <Container>
-      {suggestion && suggestion.map((item) => <SuggestionItem key={item.symbol} item={item} />)}
+      {data && data.map((item) => <SuggestionItem key={item.ticker} item={item} />)}
     </Container>
   );
 };

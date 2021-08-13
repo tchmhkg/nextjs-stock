@@ -6,7 +6,7 @@ import useTranslation from '~/hooks/useTranslation';
 
 const Container = styled.div`
   flex: 1;
-  padding: 10px;
+  padding: 5px 10px;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
@@ -32,22 +32,17 @@ const Symbol = styled.span`
   margin-right: 5px;
 `;
 
-const Exch = styled.span`
-  color: ${(props) => props.theme.inactiveLegend};
-`;
-
 const SuggestionItem = ({ item }) => {
   const { locale } = useTranslation();
 
   return (
     <Link
       href={`/[lang]/market/[symbol]`}
-      as={`/${locale}/market/${item.symbol}`}
+      as={`/${locale}/market/${item.ticker}`}
     >
       <Container>
         <SymbolWrapper>
-          <Symbol>{item.symbol}</Symbol>
-          <Exch>{item.exchDisp}</Exch>
+          <Symbol>{item.ticker}</Symbol>
         </SymbolWrapper>
         <Name numberOfLines={1}>{item.name}</Name>
       </Container>
