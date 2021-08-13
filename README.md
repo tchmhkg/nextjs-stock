@@ -1,7 +1,5 @@
 NextJS app (Work in progress)
 
-TODO: search function not work
-
 [Demo link](https://truman.vercel.app/)
 
 ## What is inside?
