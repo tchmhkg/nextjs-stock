@@ -30,8 +30,8 @@ export default async function handler(req, res) {
       data: filteredData
     });
   } catch (error) {
-    console.log(error);
-    res.json({
+    // console.log(error);
+    res.status(error?.response?.status || 500).json({
       success: false,
       data: {}
     });

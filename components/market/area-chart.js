@@ -17,6 +17,7 @@ const AreaChart = ({ symbol, ...props }) => {
   const chartRef = useRef(null);
   const isVisible = usePageVisibility();
   const [loading, setLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [options, setOptions] = useState(getAreaChartOptions({ symbol, colors }));
   // const params = useMemo(() => ({
   //   symbol,
@@ -47,8 +48,9 @@ const AreaChart = ({ symbol, ...props }) => {
     const interval = setInterval(() => {
       fetchStock();
     }, 5000);
+    if(isError) clearInterval(interval);
     return () => clearInterval(interval);
-  }, [symbol, isVisible]);
+  }, [symbol, isVisible, isError]);
 
   const fetchStock = async () => {
     try {
@@ -73,9 +75,11 @@ const AreaChart = ({ symbol, ...props }) => {
         series: [{ ...prevOptions?.series?.[0], data: ohlc }],
       }));
       setLoading(false);
+      setIsError(false);
     } catch (error) {
       console.log(error);
       setLoading(false);
+      setIsError(true);
     }
   };
 
