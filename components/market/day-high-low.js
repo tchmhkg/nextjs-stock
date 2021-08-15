@@ -20,8 +20,8 @@ const DayHighLow = memo(({high = 0, low = 0}) => {
   const { t } = useTranslation();
   return (
     <PriceWrapper>
-      <Price>{t('Day high')}: {high}</Price>
-      <Price>{t('Day low')}: {low}</Price>
+      <Price>{t('Day high')}: {high?.toFixed(2)}</Price>
+      <Price>{t('Day low')}: {low?.toFixed(2)}</Price>
     </PriceWrapper>
   )
 })

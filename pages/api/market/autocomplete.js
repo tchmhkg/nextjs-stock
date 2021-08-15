@@ -11,10 +11,9 @@ export default async function handler(req, res) {
         columns: 'ticker,name,assetType,countryCode'
       }
     });
-    console.log(response?.data);
     res.json({
       success: true,
-      result: response?.data?.filter(ticker => ticker.assetType === 'Stock' && ticker.countryCode === 'US')
+      result: response?.data?.filter(ticker => (ticker.assetType === 'Stock' || ticker.assetType === 'ETF') && ticker.countryCode === 'US')
     });
   } catch (error) {
     console.log(error);

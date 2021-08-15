@@ -150,10 +150,10 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
       if(prices?.longName) {
         setName(prices?.longName)
       }
-      if(prices?.marketState !== 'CLOSED') {
+      // if(prices?.marketState !== 'CLOSED') {
         setPrice(prices?.lastPrice);
         setClosePrice(prices?.apiClosePrice);
-      }
+      // }
     }, [prices?.lastPrice, prices?.apiClosePrice, prices?.marketState])
 
     return (
