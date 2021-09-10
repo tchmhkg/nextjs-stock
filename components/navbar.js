@@ -43,7 +43,7 @@ const GitHubIconWrapper = styled.div`
 
 const GitHubButton = memo(() => (
   <GitHubIconWrapper>
-    <a href="https://github.com/tchmhkg/nextjs-app" rel="noopener" target="_blank">
+    <a href="https://github.com/tchmhkg/nextjs-stock" rel="noopener" target="_blank">
       <Image 
         src="/images/github.png"
         width={30}
