@@ -1,45 +1,47 @@
 import axios from "axios";
-import { getMetaInfo, getLatestPrice } from "~/utils/apiUrls";
-let Parser = require('rss-parser');
-let parser = new Parser();
-let cancelToken;
+import { getMetaInfo, FINNHUB_COMPANY_NEWS_API } from "~/utils/apiUrls";
 
 export default async function handler(req, res) {
-  const {symbol} = req.query;
+  const { symbol } = req.query;
+
+  if (!symbol) {
+    return res.json({ success: false, feeds: [], desc: null });
+  }
 
   try {
-  const url = `https://feeds.finance.yahoo.com/rss/2.0/headline?s=${symbol}&region=US&lang=en-US`;
-    let feed = await parser.parseURL(url);
+    const to = new Date();
+    const from = new Date(to.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const fmt = (d) => d.toISOString().slice(0, 10);
 
-    if (typeof cancelToken != typeof undefined) {
-      cancelToken.cancel("Operation canceled due to new request.");
-    }
+    const [metaRes, newsRes] = await Promise.all([
+      axios.get(getMetaInfo(symbol)),
+      axios.get(FINNHUB_COMPANY_NEWS_API, {
+        params: {
+          symbol,
+          from: fmt(from),
+          to: fmt(to),
+        },
+      }),
+    ]);
 
-    cancelToken = axios.CancelToken.source();
-
-    // const latestPriceRes = await axios.get(getLatestPrice(symbol), {
-    //   cancelToken: cancelToken.token,
-    // });
-
-    const profileUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=summaryProfile`;
-
-    const metaInfoRes = await axios.get(profileUrl, {
-      cancelToken: cancelToken.token,
-    });
+    const feeds = (Array.isArray(newsRes?.data) ? newsRes.data : []).slice(0, 20).map((item) => ({
+      title: item.headline,
+      link: item.url,
+      guid: String(item.id ?? item.url),
+      pubDate: item.datetime ? new Date(item.datetime * 1000).toISOString() : new Date().toISOString(),
+    }));
 
     res.json({
       success: true,
-      feeds: feed?.items || [],
-      // latestPrice: latestPriceRes?.data || [],
-      desc: metaInfoRes?.data?.quoteSummary?.result?.[0]?.summaryProfile.longBusinessSummary
+      feeds,
+      desc: metaRes?.data?.description || null,
     });
   } catch (error) {
-    console.log(error);
+    console.log(error?.message || error);
     res.json({
       success: false,
       feeds: [],
-      // latestPrice: [],
-      metaInfo: []
+      desc: null,
     });
   }
 }

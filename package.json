@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start",
-    "export": "next export"
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider next",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider next build",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider next start",
+    "export": "NODE_OPTIONS=--openssl-legacy-provider next export"
   },
   "dependencies": {
     "@next/bundle-analyzer": "^10.0.2",
@@ -39,6 +39,6 @@
     "duplicate-package-checker-webpack-plugin": "^3.0.0"
   },
   "engines": {
-    "node": "12.x"
+    "node": "22.x"
   }
 }

@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 
 import useSWR from 'swr';
 import useTranslation from '~/hooks/useTranslation';
-import { getPricesFromHtml } from '~/utils';
 
 const Carousel = dynamic(import('~/components/market/carousel'));
 const IndexPrice = dynamic(import('~/components/market-indices/index-price'));
@@ -37,19 +36,18 @@ const LabelContainer = memo(({ label = '' }) => {
 const fetcher = (url, params) => axios.get(url, {params}).then(res => res.data?.data);
 
 const MarketIndices = () => {
-  const params = useMemo(() => ({market: 'US'}), []);
-  const { data: prices, error } = useSWR(['/api/market/market-indices', params], fetcher, {refreshInterval: 2000, refreshWhenHidden: false})
+  // Stable key — new object each render makes SWR refetch forever.
+  const params = useMemo(() => ({ market: 'US' }), []);
+  const { data: prices } = useSWR(['/api/market/market-indices', params], fetcher, {refreshInterval: 30000, refreshWhenHidden: false})
 
   const renderQuoteContent = useCallback(data => {
-    const priceObj = getPricesFromHtml(data?.html);
-
     return (
       <Wrapper>
         <LabelContainer label={data?.symbol} />
-        <IndexPrice priceObj={priceObj} />
+        <IndexPrice priceObj={{ lastPrice: data?.lastPrice, closePrice: data?.closePrice }} />
       </Wrapper>
     );
-  }, [prices])
+  }, [])
 
   return (
     <Carousel>
