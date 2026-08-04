@@ -12,9 +12,9 @@ import {
 import type { MarketRegion, QuoteDto } from "@/lib/market/types";
 import clsx from "clsx";
 
-type Props = {
+type Props = Readonly<{
   region: MarketRegion;
-};
+}>;
 
 export function IndicesStrip({ region }: Props) {
   const { data, error, isLoading } = useSWR(
@@ -51,7 +51,7 @@ export function IndicesStrip({ region }: Props) {
   );
 }
 
-function IndexCard({ quote }: { quote: QuoteDto }) {
+function IndexCard({ quote }: Readonly<{ quote: QuoteDto }>) {
   const tone = changeTone(quote.regularMarketChange);
 
   return (

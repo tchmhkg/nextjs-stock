@@ -4,9 +4,9 @@ import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { marketApi } from "@/lib/market/api";
 
-type Props = {
+type Props = Readonly<{
   symbol: string;
-};
+}>;
 
 export function NewsList({ symbol }: Props) {
   const t = useTranslations("Market");

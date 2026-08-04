@@ -47,6 +47,7 @@ function daysAgoIso(days: number): string {
 function chartLookbackDays(interval: string): number {
   switch (interval) {
     case "1m":
+      return 1; // one session window — multi-day 1m axes are unreadable
     case "5m":
       return 5;
     case "15m":

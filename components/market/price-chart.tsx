@@ -7,6 +7,7 @@ import {
   AreaSeries,
   CandlestickSeries,
   ColorType,
+  TickMarkType,
   type IChartApi,
   type ISeriesApi,
   type Time,
@@ -18,15 +19,60 @@ import clsx from "clsx";
 
 type Interval = "1m" | "1d";
 
-type Props = {
+type Props = Readonly<{
   symbol: string;
-};
+}>;
 
 function themeColors(isDark: boolean) {
   return {
     text: isDark ? "#8b9aa5" : "#5b6b76",
     grid: isDark ? "#243039" : "#e8eef2",
   };
+}
+
+function asDate(time: Time): Date | null {
+  if (typeof time === "number") return new Date(time * 1000);
+  if (typeof time === "string") return new Date(time);
+  return new Date(Date.UTC(time.year, time.month - 1, time.day));
+}
+
+function formatClock(date: Date) {
+  return date.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+}
+
+function formatDayTime(date: Date) {
+  return `${date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  })} ${formatClock(date)}`;
+}
+
+/** Axis labels always carry the calendar day — US hours in HK span midnight. */
+function intradayTickMark(time: Time, tickMarkType: TickMarkType): string | null {
+  const date = asDate(time);
+  if (!date || Number.isNaN(date.getTime())) return null;
+
+  if (
+    tickMarkType === TickMarkType.Year ||
+    tickMarkType === TickMarkType.Month ||
+    tickMarkType === TickMarkType.DayOfMonth
+  ) {
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+  }
+  return formatDayTime(date);
+}
+
+function intradayCrosshairLabel(time: Time): string {
+  const date = asDate(time);
+  if (!date || Number.isNaN(date.getTime())) return "";
+  return formatDayTime(date);
 }
 
 export function PriceChart({ symbol }: Props) {
@@ -65,7 +111,15 @@ export function PriceChart({ symbol }: Props) {
         horzLines: { color: colors.grid },
       },
       rightPriceScale: { borderVisible: false },
-      timeScale: { borderVisible: false },
+      timeScale: {
+        borderVisible: false,
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      crosshair: {
+        vertLine: { labelVisible: true },
+        horzLine: { labelVisible: true },
+      },
     });
 
     chartRef.current = chart;
@@ -105,6 +159,29 @@ export function PriceChart({ symbol }: Props) {
     const bars = data.bars.filter(
       (b) => b.close != null && Number.isFinite(b.time),
     );
+
+    const intraday = interval === "1m";
+    chart.applyOptions({
+      localization: {
+        timeFormatter: intraday
+          ? intradayCrosshairLabel
+          : (time) => {
+              const date = asDate(time);
+              if (!date || Number.isNaN(date.getTime())) return "";
+              return date.toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              });
+            },
+      },
+      timeScale: {
+        borderVisible: false,
+        timeVisible: intraday,
+        secondsVisible: false,
+        tickMarkFormatter: intraday ? intradayTickMark : undefined,
+      },
+    });
 
     if (interval === "1d") {
       const series = chart.addSeries(CandlestickSeries, {

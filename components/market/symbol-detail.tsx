@@ -8,9 +8,9 @@ import { NewsList } from "@/components/market/news-list";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
-type Props = {
+type Props = Readonly<{
   symbol: string;
-};
+}>;
 
 export function SymbolDetail({ symbol }: Props) {
   const t = useTranslations("Market");

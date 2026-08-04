@@ -20,10 +20,10 @@ const geistMono = Geist_Mono({
 
 const themeInitScript = `(function(){try{if(localStorage.getItem("theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}})();`;
 
-type Props = {
+type Props = Readonly<{
   children: ReactNode;
   params: Promise<{ locale: string }>;
-};
+}>;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

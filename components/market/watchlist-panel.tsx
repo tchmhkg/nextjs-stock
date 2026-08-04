@@ -48,11 +48,11 @@ function WatchlistRow({
   symbol,
   onRemove,
   removeLabel,
-}: {
+}: Readonly<{
   symbol: string;
   onRemove: () => void;
   removeLabel: string;
-}) {
+}>) {
   const { data } = useSWR(
     ["quote", symbol],
     () => marketApi.quote(symbol),

@@ -12,9 +12,9 @@ import {
 import clsx from "clsx";
 import { motion } from "motion/react";
 
-type Props = {
+type Props = Readonly<{
   symbol: string;
-};
+}>;
 
 export function QuoteHeader({ symbol }: Props) {
   const t = useTranslations("Market");

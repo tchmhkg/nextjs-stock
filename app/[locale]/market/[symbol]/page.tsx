@@ -1,8 +1,8 @@
 import { SymbolDetail } from "@/components/market/symbol-detail";
 
-type Props = {
+type Props = Readonly<{
   params: Promise<{ locale: string; symbol: string }>;
-};
+}>;
 
 export async function generateMetadata({ params }: Props) {
   const { symbol } = await params;

@@ -1,9 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { MarketBoard } from "@/components/market/market-board";
 
-type Props = {
+type Props = Readonly<{
   params: Promise<{ locale: string }>;
-};
+}>;
 
 export async function generateMetadata({ params }: Props) {
   const { locale } = await params;

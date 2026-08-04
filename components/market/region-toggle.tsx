@@ -4,10 +4,10 @@ import { useTranslations } from "next-intl";
 import clsx from "clsx";
 import type { MarketRegion } from "@/lib/market/types";
 
-type Props = {
+type Props = Readonly<{
   region: MarketRegion;
   onChange: (region: MarketRegion) => void;
-};
+}>;
 
 export function RegionToggle({ region, onChange }: Props) {
   const t = useTranslations("Market");

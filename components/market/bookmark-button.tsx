@@ -4,9 +4,9 @@ import { useTranslations } from "next-intl";
 import { useWatchlist } from "@/hooks/use-watchlist";
 import clsx from "clsx";
 
-type Props = {
+type Props = Readonly<{
   symbol: string;
-};
+}>;
 
 export function BookmarkButton({ symbol }: Props) {
   const t = useTranslations("Market");
