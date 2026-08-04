@@ -20,7 +20,32 @@
   },
   "Market": {
     "title": "Market",
-    "stub": "Market board arrives in the next update — indices, watchlist, and symbol pages."
+    "regionLabel": "Market region",
+    "region": {
+      "US": "US",
+      "HK": "HK"
+    },
+    "indices": "Indices",
+    "watchlist": "Watchlist",
+    "watchlistEmpty": "No symbols yet. Open a stock and tap Save, or search from the header.",
+    "watchlistSave": "Save",
+    "watchlistSaved": "Saved",
+    "watchlistRemove": "Remove from watchlist",
+    "backToMarket": "Market",
+    "chart": "Chart",
+    "interval": {
+      "1m": "Intraday",
+      "1d": "Daily"
+    },
+    "company": "Company",
+    "noSummary": "No company summary available.",
+    "news": "News",
+    "noNews": "No recent news.",
+    "dayHigh": "Day high",
+    "dayLow": "Day low",
+    "prevClose": "Prev close",
+    "marketState": "Session",
+    "loadError": "Could not load market data."
   },
   "Theme": {
     "light": "Light",
@@ -30,6 +55,6 @@
   "Language": {
     "label": "Language",
     "en": "English",
-    "zh": "中文"
+    "zh": "繁體中文"
   }
 }

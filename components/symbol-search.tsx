@@ -11,11 +11,11 @@ type SearchHit = {
   longName: string | null;
 };
 
-type Props = {
+type Props = Readonly<{
   autoFocus?: boolean;
   onClose?: () => void;
   className?: string;
-};
+}>;
 
 export function SymbolSearch({ autoFocus = false, onClose, className }: Props) {
   const t = useTranslations("Nav");

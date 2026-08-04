@@ -1770,6 +1770,11 @@ depd@^2.0.0, depd@~2.0.0:
   resolved "https://registry.yarnpkg.com/depd/-/depd-2.0.0.tgz#b696163cc757560d09cf22cc8fad1571b79e76df"
   integrity sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==
 
+dequal@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/dequal/-/dequal-2.0.3.tgz#2644214f1997d39ed0ee0ece72335490a7ac67be"
+  integrity sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==
+
 detect-libc@^2.0.3, detect-libc@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-2.1.2.tgz#689c5dcdc1900ef5583a4cb9f6d7b473742074ad"
@@ -2283,6 +2288,11 @@ express@^5.2.1:
     statuses "^2.0.1"
     type-is "^2.0.1"
     vary "^1.1.2"
+
+fancy-canvas@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/fancy-canvas/-/fancy-canvas-2.1.0.tgz#44b40e40419ad8ef8304df365e4276767e918552"
+  integrity sha512-nifxXJ95JNLFR2NgRV4/MxVP45G9909wJTEKz5fg/TZS20JJZA6hfgRVh/bC9bwl2zBtBNcYPjiBE4njQHVBwQ==
 
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
@@ -3105,6 +3115,13 @@ lightningcss@1.32.0:
     lightningcss-linux-x64-musl "1.32.0"
     lightningcss-win32-arm64-msvc "1.32.0"
     lightningcss-win32-x64-msvc "1.32.0"
+
+lightweight-charts@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/lightweight-charts/-/lightweight-charts-5.2.0.tgz#ef3f681794e9dad0ac131913259439ad596bcf92"
+  integrity sha512-ey3Vas8UhV06ni+LT9TA1nEe4y8So4Mi6CL/oarNHFMyTktz/xy8e8+oh04Q//eO3t6etvFXgayz2fClyFQb5w==
+  dependencies:
+    fancy-canvas "2.1.0"
 
 locate-path@^6.0.0:
   version "6.0.0"
@@ -3977,6 +3994,14 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+swr@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-2.5.0.tgz#186c68b08b3419a5ebba4cea53d776467c9fa2d4"
+  integrity sha512-W0GomadRJe9OfzIoRX0kZHhDSaRRfdiOUeH6uazgR05SibBhDNwfdTbhAxmFtObvkf59fFymo22mooKukosvNA==
+  dependencies:
+    dequal "^2.0.3"
+    use-sync-external-store "^1.6.0"
+
 tailwindcss@4.3.3, tailwindcss@^4:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-4.3.3.tgz#c006861611c213c1877893ab5b23daa16be2bb55"
@@ -4212,6 +4237,11 @@ use-intl@^4.13.5:
     "@schummar/icu-type-parser" "1.21.5"
     icu-minify "^4.13.5"
     intl-messageformat "^11.1.0"
+
+use-sync-external-store@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz#b174bfa65cb2b526732d9f2ac0a408027876f32d"
+  integrity sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==
 
 vary@^1, vary@^1.1.2:
   version "1.1.2"

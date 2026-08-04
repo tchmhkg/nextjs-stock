@@ -24,7 +24,7 @@ function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [theme, setThemeState] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 

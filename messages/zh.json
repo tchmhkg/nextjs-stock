@@ -20,7 +20,32 @@
   },
   "Market": {
     "title": "市場",
-    "stub": "市場看板將於下一階段上線 — 指數、自選與個股頁面。"
+    "regionLabel": "市場地區",
+    "region": {
+      "US": "美股",
+      "HK": "港股"
+    },
+    "indices": "指數",
+    "watchlist": "自選",
+    "watchlistEmpty": "尚無自選。開啟個股後點「收藏」，或使用上方搜尋。",
+    "watchlistSave": "收藏",
+    "watchlistSaved": "已收藏",
+    "watchlistRemove": "從自選移除",
+    "backToMarket": "市場",
+    "chart": "圖表",
+    "interval": {
+      "1m": "分時",
+      "1d": "日線"
+    },
+    "company": "公司資料",
+    "noSummary": "暫無公司簡介。",
+    "news": "新聞",
+    "noNews": "暫無相關新聞。",
+    "dayHigh": "最高",
+    "dayLow": "最低",
+    "prevClose": "昨收",
+    "marketState": "盤勢",
+    "loadError": "無法載入市場資料。"
   },
   "Theme": {
     "light": "淺色",
