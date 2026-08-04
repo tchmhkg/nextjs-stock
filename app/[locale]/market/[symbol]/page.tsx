@@ -1,4 +1,3 @@
-import { setRequestLocale } from "next-intl/server";
 import { SymbolDetail } from "@/components/market/symbol-detail";
 
 type Props = {
@@ -11,8 +10,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function SymbolPage({ params }: Props) {
-  const { locale, symbol } = await params;
-  setRequestLocale(locale);
+  const { symbol } = await params;
   const decoded = decodeURIComponent(symbol).toUpperCase();
 
   return (

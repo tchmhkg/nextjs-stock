@@ -1,4 +1,3 @@
-import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { HomeHero } from "@/components/home-hero";
 
@@ -15,9 +14,6 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function HomePage({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default function HomePage() {
   return <HomeHero />;
 }

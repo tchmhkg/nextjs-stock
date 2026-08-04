@@ -1,4 +1,4 @@
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { MarketBoard } from "@/components/market/market-board";
 
 type Props = {
@@ -11,10 +11,7 @@ export async function generateMetadata({ params }: Props) {
   return { title: t("title") };
 }
 
-export default async function MarketPage({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+export default function MarketPage() {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <MarketBoard />
