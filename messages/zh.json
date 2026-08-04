@@ -4,8 +4,12 @@
     "description": "即时报價與圖表"
   },
   "Nav": {
+    "logo": "nextjs-stock",
+    "logoShort": "stock",
     "market": "市場",
-    "searchPlaceholder": "搜尋代號…"
+    "searchPlaceholder": "搜尋代號…",
+    "searchOpen": "開啟搜尋",
+    "searchClose": "關閉搜尋"
   },
   "Home": {
     "eyebrow": "2.0.0",

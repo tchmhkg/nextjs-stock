@@ -11,13 +11,26 @@ type SearchHit = {
   longName: string | null;
 };
 
-export function SymbolSearch() {
+type Props = {
+  autoFocus?: boolean;
+  onClose?: () => void;
+  className?: string;
+};
+
+export function SymbolSearch({ autoFocus = false, onClose, className }: Props) {
   const t = useTranslations("Nav");
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (autoFocus) {
+      inputRef.current?.focus();
+    }
+  }, [autoFocus]);
 
   useEffect(() => {
     if (query.trim().length < 1) {
@@ -54,9 +67,17 @@ export function SymbolSearch() {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
+  const close = () => {
+    setQuery("");
+    setHits([]);
+    setOpen(false);
+    onClose?.();
+  };
+
   const go = (symbol: string) => {
     setOpen(false);
     setQuery("");
+    onClose?.();
     router.push(`/market/${encodeURIComponent(symbol)}`);
   };
 
@@ -68,9 +89,20 @@ export function SymbolSearch() {
   };
 
   return (
-    <div ref={wrapRef} className="relative w-full">
-      <form onSubmit={onSubmit}>
+    <div ref={wrapRef} className={clsx("relative flex w-full items-center gap-2", className)}>
+      {onClose && (
+        <button
+          type="button"
+          onClick={close}
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-foreground"
+          aria-label={t("searchClose")}
+        >
+          ←
+        </button>
+      )}
+      <form onSubmit={onSubmit} className="min-w-0 flex-1">
         <input
+          ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => hits.length > 0 && setOpen(true)}
@@ -81,15 +113,13 @@ export function SymbolSearch() {
         />
       </form>
       {open && hits.length > 0 && (
-        <ul className="absolute z-40 mt-1 max-h-64 w-full overflow-auto rounded-md border border-border bg-surface shadow-lg">
+        <ul className="absolute top-full right-0 left-0 z-40 mt-1 max-h-[min(16rem,50vh)] overflow-auto rounded-md border border-border bg-surface shadow-lg">
           {hits.map((hit) => (
             <li key={hit.symbol}>
               <button
                 type="button"
                 onClick={() => go(hit.symbol)}
-                className={clsx(
-                  "flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left transition-colors hover:bg-accent-soft",
-                )}
+                className="flex w-full flex-col items-start gap-0.5 px-3 py-2.5 text-left transition-colors hover:bg-accent-soft"
               >
                 <span className="font-mono text-sm font-semibold text-foreground">
                   {hit.symbol}

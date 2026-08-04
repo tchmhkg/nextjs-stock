@@ -4,8 +4,12 @@
     "description": "Live quotes and charts"
   },
   "Nav": {
+    "logo": "nextjs-stock",
+    "logoShort": "stock",
     "market": "Market",
-    "searchPlaceholder": "Search symbol…"
+    "searchPlaceholder": "Search symbol…",
+    "searchOpen": "Open search",
+    "searchClose": "Close search"
   },
   "Home": {
     "eyebrow": "2.0.0",
