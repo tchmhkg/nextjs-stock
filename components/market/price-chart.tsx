@@ -22,9 +22,16 @@ type Props = {
   symbol: string;
 };
 
+function themeColors(isDark: boolean) {
+  return {
+    text: isDark ? "#8b9aa5" : "#5b6b76",
+    grid: isDark ? "#243039" : "#e8eef2",
+  };
+}
+
 export function PriceChart({ symbol }: Props) {
   const t = useTranslations("Market");
-  const { theme } = useTheme();
+  const { theme, mounted } = useTheme();
   const [interval, setInterval] = useState<Interval>("1d");
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -35,22 +42,27 @@ export function PriceChart({ symbol }: Props) {
   const { data, error, isLoading } = useSWR(
     ["chart", symbol, interval],
     () => marketApi.chart(symbol, interval),
-    { refreshInterval: interval === "1m" ? 60_000 : 120_000, revalidateOnFocus: false },
+    {
+      refreshInterval: interval === "1m" ? 60_000 : 120_000,
+      revalidateOnFocus: false,
+    },
   );
 
+  // Create chart once; update colors on theme change (don't recreate — that blanks series).
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || chartRef.current) return;
 
     const isDark = theme === "dark";
+    const colors = themeColors(isDark);
     const chart = createChart(containerRef.current, {
       autoSize: true,
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
-        textColor: isDark ? "#8b9aa5" : "#5b6b76",
+        textColor: colors.text,
       },
       grid: {
-        vertLines: { color: isDark ? "#243039" : "#e8eef2" },
-        horzLines: { color: isDark ? "#243039" : "#e8eef2" },
+        vertLines: { color: colors.grid },
+        horzLines: { color: colors.grid },
       },
       rightPriceScale: { borderVisible: false },
       timeScale: { borderVisible: false },
@@ -58,19 +70,28 @@ export function PriceChart({ symbol }: Props) {
 
     chartRef.current = chart;
 
-    const onResize = () => {
-      // autoSize handles most cases; force a read for flex parents
-      chart.timeScale().fitContent();
-    };
-    window.addEventListener("resize", onResize);
-
     return () => {
-      window.removeEventListener("resize", onResize);
       chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
     };
-  }, [theme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- create once on mount
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !chartRef.current) return;
+    const colors = themeColors(theme === "dark");
+    chartRef.current.applyOptions({
+      layout: {
+        background: { type: ColorType.Solid, color: "transparent" },
+        textColor: colors.text,
+      },
+      grid: {
+        vertLines: { color: colors.grid },
+        horzLines: { color: colors.grid },
+      },
+    });
+  }, [theme, mounted]);
 
   useEffect(() => {
     const chart = chartRef.current;
@@ -149,16 +170,15 @@ export function PriceChart({ symbol }: Props) {
       </div>
 
       {error && <p className="mb-2 text-sm text-danger">{t("loadError")}</p>}
-      {isLoading && !data && (
-        <div className="h-72 animate-pulse rounded-md border border-border bg-surface" />
-      )}
-      <div
-        ref={containerRef}
-        className={clsx(
-          "h-72 w-full rounded-md border border-border bg-surface",
-          !data && isLoading && "hidden",
+      <div className="relative">
+        {isLoading && !data && (
+          <div className="absolute inset-0 z-10 animate-pulse rounded-md border border-border bg-surface" />
         )}
-      />
+        <div
+          ref={containerRef}
+          className="h-72 w-full rounded-md border border-border bg-surface"
+        />
+      </div>
     </div>
   );
 }
