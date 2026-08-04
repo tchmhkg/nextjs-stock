@@ -12,7 +12,7 @@ export function LanguageSwitcher() {
 
   return (
     <div
-      className="inline-flex shrink-0 items-center gap-0.5 rounded-md border border-border bg-surface p-0.5"
+      className="inline-flex h-9 shrink-0 items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5"
       role="group"
       aria-label={t("label")}
     >
@@ -22,7 +22,7 @@ export function LanguageSwitcher() {
           href={pathname}
           locale={code}
           className={clsx(
-            "min-w-9 rounded px-2.5 py-1 text-center font-mono text-xs font-medium uppercase transition-colors",
+            "inline-flex min-w-9 items-center justify-center rounded px-2.5 font-mono text-xs font-medium uppercase transition-colors",
             locale === code
               ? "bg-accent text-white dark:text-foreground"
               : "text-muted hover:text-foreground",
