@@ -145,7 +145,7 @@ const LatestPrice = ({symbol = '', data = {}, isDelayed = false, ...props}) => {
     const [closePrice, setClosePrice] = useState(data.closePrice || 0);
     const [name, setName] = useState(null);
     const params = useMemo(() => ({symbol}), [symbol]);
-    const { data: prices, error } = useSWR([symbol ? '/api/market/price' : null, params], fetcher, {refreshInterval: 2500})
+    const { data: prices, error } = useSWR([symbol ? '/api/market/price' : null, params], fetcher, {refreshInterval: 10000})
     useEffect(() => {
       if(prices?.longName) {
         setName(prices?.longName)

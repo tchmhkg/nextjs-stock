@@ -1,41 +1,47 @@
 import axios from "axios";
-let cancelToken;
+import { FINNHUB_QUOTE_API, FINNHUB_STOCK_PROFILE_API } from "~/utils/apiUrls";
+
+const raw = (value) => ({ raw: value ?? 0, fmt: value != null ? String(value) : "0" });
 
 export default async function handler(req, res) {
-  const {symbol} = req.query;
+  const { symbol } = req.query;
+
+  if (!symbol) {
+    return res.status(400).json({ success: false, data: {} });
+  }
 
   try {
-    if (typeof cancelToken != typeof undefined) {
-      cancelToken.cancel("Operation canceled due to new request.");
+    const [quoteRes, profileRes] = await Promise.all([
+      axios.get(FINNHUB_QUOTE_API, { params: { symbol } }),
+      axios.get(FINNHUB_STOCK_PROFILE_API, { params: { symbol } }),
+    ]);
+
+    const q = quoteRes?.data || {};
+    const profile = profileRes?.data || {};
+
+    if (q.c == null || q.c === 0) {
+      return res.status(500).json({ success: false, data: {} });
     }
 
-    cancelToken = axios.CancelToken.source();
-
-    const url = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=price`;
-
-    const apiRes = await axios.get(url, {
-      cancelToken: cancelToken.token,
-    });
-
-    const result = apiRes?.data?.quoteSummary?.result?.[0]?.price || {};
-    const filteredData = Object.keys(result)
-      .filter(key => fields.includes(key))
-      .reduce((obj, key) => {
-        obj[key] = result[key];
-        return obj;
-      }, {});
-
+    // Always REGULAR: Finnhub free has no session; avoids PRE/POST/CLOSED paths reading empty fields.
     res.json({
       success: true,
-      data: filteredData
+      data: {
+        marketState: "REGULAR",
+        regularMarketPrice: raw(q.c),
+        regularMarketPreviousClose: raw(q.pc),
+        quoteSourceName: "Finnhub",
+        longName: profile.name || symbol,
+        symbol,
+        regularMarketDayHigh: raw(q.h),
+        regularMarketDayLow: raw(q.l),
+      },
     });
   } catch (error) {
-    // console.log(error);
-    res.status(error?.response?.status || 500).json({
+    console.log(error?.message || error);
+    res.status(500).json({
       success: false,
-      data: {}
+      data: {},
     });
   }
 }
-
-const fields = ['marketState', 'preMarketPrice', 'regularMarketPrice', 'postMarketPrice', 'regularMarketPreviousClose', 'quoteSourceName', 'longName', 'symbol', 'regularMarketDayHigh', 'regularMarketDayLow']

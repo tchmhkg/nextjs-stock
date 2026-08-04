@@ -20,7 +20,7 @@ const IndexPrice = ({ priceObj = {}, isFuture = false }) => {
 
   useEffect(() => {
     setPrices(priceObj)
-  }, [priceObj])
+  }, [priceObj?.lastPrice, priceObj?.closePrice, priceObj?.lastPriceInDouble, priceObj?.closePriceInDouble])
 
   const lastPrice = useMemo(
     () => getLastPrice(prices, isFuture),
