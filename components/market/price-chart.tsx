@@ -75,6 +75,16 @@ function intradayCrosshairLabel(time: Time): string {
   return formatDayTime(date);
 }
 
+function dailyCrosshairLabel(time: Time): string {
+  const date = asDate(time);
+  if (!date || Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export function PriceChart({ symbol }: Props) {
   const t = useTranslations("Market");
   const { theme, mounted } = useTheme();
@@ -163,17 +173,7 @@ export function PriceChart({ symbol }: Props) {
     const intraday = interval === "1m";
     chart.applyOptions({
       localization: {
-        timeFormatter: intraday
-          ? intradayCrosshairLabel
-          : (time) => {
-              const date = asDate(time);
-              if (!date || Number.isNaN(date.getTime())) return "";
-              return date.toLocaleDateString(undefined, {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              });
-            },
+        timeFormatter: intraday ? intradayCrosshairLabel : dailyCrosshairLabel,
       },
       timeScale: {
         borderVisible: false,
