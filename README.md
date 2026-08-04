@@ -7,10 +7,11 @@ Market quotes and charts. **Version 2.0.0** rewrite in progress.
 - Next.js 16 (App Router) + React 19 + TypeScript
 - Node.js 24.x
 - Tailwind CSS 4
+- `yahoo-finance2` (no API keys) for market data
 
 ## Status
 
-PR1 scaffold only. Data layer, UI shell, and market features follow in later PRs.
+PR2 data layer landed. UI shell and market pages follow.
 
 ## Local
 
@@ -21,3 +22,18 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Market APIs
+
+| Endpoint | Query |
+|---|---|
+| `/api/market/quote` | `symbol` |
+| `/api/market/profile` | `symbol` |
+| `/api/market/chart` | `symbol`, `interval` (`1m`…`1d`) |
+| `/api/market/search` | `q` |
+| `/api/market/news` | `symbol` |
+| `/api/market/indices` | `region` (`US` \| `HK`) |
+
+```bash
+yarn smoke:market
+```
