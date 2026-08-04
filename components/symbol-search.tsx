@@ -68,7 +68,7 @@ export function SymbolSearch() {
   };
 
   return (
-    <div ref={wrapRef} className="relative w-full max-w-xs">
+    <div ref={wrapRef} className="relative w-full">
       <form onSubmit={onSubmit}>
         <input
           value={query}

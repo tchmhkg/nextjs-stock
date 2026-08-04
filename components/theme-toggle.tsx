@@ -1,22 +1,18 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
+import { useTheme } from "@/components/theme-provider";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const { theme, toggle, mounted } = useTheme();
   const t = useTranslations("Theme");
-
-  useEffect(() => setMounted(true), []);
 
   if (!mounted) {
     return (
       <button
         type="button"
-        className="h-9 w-9 rounded-md border border-border bg-surface"
+        className="h-9 w-9 shrink-0 rounded-md border border-border bg-surface"
         aria-hidden
       />
     );
@@ -27,8 +23,8 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-foreground transition-colors hover:border-accent hover:text-accent"
+      onClick={toggle}
+      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface text-foreground transition-colors hover:border-accent hover:text-accent"
       aria-label={t("toggle")}
       title={isDark ? t("light") : t("dark")}
     >
