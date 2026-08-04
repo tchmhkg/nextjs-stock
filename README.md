@@ -1,22 +1,23 @@
-NextJS app (Work in progress)
+# nextjs-stock
 
-[Demo link](https://truman.vercel.app/)
+Market quotes and charts. **Version 2.0.0** rewrite in progress.
 
-## What is inside?
+## Stack
 
-This project uses lot of stuff as:
+- Next.js 16 (App Router) + React 19 + TypeScript
+- Node.js 24.x
+- Tailwind CSS 4
 
-- [NextJS](https://nextjs.org/)
-- [Styled Components](https://styled-components.com/)
-- [Prettier](https://prettier.io/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [Highcharts](https://github.com/highcharts/highcharts-react/)
+## Status
 
-## API keys
+PR1 scaffold only. Data layer, UI shell, and market features follow in later PRs.
 
-Need to get api keys from below providers:
-- [TD Ameritrade](https://developer.tdameritrade.com/)
-- [FINNHUB](https://finnhub.io/)
-- [TIINGO](https://api.tiingo.com/)
+## Local
 
-Other data are get from Yahoo API & investing.com
+```bash
+nvm use 24
+yarn
+yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
