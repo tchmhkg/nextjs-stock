@@ -1,0 +1,31 @@
+{
+  "Meta": {
+    "title": "nextjs-stock",
+    "description": "Live quotes and charts"
+  },
+  "Nav": {
+    "market": "Market",
+    "searchPlaceholder": "Search symbol…"
+  },
+  "Home": {
+    "eyebrow": "2.0.0",
+    "title": "nextjs-stock",
+    "tagline": "Live quotes and charts for US and Hong Kong markets.",
+    "cta": "Open market",
+    "stack": "Next.js 16 · TypeScript · Node 24 · yahoo-finance2"
+  },
+  "Market": {
+    "title": "Market",
+    "stub": "Market board arrives in the next update — indices, watchlist, and symbol pages."
+  },
+  "Theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "toggle": "Toggle theme"
+  },
+  "Language": {
+    "label": "Language",
+    "en": "English",
+    "zh": "中文"
+  }
+}

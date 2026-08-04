@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* Cool-tech theme tokens — light first */
+  /* Cool-tech theme — light first */
   --background: #f4f7f9;
   --foreground: #0f1c24;
   --muted: #5b6b76;
@@ -11,6 +11,16 @@
   --accent-soft: #ccfbf1;
   --danger: #e11d48;
   --success: #059669;
+}
+
+.dark {
+  --background: #0b1217;
+  --foreground: #e8eef2;
+  --muted: #8b9aa5;
+  --surface: #121b22;
+  --border: #243039;
+  --accent: #2dd4bf;
+  --accent-soft: #134e4a;
 }
 
 @theme inline {
@@ -25,18 +35,6 @@
   --color-success: var(--success);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b1217;
-    --foreground: #e8eef2;
-    --muted: #8b9aa5;
-    --surface: #121b22;
-    --border: #243039;
-    --accent: #2dd4bf;
-    --accent-soft: #134e4a;
-  }
 }
 
 body {

@@ -6,12 +6,12 @@ Market quotes and charts. **Version 2.0.0** rewrite in progress.
 
 - Next.js 16 (App Router) + React 19 + TypeScript
 - Node.js 24.x
-- Tailwind CSS 4
+- Tailwind CSS 4 · next-intl · next-themes · motion
 - `yahoo-finance2` (no API keys) for market data
 
 ## Status
 
-PR2 data layer landed. UI shell and market pages follow.
+PR3 UI shell landed (header, hero, en/zh, theme). Market board features follow.
 
 ## Local
 
@@ -21,7 +21,13 @@ yarn
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) (redirects to `/en`).
+
+### Routes
+
+- `/en`, `/zh` — home
+- `/en/market`, `/zh/market` — market stub
+- `/en/market/[symbol]` — symbol stub
 
 ### Market APIs
 

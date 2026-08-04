@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,21 +12,18 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "nextjs-stock",
-    template: "%s · nextjs-stock",
-  },
-  description: "Live quotes and charts — nextjs-stock 2.0",
+type Props = {
+  children: ReactNode;
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: Props) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+    <html lang="en" suppressHydrationWarning className="h-full">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-full flex flex-col font-sans antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
