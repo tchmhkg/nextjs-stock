@@ -71,6 +71,8 @@
     },
     "company": "公司資料",
     "noSummary": "暫無公司簡介。",
+    "showMore": "顯示更多",
+    "showLess": "收合",
     "insights": "洞察",
     "calendar": "行事曆",
     "earningsDate": "財報",
@@ -79,7 +81,7 @@
     "exDividendDate": "除息日",
     "dividendDate": "股息發放",
     "recommendations": "分析師評等",
-    "recommendationsHint": "當月共識（Yahoo）。",
+    "recommendationsHint": "分析師評等 · 當月（Yahoo）。",
     "rec": {
       "strongBuy": "強力買入",
       "buy": "買入",

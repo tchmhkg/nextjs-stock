@@ -26,8 +26,14 @@ export function SymbolDetail({ symbol }: Props) {
       <div className="mt-4">
         <QuoteHeader symbol={symbol}>
           <PriceChart symbol={symbol} />
-          <CompanyProfile symbol={symbol} />
-          <SymbolInsights symbol={symbol} />
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-10">
+            <div className="min-w-0 flex-1">
+              <CompanyProfile symbol={symbol} />
+            </div>
+            <div className="min-w-0 flex-1 empty:hidden">
+              <SymbolInsights symbol={symbol} />
+            </div>
+          </div>
           <NewsList symbol={symbol} />
         </QuoteHeader>
       </div>

@@ -71,6 +71,8 @@
     },
     "company": "Company",
     "noSummary": "No company summary available.",
+    "showMore": "Show more",
+    "showLess": "Show less",
     "insights": "Insights",
     "calendar": "Calendar",
     "earningsDate": "Earnings",
@@ -79,7 +81,7 @@
     "exDividendDate": "Ex-dividend",
     "dividendDate": "Dividend",
     "recommendations": "Analyst ratings",
-    "recommendationsHint": "Current month consensus (Yahoo).",
+    "recommendationsHint": "Analyst ratings · current month (Yahoo).",
     "rec": {
       "strongBuy": "Strong buy",
       "buy": "Buy",

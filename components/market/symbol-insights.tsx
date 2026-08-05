@@ -97,13 +97,14 @@ function CalRow({
       <dd className="font-mono tabular-nums text-foreground">
         {value}
         {hint ? (
-          <span className="ml-1.5 text-xs font-sans text-muted">{hint}</span>
+          <span className="ml-1.5 font-sans text-xs text-muted">{hint}</span>
         ) : null}
       </dd>
     </div>
   );
 }
 
+/** Calendar + analyst ratings under one Insights heading. */
 export function SymbolInsights({ symbol }: Props) {
   const t = useTranslations("Market");
   const { data, error, isLoading } = useSWR(
@@ -143,13 +144,11 @@ export function SymbolInsights({ symbol }: Props) {
   if (!hasCal && !hasRec) return null;
 
   return (
-    <section className="space-y-6">
-      {hasCal ? (
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">
-            {t("calendar")}
-          </h2>
-          <dl className="mt-3 space-y-2">
+    <section>
+      <h2 className="text-lg font-semibold text-foreground">{t("insights")}</h2>
+      <div className="mt-3 space-y-5">
+        {hasCal ? (
+          <dl className="space-y-2">
             <CalRow
               label={t("earningsDate")}
               value={formatDay(cal.earningsDate)}
@@ -174,20 +173,15 @@ export function SymbolInsights({ symbol }: Props) {
               value={formatDay(cal.dividendDate)}
             />
           </dl>
-        </div>
-      ) : null}
+        ) : null}
 
-      {hasRec ? (
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">
-            {t("recommendations")}
-          </h2>
-          <p className="mt-1 text-xs text-muted">{t("recommendationsHint")}</p>
-          <div className="mt-3">
+        {hasRec ? (
+          <div>
+            <p className="mb-2 text-xs text-muted">{t("recommendationsHint")}</p>
             <RecommendationBar row={rec} />
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </section>
   );
 }
