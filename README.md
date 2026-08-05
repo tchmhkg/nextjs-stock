@@ -61,7 +61,7 @@ All handlers live under `app/api/market/*`. Query params are Zod-validated; Yaho
 |---|---|
 | `/api/market/quote` | `symbol` |
 | `/api/market/profile` | `symbol` |
-| `/api/market/chart` | `symbol`, `interval` (`1m` \| `5m` \| `15m` \| `1h` \| `1d`) |
+| `/api/market/chart` | `symbol`, `range` (`1D` \| `5D` \| `1M` \| `3M` \| `1Y` \| `5Y`) |
 | `/api/market/search` | `q` |
 | `/api/market/news` | `symbol` |
 | `/api/market/indices` | `region` (`US` \| `HK`) |

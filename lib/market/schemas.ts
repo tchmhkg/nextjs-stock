@@ -23,4 +23,13 @@ export const regionSchema = z.enum(["US", "HK"]);
 
 export const chartIntervalSchema = z.enum(["1m", "5m", "15m", "1h", "1d"]);
 
+export const chartRangeSchema = z.enum([
+  "1D",
+  "5D",
+  "1M",
+  "3M",
+  "1Y",
+  "5Y",
+]);
+
 export const searchQuerySchema = z.string().trim().min(1).max(64);

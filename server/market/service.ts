@@ -9,6 +9,10 @@ import type {
   MarketRegion,
 } from "@/lib/market/types";
 import { REGION_INDICES } from "@/lib/market/types";
+import {
+  CHART_RANGES,
+  type ChartRangeId,
+} from "@/lib/market/chart-ranges";
 import { TTL, withCache } from "@/server/market/cache";
 import yahooFinance from "@/server/market/client";
 
@@ -60,20 +64,6 @@ function daysAgoIso(days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-function chartLookbackDays(interval: string): number {
-  switch (interval) {
-    case "1m":
-      return 1; // one session window — multi-day 1m axes are unreadable
-    case "5m":
-      return 5;
-    case "15m":
-    case "1h":
-      return 30;
-    default:
-      return 100;
-  }
-}
-
 export async function getQuote(symbol: string): Promise<QuoteDto> {
   return withCache(`quote:${symbol.toUpperCase()}`, TTL.quote, async () => {
     const raw = await yahooFinance.quote(symbol);
@@ -117,12 +107,13 @@ export async function getProfile(symbol: string): Promise<ProfileDto> {
 
 export async function getChart(
   symbol: string,
-  interval: "1m" | "5m" | "15m" | "1h" | "1d",
+  range: ChartRangeId,
 ): Promise<ChartDto> {
-  const key = `chart:${symbol.toUpperCase()}:${interval}`;
+  const { interval, lookbackDays } = CHART_RANGES[range];
+  const key = `chart:${symbol.toUpperCase()}:${range}`;
   return withCache(key, TTL.chart, async () => {
     const result = await yahooFinance.chart(symbol, {
-      period1: daysAgoIso(chartLookbackDays(interval)),
+      period1: daysAgoIso(lookbackDays),
       interval,
     });
 

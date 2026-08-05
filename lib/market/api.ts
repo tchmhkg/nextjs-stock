@@ -28,9 +28,9 @@ export const marketApi = {
     getJson<ProfileDto>(
       `/api/market/profile?symbol=${encodeURIComponent(symbol)}`,
     ),
-  chart: (symbol: string, interval: string) =>
+  chart: (symbol: string, range: string) =>
     getJson<ChartDto>(
-      `/api/market/chart?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}`,
+      `/api/market/chart?symbol=${encodeURIComponent(symbol)}&range=${encodeURIComponent(range)}`,
     ),
   news: (symbol: string) =>
     getJson<NewsItemDto[]>(
