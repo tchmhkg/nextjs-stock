@@ -13,6 +13,10 @@ import {
   chartHistoryFloorSec,
   type ChartIntervalId,
 } from "@/lib/market/chart-ranges";
+import {
+  DEFAULT_SCREENER_COUNT,
+  type ScreenerListId,
+} from "@/lib/market/screener";
 import { TTL, withCache } from "@/server/market/cache";
 import yahooFinance from "@/server/market/client";
 
@@ -94,6 +98,18 @@ export async function getQuotes(symbols: string[]): Promise<QuoteDto[]> {
 export async function getIndices(region: MarketRegion): Promise<QuoteDto[]> {
   const symbols = REGION_INDICES[region];
   return withCache(`indices:${region}`, TTL.indices, () => getQuotes(symbols));
+}
+
+export async function getScreener(
+  list: ScreenerListId,
+  count = DEFAULT_SCREENER_COUNT,
+): Promise<QuoteDto[]> {
+  return withCache(`screener:${list}:${count}`, TTL.screener, async () => {
+    const result = await yahooFinance.screener({ scrIds: list, count });
+    return (result.quotes ?? []).map((item) =>
+      mapQuote(item as unknown as Record<string, unknown>),
+    );
+  });
 }
 
 export async function getProfile(symbol: string): Promise<ProfileDto> {
