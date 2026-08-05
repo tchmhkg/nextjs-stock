@@ -33,7 +33,6 @@
     "watchlistRemove": "Remove from watchlist",
     "backToMarket": "Market",
     "chart": "Chart",
-    "chartHint": "Bar size and lookback are independent. Scroll left past the first bar to load older history. Future is empty (no data yet). Yahoo has no 3m bars — use 2m or 5m.",
     "chartLoadingOlder": "Loading older bars…",
     "chartLoadOlder": "Load older",
     "chartHistoryEnd": "No more older bars from Yahoo for this interval.",

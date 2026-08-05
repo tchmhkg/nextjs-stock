@@ -17,6 +17,7 @@ import { useTranslations } from "next-intl";
 import { marketApi } from "@/lib/market/api";
 import {
   CHART_LOOKBACK_IDS,
+  chartHistoryFloorSec,
   coerceInterval,
   DEFAULT_INTERVAL,
   DEFAULT_LOOKBACK,
@@ -297,23 +298,20 @@ export function PriceChart({ symbol }: Props) {
         priceStyleRef.current = styleRef.current;
       }
 
+      // Overlay volume in the bottom band (LWC price+volume pattern).
+      chart.priceScale("right").applyOptions({
+        scaleMargins: { top: 0.08, bottom: 0.22 },
+      });
       if (!volumeSeriesRef.current) {
-        volumeSeriesRef.current = chart.addSeries(
-          HistogramSeries,
-          {
-            priceFormat: { type: "volume" },
-            priceScaleId: "volume",
-            lastValueVisible: false,
-            priceLineVisible: false,
-          },
-          1,
-        );
-        chart.priceScale("volume", 1).applyOptions({
-          scaleMargins: { top: 0.1, bottom: 0 },
-          borderVisible: false,
+        volumeSeriesRef.current = chart.addSeries(HistogramSeries, {
+          priceFormat: { type: "volume" },
+          priceScaleId: "",
+          lastValueVisible: false,
+          priceLineVisible: false,
         });
-        const panes = chart.panes();
-        if (panes[1]) panes[1].setHeight(72);
+        volumeSeriesRef.current.priceScale().applyOptions({
+          scaleMargins: { top: 0.78, bottom: 0 },
+        });
       }
 
       if (styleRef.current === "candle") {
@@ -354,6 +352,13 @@ export function PriceChart({ symbol }: Props) {
     if (loadingHistoryRef.current || historyExhaustedRef.current) return;
     const oldest = barsRef.current[0];
     if (!oldest) return;
+
+    // Intraday Yahoo history is absolute from now — stop before we ask past it.
+    if (oldest.time <= chartHistoryFloorSec(intervalRef.current)) {
+      historyExhaustedRef.current = true;
+      setHistoryExhausted(true);
+      return;
+    }
 
     const chart = chartRef.current;
     const logical = chart?.timeScale().getVisibleLogicalRange() ?? null;
@@ -396,7 +401,9 @@ export function PriceChart({ symbol }: Props) {
           } as LogicalRange)
         : null;
     } catch {
-      // leave chart as-is; user can scroll / tap again
+      // Likely hit Yahoo's intraday ceiling — don't keep retrying.
+      historyExhaustedRef.current = true;
+      setHistoryExhausted(true);
     } finally {
       loadingHistoryRef.current = false;
       setLoadingOlder(false);
@@ -425,7 +432,7 @@ export function PriceChart({ symbol }: Props) {
         borderVisible: false,
         timeVisible: true,
         secondsVisible: false,
-        fixLeftEdge: false,
+        fixLeftEdge: true,
         fixRightEdge: true,
         lockVisibleTimeRangeOnResize: true,
       },
@@ -452,13 +459,6 @@ export function PriceChart({ symbol }: Props) {
       setLegend(
         formatLegend(barsByTimeRef.current.get(tKey), intradayRef.current),
       );
-    });
-
-    chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
-      // from < 0 ⇒ scrolled past the first bar into empty space (not initial fit).
-      if (range && range.from < 0) {
-        void loadOlderHistoryRef.current();
-      }
     });
 
     return () => {
@@ -498,7 +498,7 @@ export function PriceChart({ symbol }: Props) {
         borderVisible: false,
         timeVisible: intraday,
         secondsVisible: false,
-        fixLeftEdge: false,
+        fixLeftEdge: true,
         fixRightEdge: true,
         tickMarkFormatter: intraday ? intradayTickMark : undefined,
       },
@@ -581,7 +581,6 @@ export function PriceChart({ symbol }: Props) {
           </div>
         </div>
       </div>
-      <p className="mb-2 text-xs text-muted">{t("chartHint")}</p>
       <div className="mb-2 flex flex-wrap items-center gap-3">
         <button
           type="button"

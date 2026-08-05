@@ -33,7 +33,6 @@
     "watchlistRemove": "從自選移除",
     "backToMarket": "市場",
     "chart": "圖表",
-    "chartHint": "K 線週期與時間範圍可分開選擇。將圖表向左捲過第一根 K，會載入更早資料；未來沒有行情。Yahoo 不提供 3 分鐘 K，請用 2 分或 5 分。",
     "chartLoadingOlder": "正在載入更早資料…",
     "chartLoadOlder": "載入更早",
     "chartHistoryEnd": "此週期已無更早的 Yahoo 資料。",

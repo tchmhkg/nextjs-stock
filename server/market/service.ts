@@ -9,8 +9,9 @@ import type {
   MarketRegion,
 } from "@/lib/market/types";
 import { REGION_INDICES } from "@/lib/market/types";
-import type {
-  ChartIntervalId,
+import {
+  chartHistoryFloorSec,
+  type ChartIntervalId,
 } from "@/lib/market/chart-ranges";
 import { TTL, withCache } from "@/server/market/cache";
 import yahooFinance from "@/server/market/client";
@@ -136,10 +137,23 @@ export async function getChart(
     : `chart:${symbol.toUpperCase()}:${interval}:${lookbackDays}`;
 
   return withCache(key, TTL.chart, async () => {
+    const floorSec = chartHistoryFloorSec(interval);
     const period2 = before
       ? new Date(before * 1000 - 1000) // exclusive of the first on-screen bar
       : new Date();
-    const period1 = daysAgoFrom(period2, lookbackDays);
+
+    // Yahoo intraday is only the last N days from *now* — not any past window.
+    if (Math.floor(period2.getTime() / 1000) <= floorSec) {
+      return {
+        symbol: symbol.toUpperCase(),
+        currency: null,
+        bars: [],
+      };
+    }
+
+    let period1 = daysAgoFrom(period2, lookbackDays);
+    const floorDate = new Date(floorSec * 1000);
+    if (period1 < floorDate) period1 = floorDate;
 
     const result = await yahooFinance.chart(symbol, {
       period1,

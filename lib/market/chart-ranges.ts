@@ -96,5 +96,25 @@ export function effectiveLookbackDays(
   return Math.min(LOOKBACK_DAYS[lookback], INTERVAL_MAX_DAYS[interval]);
 }
 
+/** Older-history page size (button load) — larger than the on-screen lookback. */
+export function historyChunkDays(interval: ChartIntervalId): number {
+  if (interval === "1d") return 365;
+  return INTERVAL_MAX_DAYS[interval];
+}
+
+/**
+ * Earliest unix second Yahoo will serve for this interval (from `now`).
+ * Intraday caps are absolute from now — not any N-day window in the past.
+ * 1h slack so a full INTERVAL_MAX_DAYS window does not trip Yahoo's edge.
+ */
+export function chartHistoryFloorSec(
+  interval: ChartIntervalId,
+  nowMs = Date.now(),
+): number {
+  const maxSec = INTERVAL_MAX_DAYS[interval] * 86_400;
+  const slack = interval === "1d" ? 0 : 3_600;
+  return Math.floor((nowMs - (maxSec - slack) * 1000) / 1000);
+}
+
 export const chartLookbackSchema = z.enum(CHART_LOOKBACK_IDS);
 export const chartBarIntervalSchema = z.enum(CHART_INTERVAL_IDS);

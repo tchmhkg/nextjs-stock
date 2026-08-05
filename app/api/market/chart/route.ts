@@ -6,6 +6,7 @@ import {
 } from "@/lib/market/schemas";
 import {
   effectiveLookbackDays,
+  historyChunkDays,
   type ChartLookbackId,
 } from "@/lib/market/chart-ranges";
 import { jsonOk, upstreamErrorResponse, zodErrorResponse } from "@/server/market/http";
@@ -32,7 +33,9 @@ export async function GET(request: Request) {
   }
 
   const { symbol, lookback, interval, before } = parsed.data;
-  const days = effectiveLookbackDays(lookback as ChartLookbackId, interval);
+  const days = before
+    ? historyChunkDays(interval)
+    : effectiveLookbackDays(lookback as ChartLookbackId, interval);
 
   try {
     const data = await getChart(symbol, {
