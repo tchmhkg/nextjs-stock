@@ -6,11 +6,26 @@ export type QuoteDto = {
   marketState: string | null;
   regularMarketPrice: number | null;
   regularMarketPreviousClose: number | null;
+  regularMarketOpen: number | null;
   regularMarketChange: number | null;
   regularMarketChangePercent: number | null;
   regularMarketDayHigh: number | null;
   regularMarketDayLow: number | null;
   regularMarketVolume: number | null;
+  averageDailyVolume3Month: number | null;
+  fiftyTwoWeekHigh: number | null;
+  fiftyTwoWeekLow: number | null;
+  marketCap: number | null;
+  trailingPE: number | null;
+  dividendYield: number | null;
+  bid: number | null;
+  ask: number | null;
+  preMarketPrice: number | null;
+  preMarketChange: number | null;
+  preMarketChangePercent: number | null;
+  postMarketPrice: number | null;
+  postMarketChange: number | null;
+  postMarketChangePercent: number | null;
 };
 
 export type ProfileDto = {
