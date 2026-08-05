@@ -1,7 +1,7 @@
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import Script from "next/script";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
@@ -19,8 +19,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const themeInitScript = `(function(){try{if(localStorage.getItem("theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}})();`;
-
 type Props = Readonly<{
   children: ReactNode;
   params: Promise<{ locale: string }>;
@@ -37,15 +35,18 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   const messages = await getMessages();
+  const theme = (await cookies()).get("theme")?.value;
+  const themeClass = theme === "dark" ? "dark" : "";
 
   return (
-    <html lang={locale} suppressHydrationWarning className="h-full">
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={`h-full ${themeClass}`}
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col font-sans antialiased`}
       >
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>
             <div className="flex min-h-full flex-1 flex-col">

@@ -28,10 +28,22 @@ export const marketApi = {
     getJson<ProfileDto>(
       `/api/market/profile?symbol=${encodeURIComponent(symbol)}`,
     ),
-  chart: (symbol: string, interval: string) =>
-    getJson<ChartDto>(
-      `/api/market/chart?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}`,
-    ),
+  chart: (
+    symbol: string,
+    opts: Readonly<{
+      lookback: string;
+      interval: string;
+      before?: number;
+    }>,
+  ) => {
+    const params = new URLSearchParams({
+      symbol,
+      lookback: opts.lookback,
+      interval: opts.interval,
+    });
+    if (opts.before != null) params.set("before", String(opts.before));
+    return getJson<ChartDto>(`/api/market/chart?${params}`);
+  },
   news: (symbol: string) =>
     getJson<NewsItemDto[]>(
       `/api/market/news?symbol=${encodeURIComponent(symbol)}`,

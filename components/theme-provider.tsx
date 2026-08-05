@@ -20,8 +20,15 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
 function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
+}
+
+function persistTheme(theme: Theme) {
+  localStorage.setItem("theme", theme);
+  document.cookie = `theme=${theme};path=/;max-age=${THEME_COOKIE_MAX_AGE};samesite=lax`;
 }
 
 export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
@@ -33,12 +40,13 @@ export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {
     const initial: Theme = stored === "dark" ? "dark" : "light";
     setThemeState(initial);
     applyTheme(initial);
+    persistTheme(initial);
     setMounted(true);
   }, []);
 
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
-    localStorage.setItem("theme", next);
+    persistTheme(next);
     applyTheme(next);
   }, []);
 

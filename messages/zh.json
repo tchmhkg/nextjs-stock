@@ -33,6 +33,30 @@
     "watchlistRemove": "從自選移除",
     "backToMarket": "市場",
     "chart": "圖表",
+    "chartLoadingOlder": "正在載入更早資料…",
+    "chartLoadOlder": "載入更早",
+    "chartHistoryEnd": "此週期已無更早的 Yahoo 資料。",
+    "chartStyle": {
+      "area": "線圖",
+      "candle": "K線"
+    },
+    "lookback": {
+      "1D": "1日",
+      "5D": "5日",
+      "1M": "1月",
+      "3M": "3月",
+      "1Y": "1年",
+      "5Y": "5年"
+    },
+    "barInterval": {
+      "1m": "1分",
+      "2m": "2分",
+      "5m": "5分",
+      "15m": "15分",
+      "30m": "30分",
+      "1h": "1時",
+      "1d": "日"
+    },
     "interval": {
       "1m": "分時",
       "1d": "日線"
