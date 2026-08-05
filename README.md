@@ -18,8 +18,8 @@ A greenfield rewrite of the old Next 10 app: App Router, TypeScript, Node 24, an
 
 ## Features
 
-- **Market board** — US \| HK region toggle, major indices, local watchlist
-- **Symbol page** — quote, day range, intraday/daily chart, company summary, news, bookmark
+- **Market board** — US \| HK region toggle, major indices, US movers (gainers / losers / most active), local watchlist
+- **Symbol page** — quote, day range, chart, company summary, calendar & analyst ratings, news, bookmark
 - **Search** — header autocomplete → symbol detail
 - **Watchlist** — `localStorage` only (key `nextjs-stock:watchlist`), no auth
 
@@ -50,7 +50,7 @@ yarn smoke:market   # live Yahoo quote + chart sanity check
 | Path | Page |
 |---|---|
 | `/en`, `/zh` | Home |
-| `/en/market`, `/zh/market` | Indices + watchlist |
+| `/en/market`, `/zh/market` | Indices + movers + watchlist |
 | `/en/market/[symbol]` | Quote, chart, company, news |
 
 ### Market APIs
@@ -61,10 +61,13 @@ All handlers live under `app/api/market/*`. Query params are Zod-validated; Yaho
 |---|---|
 | `/api/market/quote` | `symbol` |
 | `/api/market/profile` | `symbol` |
-| `/api/market/chart` | `symbol`, `interval` (`1m` \| `5m` \| `15m` \| `1h` \| `1d`) |
+| `/api/market/chart` | `symbol`, `lookback` (`1D`…`5Y`), `interval` (`1m`\|`2m`\|`5m`\|`15m`\|`30m`\|`1h`\|`1d`), optional `before` (unix, older page) |
 | `/api/market/search` | `q` |
 | `/api/market/news` | `symbol` |
 | `/api/market/indices` | `region` (`US` \| `HK`) |
+| `/api/market/screener` | `list` (`day_gainers` \| `day_losers` \| `most_actives`), optional `count` |
+| `/api/market/quotes` | `symbols` (comma-separated, max 20) |
+| `/api/market/insights` | `symbol` (calendar events + recommendation trend) |
 
 ## Deploy (Vercel)
 

@@ -21,10 +21,12 @@ export async function withCache<T>(
 }
 
 export const TTL = {
-  quote: 20_000,
-  indices: 20_000,
+  quote: 5_000,
+  indices: 5_000,
   chart: 60_000,
   profile: 60 * 60_000,
   search: 60_000,
   news: 5 * 60_000,
+  screener: 60_000,
+  insights: 60 * 60_000,
 } as const;

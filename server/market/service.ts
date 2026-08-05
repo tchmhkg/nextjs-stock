@@ -7,8 +7,18 @@ import type {
   QuoteDto,
   SearchResultDto,
   MarketRegion,
+  SymbolInsightsDto,
+  RecommendationPeriodDto,
 } from "@/lib/market/types";
 import { REGION_INDICES } from "@/lib/market/types";
+import {
+  chartHistoryFloorSec,
+  type ChartIntervalId,
+} from "@/lib/market/chart-ranges";
+import {
+  DEFAULT_SCREENER_COUNT,
+  type ScreenerListId,
+} from "@/lib/market/screener";
 import { TTL, withCache } from "@/server/market/cache";
 import yahooFinance from "@/server/market/client";
 
@@ -30,32 +40,45 @@ function mapQuote(raw: Record<string, unknown>): QuoteDto {
     marketState: str("marketState"),
     regularMarketPrice: num("regularMarketPrice"),
     regularMarketPreviousClose: num("regularMarketPreviousClose"),
+    regularMarketOpen: num("regularMarketOpen"),
     regularMarketChange: num("regularMarketChange"),
     regularMarketChangePercent: num("regularMarketChangePercent"),
     regularMarketDayHigh: num("regularMarketDayHigh"),
     regularMarketDayLow: num("regularMarketDayLow"),
     regularMarketVolume: num("regularMarketVolume"),
+    averageDailyVolume3Month: num("averageDailyVolume3Month"),
+    fiftyTwoWeekHigh: num("fiftyTwoWeekHigh"),
+    fiftyTwoWeekLow: num("fiftyTwoWeekLow"),
+    marketCap: num("marketCap"),
+    trailingPE: num("trailingPE"),
+    dividendYield:
+      num("trailingAnnualDividendYield") ?? num("dividendYield"),
+    bid: num("bid"),
+    ask: num("ask"),
+    preMarketPrice: num("preMarketPrice"),
+    preMarketChange: num("preMarketChange"),
+    preMarketChangePercent: num("preMarketChangePercent"),
+    postMarketPrice: num("postMarketPrice"),
+    postMarketChange: num("postMarketChange"),
+    postMarketChangePercent: num("postMarketChangePercent"),
   };
 }
 
-function daysAgoIso(days: number): string {
-  const d = new Date();
+function daysAgoFrom(base: Date, days: number): Date {
+  const d = new Date(base);
   d.setUTCDate(d.getUTCDate() - days);
-  return d.toISOString().slice(0, 10);
+  return d;
 }
 
-function chartLookbackDays(interval: string): number {
-  switch (interval) {
-    case "1m":
-      return 1; // one session window — multi-day 1m axes are unreadable
-    case "5m":
-      return 5;
-    case "15m":
-    case "1h":
-      return 30;
-    default:
-      return 100;
-  }
+function mapChartBars(quotes: ReadonlyArray<Record<string, unknown>>): ChartBarDto[] {
+  return quotes.map((bar) => ({
+    time: Math.floor(new Date(bar.date as Date | string | number).getTime() / 1000),
+    open: typeof bar.open === "number" ? bar.open : null,
+    high: typeof bar.high === "number" ? bar.high : null,
+    low: typeof bar.low === "number" ? bar.low : null,
+    close: typeof bar.close === "number" ? bar.close : null,
+    volume: typeof bar.volume === "number" ? bar.volume : null,
+  }));
 }
 
 export async function getQuote(symbol: string): Promise<QuoteDto> {
@@ -79,6 +102,18 @@ export async function getIndices(region: MarketRegion): Promise<QuoteDto[]> {
   return withCache(`indices:${region}`, TTL.indices, () => getQuotes(symbols));
 }
 
+export async function getScreener(
+  list: ScreenerListId,
+  count = DEFAULT_SCREENER_COUNT,
+): Promise<QuoteDto[]> {
+  return withCache(`screener:${list}:${count}`, TTL.screener, async () => {
+    const result = await yahooFinance.screener({ scrIds: list, count });
+    return (result.quotes ?? []).map((item) =>
+      mapQuote(item as unknown as Record<string, unknown>),
+    );
+  });
+}
+
 export async function getProfile(symbol: string): Promise<ProfileDto> {
   return withCache(`profile:${symbol.toUpperCase()}`, TTL.profile, async () => {
     const summary = await yahooFinance.quoteSummary(symbol, {
@@ -99,30 +134,124 @@ export async function getProfile(symbol: string): Promise<ProfileDto> {
   });
 }
 
+function toIsoDate(value: unknown): string | null {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10);
+  }
+  if (typeof value === "string" && value) {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+  }
+  if (Array.isArray(value) && value.length > 0) return toIsoDate(value[0]);
+  return null;
+}
+
+function mapRecommendation(
+  row: Record<string, unknown>,
+): RecommendationPeriodDto | null {
+  const period = typeof row.period === "string" ? row.period : null;
+  if (!period) return null;
+  const n = (key: string) => {
+    const v = row[key];
+    return typeof v === "number" && Number.isFinite(v) ? v : 0;
+  };
+  return {
+    period,
+    strongBuy: n("strongBuy"),
+    buy: n("buy"),
+    hold: n("hold"),
+    sell: n("sell"),
+    strongSell: n("strongSell"),
+  };
+}
+
+export async function getSymbolInsights(
+  symbol: string,
+): Promise<SymbolInsightsDto> {
+  return withCache(
+    `insights:${symbol.toUpperCase()}`,
+    TTL.insights,
+    async () => {
+      const summary = await yahooFinance.quoteSummary(symbol, {
+        modules: ["calendarEvents", "recommendationTrend"],
+      });
+      const cal = summary.calendarEvents as
+        | Record<string, unknown>
+        | undefined;
+      const earnings = (cal?.earnings ?? {}) as Record<string, unknown>;
+      const trend = summary.recommendationTrend?.trend ?? [];
+
+      return {
+        symbol: symbol.toUpperCase(),
+        calendar: {
+          earningsDate: toIsoDate(earnings.earningsDate),
+          earningsDateEstimate: Boolean(earnings.isEarningsDateEstimate),
+          exDividendDate: toIsoDate(cal?.exDividendDate),
+          dividendDate: toIsoDate(cal?.dividendDate),
+          earningsAverage:
+            typeof earnings.earningsAverage === "number"
+              ? earnings.earningsAverage
+              : null,
+        },
+        recommendations: trend
+          .map((row) => mapRecommendation(row as unknown as Record<string, unknown>))
+          .filter((row): row is RecommendationPeriodDto => row != null),
+      };
+    },
+  );
+}
+
+export type GetChartOpts = Readonly<{
+  interval: ChartIntervalId;
+  /** Window length in days (already clamped to interval max by caller). */
+  lookbackDays: number;
+  /**
+   * When set, fetch a chunk ending at this unix second (load older history).
+   * period2 = before, period1 = before - lookbackDays.
+   */
+  before?: number;
+}>;
+
 export async function getChart(
   symbol: string,
-  interval: "1m" | "5m" | "15m" | "1h" | "1d",
+  opts: GetChartOpts,
 ): Promise<ChartDto> {
-  const key = `chart:${symbol.toUpperCase()}:${interval}`;
+  const { interval, lookbackDays, before } = opts;
+  const key = before
+    ? `chart:${symbol.toUpperCase()}:${interval}:${lookbackDays}:before:${before}`
+    : `chart:${symbol.toUpperCase()}:${interval}:${lookbackDays}`;
+
   return withCache(key, TTL.chart, async () => {
+    const floorSec = chartHistoryFloorSec(interval);
+    const period2 = before
+      ? new Date(before * 1000 - 1000) // exclusive of the first on-screen bar
+      : new Date();
+
+    // Yahoo intraday is only the last N days from *now* — not any past window.
+    if (Math.floor(period2.getTime() / 1000) <= floorSec) {
+      return {
+        symbol: symbol.toUpperCase(),
+        currency: null,
+        bars: [],
+      };
+    }
+
+    let period1 = daysAgoFrom(period2, lookbackDays);
+    const floorDate = new Date(floorSec * 1000);
+    if (period1 < floorDate) period1 = floorDate;
+
     const result = await yahooFinance.chart(symbol, {
-      period1: daysAgoIso(chartLookbackDays(interval)),
+      period1,
+      period2,
       interval,
     });
-
-    const bars: ChartBarDto[] = (result.quotes ?? []).map((bar) => ({
-      time: Math.floor(new Date(bar.date).getTime() / 1000),
-      open: bar.open ?? null,
-      high: bar.high ?? null,
-      low: bar.low ?? null,
-      close: bar.close ?? null,
-      volume: bar.volume ?? null,
-    }));
 
     return {
       symbol: symbol.toUpperCase(),
       currency: result.meta?.currency ?? null,
-      bars,
+      bars: mapChartBars(
+        (result.quotes ?? []) as unknown as ReadonlyArray<Record<string, unknown>>,
+      ),
     };
   });
 }

@@ -6,11 +6,26 @@ export type QuoteDto = {
   marketState: string | null;
   regularMarketPrice: number | null;
   regularMarketPreviousClose: number | null;
+  regularMarketOpen: number | null;
   regularMarketChange: number | null;
   regularMarketChangePercent: number | null;
   regularMarketDayHigh: number | null;
   regularMarketDayLow: number | null;
   regularMarketVolume: number | null;
+  averageDailyVolume3Month: number | null;
+  fiftyTwoWeekHigh: number | null;
+  fiftyTwoWeekLow: number | null;
+  marketCap: number | null;
+  trailingPE: number | null;
+  dividendYield: number | null;
+  bid: number | null;
+  ask: number | null;
+  preMarketPrice: number | null;
+  preMarketChange: number | null;
+  preMarketChangePercent: number | null;
+  postMarketPrice: number | null;
+  postMarketChange: number | null;
+  postMarketChangePercent: number | null;
 };
 
 export type ProfileDto = {
@@ -52,6 +67,29 @@ export type NewsItemDto = {
   publisher: string | null;
   link: string;
   publishedAt: string; // ISO
+};
+
+export type SymbolCalendarDto = {
+  earningsDate: string | null;
+  earningsDateEstimate: boolean;
+  exDividendDate: string | null;
+  dividendDate: string | null;
+  earningsAverage: number | null;
+};
+
+export type RecommendationPeriodDto = {
+  period: string;
+  strongBuy: number;
+  buy: number;
+  hold: number;
+  sell: number;
+  strongSell: number;
+};
+
+export type SymbolInsightsDto = {
+  symbol: string;
+  calendar: SymbolCalendarDto;
+  recommendations: RecommendationPeriodDto[];
 };
 
 export type MarketRegion = "US" | "HK";

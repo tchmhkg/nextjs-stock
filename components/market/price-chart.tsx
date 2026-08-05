@@ -1,27 +1,63 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import {
   createChart,
   AreaSeries,
   CandlestickSeries,
+  HistogramSeries,
   ColorType,
-  TickMarkType,
   type IChartApi,
   type ISeriesApi,
+  type LogicalRange,
   type Time,
 } from "lightweight-charts";
 import { useTranslations } from "next-intl";
 import { marketApi } from "@/lib/market/api";
+import {
+  CHART_LOOKBACK_IDS,
+  chartHistoryFloorSec,
+  coerceInterval,
+  DEFAULT_INTERVAL,
+  DEFAULT_LOOKBACK,
+  intervalsForLookback,
+  isIntradayInterval,
+  preferredStyle,
+  refreshMs,
+  type ChartIntervalId,
+  type ChartLookbackId,
+  type ChartStyle,
+} from "@/lib/market/chart-ranges";
+import {
+  dailyCrosshairLabel,
+  formatChartDayTime,
+  formatChartDay,
+  intradayCrosshairLabel,
+  intradayTickMark,
+  asChartDate,
+} from "@/lib/market/chart-time";
+import { formatPrice, formatVolume } from "@/lib/market/format";
+import type { ChartBarDto } from "@/lib/market/types";
 import { useTheme } from "@/components/theme-provider";
 import clsx from "clsx";
-
-type Interval = "1m" | "1d";
 
 type Props = Readonly<{
   symbol: string;
 }>;
+
+type CandlePoint = {
+  time: Time;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+};
+
+type AreaPoint = { time: Time; value: number };
+type VolumePoint = { time: Time; value: number; color: string };
+
+type AppliedMeta = { key: string; time: Time; len: number };
 
 function themeColors(isDark: boolean) {
   return {
@@ -30,86 +66,357 @@ function themeColors(isDark: boolean) {
   };
 }
 
-function asDate(time: Time): Date | null {
-  if (typeof time === "number") return new Date(time * 1000);
-  if (typeof time === "string") return new Date(time);
-  return new Date(Date.UTC(time.year, time.month - 1, time.day));
+function timeEquals(a: Time, b: Time) {
+  return a === b;
 }
 
-function formatClock(date: Date) {
-  return date.toLocaleTimeString(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+function timeNewer(a: Time, b: Time) {
+  return typeof a === "number" && typeof b === "number" && a > b;
 }
 
-function formatDayTime(date: Date) {
-  return `${date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  })} ${formatClock(date)}`;
-}
+function syncSeries<T extends { time: Time }>(
+  series: { setData: (data: T[]) => void; update: (bar: T) => void } | null,
+  points: T[],
+  key: string,
+  applied: { current: AppliedMeta | null },
+  onFullSet: () => void,
+) {
+  if (!series || points.length === 0) return;
+  const last = points[points.length - 1];
+  const prev = applied.current;
+  const canUpdate =
+    prev != null &&
+    prev.key === key &&
+    points.length >= prev.len - 1 &&
+    points.length <= prev.len + 2 &&
+    (timeEquals(last.time, prev.time) || timeNewer(last.time, prev.time));
 
-/** Axis labels always carry the calendar day — US hours in HK span midnight. */
-function intradayTickMark(time: Time, tickMarkType: TickMarkType): string | null {
-  const date = asDate(time);
-  if (!date || Number.isNaN(date.getTime())) return null;
-
-  if (
-    tickMarkType === TickMarkType.Year ||
-    tickMarkType === TickMarkType.Month ||
-    tickMarkType === TickMarkType.DayOfMonth
-  ) {
-    return date.toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-    });
+  if (canUpdate) {
+    series.update(last);
+  } else {
+    series.setData(points);
+    onFullSet();
   }
-  return formatDayTime(date);
+  applied.current = { key, time: last.time, len: points.length };
 }
 
-function intradayCrosshairLabel(time: Time): string {
-  const date = asDate(time);
-  if (!date || Number.isNaN(date.getTime())) return "";
-  return formatDayTime(date);
+function toCandles(bars: ChartBarDto[]): CandlePoint[] {
+  return bars
+    .filter(
+      (b) =>
+        b.open != null &&
+        b.high != null &&
+        b.low != null &&
+        b.close != null &&
+        Number.isFinite(b.time),
+    )
+    .map((b) => ({
+      time: b.time as Time,
+      open: b.open!,
+      high: b.high!,
+      low: b.low!,
+      close: b.close!,
+    }));
 }
 
-function dailyCrosshairLabel(time: Time): string {
-  const date = asDate(time);
-  if (!date || Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+function toArea(bars: ChartBarDto[]): AreaPoint[] {
+  return bars
+    .filter((b) => b.close != null && Number.isFinite(b.time))
+    .map((b) => ({ time: b.time as Time, value: b.close! }));
+}
+
+function toVolume(bars: ChartBarDto[]): VolumePoint[] {
+  const out: VolumePoint[] = [];
+  let prevClose: number | null = null;
+  for (const b of bars) {
+    if (!Number.isFinite(b.time) || b.close == null) continue;
+    const up = prevClose == null || b.close >= prevClose;
+    out.push({
+      time: b.time as Time,
+      value: b.volume ?? 0,
+      color: up ? "rgba(5, 150, 105, 0.5)" : "rgba(225, 29, 72, 0.5)",
+    });
+    prevClose = b.close;
+  }
+  return out;
+}
+
+function mergeBars(a: ChartBarDto[], b: ChartBarDto[]): ChartBarDto[] {
+  const map = new Map<number, ChartBarDto>();
+  for (const bar of [...a, ...b]) {
+    if (Number.isFinite(bar.time)) map.set(bar.time, bar);
+  }
+  return [...map.values()].sort((x, y) => x.time - y.time);
+}
+
+function formatLegend(
+  bar: ChartBarDto | undefined,
+  intraday: boolean,
+): string | null {
+  if (!bar) return null;
+  const date = asChartDate(bar.time as Time);
+  const when = date
+    ? intraday
+      ? formatChartDayTime(date)
+      : formatChartDay(date)
+    : "";
+  const parts = [
+    when,
+    bar.open != null ? `O ${formatPrice(bar.open)}` : null,
+    bar.high != null ? `H ${formatPrice(bar.high)}` : null,
+    bar.low != null ? `L ${formatPrice(bar.low)}` : null,
+    bar.close != null ? `C ${formatPrice(bar.close)}` : null,
+    bar.volume != null ? `V ${formatVolume(bar.volume)}` : null,
+  ].filter(Boolean);
+  return parts.join(" · ");
 }
 
 export function PriceChart({ symbol }: Props) {
   const t = useTranslations("Market");
   const { theme, mounted } = useTheme();
-  const [interval, setInterval] = useState<Interval>("1d");
+  const [lookback, setLookback] = useState<ChartLookbackId>(DEFAULT_LOOKBACK);
+  const [interval, setInterval] = useState<ChartIntervalId>(DEFAULT_INTERVAL);
+  const [style, setStyle] = useState<ChartStyle>(preferredStyle(DEFAULT_INTERVAL));
+  const [legend, setLegend] = useState<string | null>(null);
+  const [bars, setBars] = useState<ChartBarDto[]>([]);
+  const [historyExhausted, setHistoryExhausted] = useState(false);
+  const [loadingOlder, setLoadingOlder] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<"Area"> | ISeriesApi<"Candlestick"> | null>(
-    null,
+  const priceSeriesRef = useRef<
+    ISeriesApi<"Area"> | ISeriesApi<"Candlestick"> | null
+  >(null);
+  const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const priceStyleRef = useRef<ChartStyle | null>(null);
+  const barsRef = useRef<ChartBarDto[]>([]);
+  const barsByTimeRef = useRef<Map<number, ChartBarDto>>(new Map());
+  const intradayRef = useRef(true);
+  const priceAppliedRef = useRef<AppliedMeta | null>(null);
+  const volumeAppliedRef = useRef<AppliedMeta | null>(null);
+  const loadingHistoryRef = useRef(false);
+  const historyExhaustedRef = useRef(false);
+  const fitOnNextBarsRef = useRef(true);
+  const pendingPreserveRef = useRef<LogicalRange | null>(null);
+  const lookbackRef = useRef(lookback);
+  const intervalRef = useRef(interval);
+  const symbolRef = useRef(symbol);
+  const styleRef = useRef(style);
+
+  const allowedIntervals = useMemo(
+    () => intervalsForLookback(lookback),
+    [lookback],
   );
+  const intraday = isIntradayInterval(interval);
+  intradayRef.current = intraday;
+  lookbackRef.current = lookback;
+  intervalRef.current = interval;
+  symbolRef.current = symbol;
+  styleRef.current = style;
 
   const { data, error, isLoading } = useSWR(
-    ["chart", symbol, interval],
-    () => marketApi.chart(symbol, interval),
+    ["chart", symbol, lookback, interval],
+    () => marketApi.chart(symbol, { lookback, interval }),
     {
-      refreshInterval: interval === "1m" ? 60_000 : 120_000,
+      refreshInterval: refreshMs(interval),
       revalidateOnFocus: false,
     },
   );
 
-  // Create chart once; update colors on theme change (don't recreate — that blanks series).
+  useEffect(() => {
+    setHistoryExhausted(false);
+    historyExhaustedRef.current = false;
+    fitOnNextBarsRef.current = true;
+    setBars([]);
+    barsRef.current = [];
+    priceAppliedRef.current = null;
+    volumeAppliedRef.current = null;
+  }, [symbol, lookback, interval]);
+
+  // Merge live poll into any older pages already loaded (don't wipe history).
+  useEffect(() => {
+    if (!data) return;
+    const incoming = data.bars.filter(
+      (b) => b.close != null && Number.isFinite(b.time),
+    );
+    setBars((prev) => {
+      if (!prev.length || fitOnNextBarsRef.current) {
+        barsRef.current = incoming;
+        return incoming;
+      }
+      const firstNew = incoming[0]?.time;
+      if (firstNew == null) return prev;
+      const older = prev.filter((b) => b.time < firstNew);
+      const merged = mergeBars(older, incoming);
+      barsRef.current = merged;
+      return merged;
+    });
+  }, [data]);
+
+  const applyBarsToChart = useCallback(
+    (
+      nextBars: ChartBarDto[],
+      opts: { fit?: boolean; preserve?: LogicalRange | null },
+    ) => {
+      const chart = chartRef.current;
+      if (!chart) return;
+
+      const filtered = nextBars.filter(
+        (b) => b.close != null && Number.isFinite(b.time),
+      );
+      barsByTimeRef.current = new Map(filtered.map((b) => [b.time, b]));
+
+      const key = `${symbolRef.current}:${lookbackRef.current}:${intervalRef.current}:${styleRef.current}`;
+      let didFull = false;
+      const markFull = () => {
+        didFull = true;
+      };
+
+      if (priceStyleRef.current !== styleRef.current || !priceSeriesRef.current) {
+        if (priceSeriesRef.current) {
+          chart.removeSeries(priceSeriesRef.current);
+          priceSeriesRef.current = null;
+        }
+        priceAppliedRef.current = null;
+        if (styleRef.current === "candle") {
+          priceSeriesRef.current = chart.addSeries(CandlestickSeries, {
+            upColor: "#059669",
+            downColor: "#e11d48",
+            borderUpColor: "#059669",
+            borderDownColor: "#e11d48",
+            wickUpColor: "#059669",
+            wickDownColor: "#e11d48",
+          });
+        } else {
+          priceSeriesRef.current = chart.addSeries(AreaSeries, {
+            lineColor: "#0d9488",
+            topColor: "rgba(13, 148, 136, 0.35)",
+            bottomColor: "rgba(13, 148, 136, 0.02)",
+            lineWidth: 2,
+          });
+        }
+        priceStyleRef.current = styleRef.current;
+      }
+
+      // Overlay volume in the bottom band (LWC price+volume pattern).
+      chart.priceScale("right").applyOptions({
+        scaleMargins: { top: 0.08, bottom: 0.22 },
+      });
+      if (!volumeSeriesRef.current) {
+        volumeSeriesRef.current = chart.addSeries(HistogramSeries, {
+          priceFormat: { type: "volume" },
+          priceScaleId: "",
+          lastValueVisible: false,
+          priceLineVisible: false,
+        });
+        volumeSeriesRef.current.priceScale().applyOptions({
+          scaleMargins: { top: 0.78, bottom: 0 },
+        });
+      }
+
+      if (styleRef.current === "candle") {
+        syncSeries(
+          priceSeriesRef.current as ISeriesApi<"Candlestick">,
+          toCandles(filtered),
+          key,
+          priceAppliedRef,
+          markFull,
+        );
+      } else {
+        syncSeries(
+          priceSeriesRef.current as ISeriesApi<"Area">,
+          toArea(filtered),
+          key,
+          priceAppliedRef,
+          markFull,
+        );
+      }
+      syncSeries(
+        volumeSeriesRef.current,
+        toVolume(filtered),
+        key,
+        volumeAppliedRef,
+        markFull,
+      );
+
+      if (opts.preserve) {
+        chart.timeScale().setVisibleLogicalRange(opts.preserve);
+      } else if (opts.fit || didFull) {
+        chart.timeScale().fitContent();
+      }
+    },
+    [],
+  );
+
+  const loadOlderHistory = useCallback(async () => {
+    if (loadingHistoryRef.current || historyExhaustedRef.current) return;
+    const oldest = barsRef.current[0];
+    if (!oldest) return;
+
+    // Intraday Yahoo history is absolute from now — stop before we ask past it.
+    if (oldest.time <= chartHistoryFloorSec(intervalRef.current)) {
+      historyExhaustedRef.current = true;
+      setHistoryExhausted(true);
+      return;
+    }
+
+    const chart = chartRef.current;
+    const logical = chart?.timeScale().getVisibleLogicalRange() ?? null;
+    loadingHistoryRef.current = true;
+    setLoadingOlder(true);
+    try {
+      // Exclusive end so Yahoo does not re-send the same first bar only.
+      const page = await marketApi.chart(symbolRef.current, {
+        lookback: lookbackRef.current,
+        interval: intervalRef.current,
+        before: oldest.time,
+      });
+      const olderOnly = page.bars.filter(
+        (b) =>
+          b.close != null &&
+          Number.isFinite(b.time) &&
+          b.time < oldest.time,
+      );
+      if (!olderOnly.length) {
+        historyExhaustedRef.current = true;
+        setHistoryExhausted(true);
+        return;
+      }
+      const prevLen = barsRef.current.length;
+      const merged = mergeBars(olderOnly, barsRef.current);
+      const added = merged.length - prevLen;
+      if (added <= 0) {
+        historyExhaustedRef.current = true;
+        setHistoryExhausted(true);
+        return;
+      }
+      barsRef.current = merged;
+      setBars(merged);
+      priceAppliedRef.current = null;
+      volumeAppliedRef.current = null;
+      pendingPreserveRef.current = logical
+        ? ({
+            from: logical.from + added,
+            to: logical.to + added,
+          } as LogicalRange)
+        : null;
+    } catch {
+      // Likely hit Yahoo's intraday ceiling — don't keep retrying.
+      historyExhaustedRef.current = true;
+      setHistoryExhausted(true);
+    } finally {
+      loadingHistoryRef.current = false;
+      setLoadingOlder(false);
+    }
+  }, []);
+
+  const loadOlderHistoryRef = useRef(loadOlderHistory);
+  loadOlderHistoryRef.current = loadOlderHistory;
+
   useEffect(() => {
     if (!containerRef.current || chartRef.current) return;
 
-    const isDark = theme === "dark";
-    const colors = themeColors(isDark);
+    const colors = themeColors(theme === "dark");
     const chart = createChart(containerRef.current, {
       autoSize: true,
       layout: {
@@ -125,6 +432,9 @@ export function PriceChart({ symbol }: Props) {
         borderVisible: false,
         timeVisible: true,
         secondsVisible: false,
+        fixLeftEdge: true,
+        fixRightEdge: true,
+        lockVisibleTimeRangeOnResize: true,
       },
       crosshair: {
         vertLine: { labelVisible: true },
@@ -134,12 +444,31 @@ export function PriceChart({ symbol }: Props) {
 
     chartRef.current = chart;
 
+    chart.subscribeCrosshairMove((param) => {
+      if (param.time === undefined) {
+        setLegend(null);
+        return;
+      }
+      const tKey =
+        typeof param.time === "number"
+          ? param.time
+          : typeof param.time === "string"
+            ? Date.parse(param.time) / 1000
+            : Date.UTC(param.time.year, param.time.month - 1, param.time.day) /
+              1000;
+      setLegend(
+        formatLegend(barsByTimeRef.current.get(tKey), intradayRef.current),
+      );
+    });
+
     return () => {
       chart.remove();
       chartRef.current = null;
-      seriesRef.current = null;
+      priceSeriesRef.current = null;
+      volumeSeriesRef.current = null;
+      priceStyleRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- create once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- create once
   }, []);
 
   useEffect(() => {
@@ -159,18 +488,8 @@ export function PriceChart({ symbol }: Props) {
 
   useEffect(() => {
     const chart = chartRef.current;
-    if (!chart || !data) return;
+    if (!chart || !bars.length) return;
 
-    if (seriesRef.current) {
-      chart.removeSeries(seriesRef.current);
-      seriesRef.current = null;
-    }
-
-    const bars = data.bars.filter(
-      (b) => b.close != null && Number.isFinite(b.time),
-    );
-
-    const intraday = interval === "1m";
     chart.applyOptions({
       localization: {
         timeFormatter: intraday ? intradayCrosshairLabel : dailyCrosshairLabel,
@@ -179,81 +498,119 @@ export function PriceChart({ symbol }: Props) {
         borderVisible: false,
         timeVisible: intraday,
         secondsVisible: false,
+        fixLeftEdge: true,
+        fixRightEdge: true,
         tickMarkFormatter: intraday ? intradayTickMark : undefined,
       },
     });
 
-    if (interval === "1d") {
-      const series = chart.addSeries(CandlestickSeries, {
-        upColor: "#059669",
-        downColor: "#e11d48",
-        borderUpColor: "#059669",
-        borderDownColor: "#e11d48",
-        wickUpColor: "#059669",
-        wickDownColor: "#e11d48",
-      });
-      series.setData(
-        bars
-          .filter((b) => b.open != null && b.high != null && b.low != null)
-          .map((b) => ({
-            time: b.time as Time,
-            open: b.open!,
-            high: b.high!,
-            low: b.low!,
-            close: b.close!,
-          })),
-      );
-      seriesRef.current = series;
-    } else {
-      const series = chart.addSeries(AreaSeries, {
-        lineColor: "#0d9488",
-        topColor: "rgba(13, 148, 136, 0.35)",
-        bottomColor: "rgba(13, 148, 136, 0.02)",
-        lineWidth: 2,
-      });
-      series.setData(
-        bars.map((b) => ({
-          time: b.time as Time,
-          value: b.close!,
-        })),
-      );
-      seriesRef.current = series;
-    }
+    const preserve = pendingPreserveRef.current;
+    pendingPreserveRef.current = null;
+    const fit = !preserve && fitOnNextBarsRef.current;
+    applyBarsToChart(bars, { fit, preserve });
+    if (fit) fitOnNextBarsRef.current = false;
+  }, [bars, style, intraday, applyBarsToChart]);
 
-    chart.timeScale().fitContent();
-  }, [data, interval]);
+  function selectLookback(id: ChartLookbackId) {
+    const nextInterval = coerceInterval(id, interval);
+    setLookback(id);
+    setInterval(nextInterval);
+    setStyle(preferredStyle(nextInterval));
+  }
+
+  function selectInterval(id: ChartIntervalId) {
+    setInterval(id);
+    setStyle(preferredStyle(id));
+  }
 
   return (
     <div>
-      <div className="mb-3 flex items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
         <h2 className="text-lg font-semibold text-foreground">{t("chart")}</h2>
-        <div className="ml-auto inline-flex h-9 items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
-          {(["1m", "1d"] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setInterval(value)}
-              className={clsx(
-                "rounded px-3 font-mono text-xs uppercase transition-colors",
-                interval === value
-                  ? "bg-accent text-white dark:text-foreground"
-                  : "text-muted hover:text-foreground",
-              )}
-            >
-              {t(`interval.${value}`)}
-            </button>
-          ))}
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <div className="inline-flex h-9 items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
+            {(["area", "candle"] as const).map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setStyle(id)}
+                className={clsx(
+                  "rounded px-2.5 font-mono text-xs uppercase transition-colors",
+                  style === id
+                    ? "bg-accent text-white dark:text-foreground"
+                    : "text-muted hover:text-foreground",
+                )}
+              >
+                {t(`chartStyle.${id}`)}
+              </button>
+            ))}
+          </div>
+          <div className="inline-flex h-9 flex-wrap items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
+            {allowedIntervals.map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => selectInterval(id)}
+                className={clsx(
+                  "rounded px-2.5 font-mono text-xs uppercase transition-colors",
+                  interval === id
+                    ? "bg-accent text-white dark:text-foreground"
+                    : "text-muted hover:text-foreground",
+                )}
+              >
+                {t(`barInterval.${id}`)}
+              </button>
+            ))}
+          </div>
+          <div className="inline-flex h-9 flex-wrap items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
+            {CHART_LOOKBACK_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => selectLookback(id)}
+                className={clsx(
+                  "rounded px-2.5 font-mono text-xs uppercase transition-colors",
+                  lookback === id
+                    ? "bg-accent text-white dark:text-foreground"
+                    : "text-muted hover:text-foreground",
+                )}
+              >
+                {t(`lookback.${id}`)}
+              </button>
+            ))}
+          </div>
         </div>
+      </div>
+      <div className="mb-2 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          disabled={loadingOlder || historyExhausted || !bars.length}
+          onClick={() => void loadOlderHistoryRef.current()}
+          className="rounded-md border border-border bg-surface px-2.5 py-1 font-mono text-xs text-muted transition-colors hover:text-foreground disabled:opacity-40"
+        >
+          {t("chartLoadOlder")}
+        </button>
+        {loadingOlder ? (
+          <span className="text-xs text-accent">{t("chartLoadingOlder")}</span>
+        ) : null}
+        {historyExhausted ? (
+          <span className="text-xs text-muted">{t("chartHistoryEnd")}</span>
+        ) : null}
       </div>
 
       {error && <p className="mb-2 text-sm text-danger">{t("loadError")}</p>}
       <div className="relative">
-        {isLoading && !data && (
+        {isLoading && !bars.length && (
           <div className="absolute inset-0 z-10 animate-pulse rounded-md border border-border bg-surface" />
         )}
+        {legend ? (
+          <p className="pointer-events-none absolute top-2 left-2 z-10 max-w-[calc(100%-1rem)] truncate font-mono text-[11px] text-muted">
+            {legend}
+          </p>
+        ) : null}
         <div
           ref={containerRef}
-          className="h-72 w-full rounded-md border border-border bg-surface"
+          className="h-96 w-full rounded-md border border-border bg-surface"
         />
       </div>
     </div>

@@ -22,8 +22,21 @@ async function main() {
   assert.ok((chart.quotes?.length ?? 0) > 0, "expected chart bars");
   assert.ok(chart.quotes![0].date, "expected bar date");
 
+  const screener = await yf.screener({ scrIds: "day_gainers", count: 3 });
+  assert.ok((screener.quotes?.length ?? 0) > 0, "expected screener quotes");
+  assert.ok(screener.quotes![0].symbol, "expected screener symbol");
+
+  const insights = await yf.quoteSummary("AAPL", {
+    modules: ["calendarEvents", "recommendationTrend"],
+  });
+  assert.ok(insights.calendarEvents, "expected calendarEvents");
+  assert.ok(
+    (insights.recommendationTrend?.trend?.length ?? 0) > 0,
+    "expected recommendationTrend",
+  );
+
   console.log(
-    `ok quote=${quote.regularMarketPrice} bars=${chart.quotes!.length}`,
+    `ok quote=${quote.regularMarketPrice} bars=${chart.quotes!.length} gainers=${screener.quotes!.length} rec=${insights.recommendationTrend!.trend![0].buy}`,
   );
 }
 
