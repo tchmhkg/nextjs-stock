@@ -136,7 +136,9 @@ export async function getChart(
     : `chart:${symbol.toUpperCase()}:${interval}:${lookbackDays}`;
 
   return withCache(key, TTL.chart, async () => {
-    const period2 = before ? new Date(before * 1000) : new Date();
+    const period2 = before
+      ? new Date(before * 1000 - 1000) // exclusive of the first on-screen bar
+      : new Date();
     const period1 = daysAgoFrom(period2, lookbackDays);
 
     const result = await yahooFinance.chart(symbol, {

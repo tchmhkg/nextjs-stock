@@ -179,6 +179,7 @@ export function PriceChart({ symbol }: Props) {
   const [legend, setLegend] = useState<string | null>(null);
   const [bars, setBars] = useState<ChartBarDto[]>([]);
   const [historyExhausted, setHistoryExhausted] = useState(false);
+  const [loadingOlder, setLoadingOlder] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -193,6 +194,9 @@ export function PriceChart({ symbol }: Props) {
   const priceAppliedRef = useRef<AppliedMeta | null>(null);
   const volumeAppliedRef = useRef<AppliedMeta | null>(null);
   const loadingHistoryRef = useRef(false);
+  const historyExhaustedRef = useRef(false);
+  const fitOnNextBarsRef = useRef(true);
+  const pendingPreserveRef = useRef<LogicalRange | null>(null);
   const lookbackRef = useRef(lookback);
   const intervalRef = useRef(interval);
   const symbolRef = useRef(symbol);
@@ -220,20 +224,39 @@ export function PriceChart({ symbol }: Props) {
 
   useEffect(() => {
     setHistoryExhausted(false);
+    historyExhaustedRef.current = false;
+    fitOnNextBarsRef.current = true;
     setBars([]);
     barsRef.current = [];
     priceAppliedRef.current = null;
     volumeAppliedRef.current = null;
   }, [symbol, lookback, interval]);
 
+  // Merge live poll into any older pages already loaded (don't wipe history).
   useEffect(() => {
     if (!data) return;
-    setBars(data.bars);
-    barsRef.current = data.bars;
+    const incoming = data.bars.filter(
+      (b) => b.close != null && Number.isFinite(b.time),
+    );
+    setBars((prev) => {
+      if (!prev.length || fitOnNextBarsRef.current) {
+        barsRef.current = incoming;
+        return incoming;
+      }
+      const firstNew = incoming[0]?.time;
+      if (firstNew == null) return prev;
+      const older = prev.filter((b) => b.time < firstNew);
+      const merged = mergeBars(older, incoming);
+      barsRef.current = merged;
+      return merged;
+    });
   }, [data]);
 
   const applyBarsToChart = useCallback(
-    (nextBars: ChartBarDto[], opts: { fit?: boolean; preserve?: LogicalRange | null }) => {
+    (
+      nextBars: ChartBarDto[],
+      opts: { fit?: boolean; preserve?: LogicalRange | null },
+    ) => {
       const chart = chartRef.current;
       if (!chart) return;
 
@@ -328,48 +351,57 @@ export function PriceChart({ symbol }: Props) {
   );
 
   const loadOlderHistory = useCallback(async () => {
-    if (loadingHistoryRef.current || historyExhausted) return;
+    if (loadingHistoryRef.current || historyExhaustedRef.current) return;
     const oldest = barsRef.current[0];
     if (!oldest) return;
 
     const chart = chartRef.current;
     const logical = chart?.timeScale().getVisibleLogicalRange() ?? null;
     loadingHistoryRef.current = true;
+    setLoadingOlder(true);
     try {
+      // Exclusive end so Yahoo does not re-send the same first bar only.
       const page = await marketApi.chart(symbolRef.current, {
         lookback: lookbackRef.current,
         interval: intervalRef.current,
         before: oldest.time,
       });
-      if (!page.bars.length) {
+      const olderOnly = page.bars.filter(
+        (b) =>
+          b.close != null &&
+          Number.isFinite(b.time) &&
+          b.time < oldest.time,
+      );
+      if (!olderOnly.length) {
+        historyExhaustedRef.current = true;
         setHistoryExhausted(true);
         return;
       }
       const prevLen = barsRef.current.length;
-      const merged = mergeBars(page.bars, barsRef.current);
-      if (merged.length <= prevLen) {
+      const merged = mergeBars(olderOnly, barsRef.current);
+      const added = merged.length - prevLen;
+      if (added <= 0) {
+        historyExhaustedRef.current = true;
         setHistoryExhausted(true);
         return;
       }
-      const added = merged.length - prevLen;
       barsRef.current = merged;
       setBars(merged);
       priceAppliedRef.current = null;
       volumeAppliedRef.current = null;
-      applyBarsToChart(merged, {
-        preserve: logical
-          ? ({
-              from: logical.from + added,
-              to: logical.to + added,
-            } as LogicalRange)
-          : null,
-      });
+      pendingPreserveRef.current = logical
+        ? ({
+            from: logical.from + added,
+            to: logical.to + added,
+          } as LogicalRange)
+        : null;
     } catch {
-      // leave chart as-is; user can scroll again
+      // leave chart as-is; user can scroll / tap again
     } finally {
       loadingHistoryRef.current = false;
+      setLoadingOlder(false);
     }
-  }, [applyBarsToChart, historyExhausted]);
+  }, []);
 
   const loadOlderHistoryRef = useRef(loadOlderHistory);
   loadOlderHistoryRef.current = loadOlderHistory;
@@ -423,7 +455,8 @@ export function PriceChart({ symbol }: Props) {
     });
 
     chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
-      if (range && range.from < 8) {
+      // from < 0 ⇒ scrolled past the first bar into empty space (not initial fit).
+      if (range && range.from < 0) {
         void loadOlderHistoryRef.current();
       }
     });
@@ -471,7 +504,11 @@ export function PriceChart({ symbol }: Props) {
       },
     });
 
-    applyBarsToChart(bars, { fit: true });
+    const preserve = pendingPreserveRef.current;
+    pendingPreserveRef.current = null;
+    const fit = !preserve && fitOnNextBarsRef.current;
+    applyBarsToChart(bars, { fit, preserve });
+    if (fit) fitOnNextBarsRef.current = false;
   }, [bars, style, intraday, applyBarsToChart]);
 
   function selectLookback(id: ChartLookbackId) {
@@ -545,6 +582,22 @@ export function PriceChart({ symbol }: Props) {
         </div>
       </div>
       <p className="mb-2 text-xs text-muted">{t("chartHint")}</p>
+      <div className="mb-2 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          disabled={loadingOlder || historyExhausted || !bars.length}
+          onClick={() => void loadOlderHistoryRef.current()}
+          className="rounded-md border border-border bg-surface px-2.5 py-1 font-mono text-xs text-muted transition-colors hover:text-foreground disabled:opacity-40"
+        >
+          {t("chartLoadOlder")}
+        </button>
+        {loadingOlder ? (
+          <span className="text-xs text-accent">{t("chartLoadingOlder")}</span>
+        ) : null}
+        {historyExhausted ? (
+          <span className="text-xs text-muted">{t("chartHistoryEnd")}</span>
+        ) : null}
+      </div>
 
       {error && <p className="mb-2 text-sm text-danger">{t("loadError")}</p>}
       <div className="relative">
