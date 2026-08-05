@@ -19,7 +19,7 @@ A greenfield rewrite of the old Next 10 app: App Router, TypeScript, Node 24, an
 ## Features
 
 - **Market board** — US \| HK region toggle, major indices, US movers (gainers / losers / most active), local watchlist
-- **Symbol page** — quote, day range, intraday/daily chart, company summary, news, bookmark
+- **Symbol page** — quote, day range, chart, company summary, calendar & analyst ratings, news, bookmark
 - **Search** — header autocomplete → symbol detail
 - **Watchlist** — `localStorage` only (key `nextjs-stock:watchlist`), no auth
 
@@ -67,6 +67,7 @@ All handlers live under `app/api/market/*`. Query params are Zod-validated; Yaho
 | `/api/market/indices` | `region` (`US` \| `HK`) |
 | `/api/market/screener` | `list` (`day_gainers` \| `day_losers` \| `most_actives`), optional `count` |
 | `/api/market/quotes` | `symbols` (comma-separated, max 20) |
+| `/api/market/insights` | `symbol` (calendar events + recommendation trend) |
 
 ## Deploy (Vercel)
 

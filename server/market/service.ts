@@ -7,6 +7,8 @@ import type {
   QuoteDto,
   SearchResultDto,
   MarketRegion,
+  SymbolInsightsDto,
+  RecommendationPeriodDto,
 } from "@/lib/market/types";
 import { REGION_INDICES } from "@/lib/market/types";
 import {
@@ -130,6 +132,73 @@ export async function getProfile(symbol: string): Promise<ProfileDto> {
       country: profile?.country ?? null,
     };
   });
+}
+
+function toIsoDate(value: unknown): string | null {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10);
+  }
+  if (typeof value === "string" && value) {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+  }
+  if (Array.isArray(value) && value.length > 0) return toIsoDate(value[0]);
+  return null;
+}
+
+function mapRecommendation(
+  row: Record<string, unknown>,
+): RecommendationPeriodDto | null {
+  const period = typeof row.period === "string" ? row.period : null;
+  if (!period) return null;
+  const n = (key: string) => {
+    const v = row[key];
+    return typeof v === "number" && Number.isFinite(v) ? v : 0;
+  };
+  return {
+    period,
+    strongBuy: n("strongBuy"),
+    buy: n("buy"),
+    hold: n("hold"),
+    sell: n("sell"),
+    strongSell: n("strongSell"),
+  };
+}
+
+export async function getSymbolInsights(
+  symbol: string,
+): Promise<SymbolInsightsDto> {
+  return withCache(
+    `insights:${symbol.toUpperCase()}`,
+    TTL.insights,
+    async () => {
+      const summary = await yahooFinance.quoteSummary(symbol, {
+        modules: ["calendarEvents", "recommendationTrend"],
+      });
+      const cal = summary.calendarEvents as
+        | Record<string, unknown>
+        | undefined;
+      const earnings = (cal?.earnings ?? {}) as Record<string, unknown>;
+      const trend = summary.recommendationTrend?.trend ?? [];
+
+      return {
+        symbol: symbol.toUpperCase(),
+        calendar: {
+          earningsDate: toIsoDate(earnings.earningsDate),
+          earningsDateEstimate: Boolean(earnings.isEarningsDateEstimate),
+          exDividendDate: toIsoDate(cal?.exDividendDate),
+          dividendDate: toIsoDate(cal?.dividendDate),
+          earningsAverage:
+            typeof earnings.earningsAverage === "number"
+              ? earnings.earningsAverage
+              : null,
+        },
+        recommendations: trend
+          .map((row) => mapRecommendation(row as unknown as Record<string, unknown>))
+          .filter((row): row is RecommendationPeriodDto => row != null),
+      };
+    },
+  );
 }
 
 export type GetChartOpts = Readonly<{

@@ -3,6 +3,7 @@ import type {
   NewsItemDto,
   ProfileDto,
   QuoteDto,
+  SymbolInsightsDto,
 } from "@/lib/market/types";
 import type { ScreenerListId } from "@/lib/market/screener";
 
@@ -56,5 +57,9 @@ export const marketApi = {
   screener: (list: ScreenerListId) =>
     getJson<QuoteDto[]>(
       `/api/market/screener?list=${encodeURIComponent(list)}`,
+    ),
+  insights: (symbol: string) =>
+    getJson<SymbolInsightsDto>(
+      `/api/market/insights?symbol=${encodeURIComponent(symbol)}`,
     ),
 };
