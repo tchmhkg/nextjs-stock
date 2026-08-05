@@ -19,6 +19,7 @@ import {
   CHART_RANGES,
   DEFAULT_CHART_RANGE,
   type ChartRangeId,
+  type ChartStyle,
 } from "@/lib/market/chart-ranges";
 import {
   dailyCrosshairLabel,
@@ -122,17 +123,16 @@ function toArea(bars: ChartBarDto[]): AreaPoint[] {
     .map((b) => ({ time: b.time as Time, value: b.close! }));
 }
 
+/** One volume point per price bar so the pane stays aligned (null vol → 0). */
 function toVolume(bars: ChartBarDto[]): VolumePoint[] {
   const out: VolumePoint[] = [];
   let prevClose: number | null = null;
   for (const b of bars) {
-    if (b.volume == null || !Number.isFinite(b.time) || b.close == null) {
-      continue;
-    }
+    if (!Number.isFinite(b.time) || b.close == null) continue;
     const up = prevClose == null || b.close >= prevClose;
     out.push({
       time: b.time as Time,
-      value: b.volume,
+      value: b.volume ?? 0,
       color: up ? "rgba(5, 150, 105, 0.5)" : "rgba(225, 29, 72, 0.5)",
     });
     prevClose = b.close;
@@ -166,6 +166,9 @@ export function PriceChart({ symbol }: Props) {
   const t = useTranslations("Market");
   const { theme, mounted } = useTheme();
   const [range, setRange] = useState<ChartRangeId>(DEFAULT_CHART_RANGE);
+  const [style, setStyle] = useState<ChartStyle>(
+    CHART_RANGES[DEFAULT_CHART_RANGE].preferredStyle,
+  );
   const [legend, setLegend] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -173,7 +176,7 @@ export function PriceChart({ symbol }: Props) {
     ISeriesApi<"Area"> | ISeriesApi<"Candlestick"> | null
   >(null);
   const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
-  const priceStyleRef = useRef<"area" | "candle" | null>(null);
+  const priceStyleRef = useRef<ChartStyle | null>(null);
   const barsByTimeRef = useRef<Map<number, ChartBarDto>>(new Map());
   const rangeConfigRef = useRef(CHART_RANGES[range]);
   const priceAppliedRef = useRef<AppliedMeta | null>(null);
@@ -210,6 +213,9 @@ export function PriceChart({ symbol }: Props) {
         borderVisible: false,
         timeVisible: true,
         secondsVisible: false,
+        fixLeftEdge: true,
+        fixRightEdge: true,
+        lockVisibleTimeRangeOnResize: true,
       },
       crosshair: {
         vertLine: { labelVisible: true },
@@ -281,23 +287,25 @@ export function PriceChart({ symbol }: Props) {
         borderVisible: false,
         timeVisible: config.intraday,
         secondsVisible: false,
+        fixLeftEdge: true,
+        fixRightEdge: true,
         tickMarkFormatter: config.intraday ? intradayTickMark : undefined,
       },
     });
 
-    const key = `${symbol}:${range}`;
+    const key = `${symbol}:${range}:${style}`;
     let fit = false;
     const markFit = () => {
       fit = true;
     };
 
-    if (priceStyleRef.current !== config.style || !priceSeriesRef.current) {
+    if (priceStyleRef.current !== style || !priceSeriesRef.current) {
       if (priceSeriesRef.current) {
         chart.removeSeries(priceSeriesRef.current);
         priceSeriesRef.current = null;
       }
       priceAppliedRef.current = null;
-      if (config.style === "candle") {
+      if (style === "candle") {
         priceSeriesRef.current = chart.addSeries(CandlestickSeries, {
           upColor: "#059669",
           downColor: "#e11d48",
@@ -314,7 +322,7 @@ export function PriceChart({ symbol }: Props) {
           lineWidth: 2,
         });
       }
-      priceStyleRef.current = config.style;
+      priceStyleRef.current = style;
     }
 
     if (!volumeSeriesRef.current) {
@@ -323,17 +331,20 @@ export function PriceChart({ symbol }: Props) {
         {
           priceFormat: { type: "volume" },
           priceScaleId: "volume",
+          lastValueVisible: false,
+          priceLineVisible: false,
         },
         1,
       );
       chart.priceScale("volume", 1).applyOptions({
         scaleMargins: { top: 0.1, bottom: 0 },
+        borderVisible: false,
       });
       const panes = chart.panes();
       if (panes[1]) panes[1].setHeight(72);
     }
 
-    if (config.style === "candle") {
+    if (style === "candle") {
       syncSeries(
         priceSeriesRef.current as ISeriesApi<"Candlestick">,
         toCandles(bars),
@@ -360,28 +371,53 @@ export function PriceChart({ symbol }: Props) {
     );
 
     if (fit) chart.timeScale().fitContent();
-  }, [data, range, symbol, config]);
+  }, [data, range, symbol, style, config]);
+
+  function selectRange(id: ChartRangeId) {
+    setRange(id);
+    setStyle(CHART_RANGES[id].preferredStyle);
+  }
 
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <h2 className="text-lg font-semibold text-foreground">{t("chart")}</h2>
-        <div className="ml-auto inline-flex h-9 flex-wrap items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
-          {CHART_RANGE_IDS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setRange(id)}
-              className={clsx(
-                "rounded px-2.5 font-mono text-xs uppercase transition-colors",
-                range === id
-                  ? "bg-accent text-white dark:text-foreground"
-                  : "text-muted hover:text-foreground",
-              )}
-            >
-              {t(`range.${id}`)}
-            </button>
-          ))}
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <div className="inline-flex h-9 items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
+            {(["area", "candle"] as const).map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setStyle(id)}
+                className={clsx(
+                  "rounded px-2.5 font-mono text-xs uppercase transition-colors",
+                  style === id
+                    ? "bg-accent text-white dark:text-foreground"
+                    : "text-muted hover:text-foreground",
+                )}
+              >
+                {t(`chartStyle.${id}`)}
+              </button>
+            ))}
+          </div>
+          <div className="inline-flex h-9 flex-wrap items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
+            {CHART_RANGE_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => selectRange(id)}
+                title={t(`rangeHint.${id}`)}
+                className={clsx(
+                  "rounded px-2.5 font-mono text-xs uppercase transition-colors",
+                  range === id
+                    ? "bg-accent text-white dark:text-foreground"
+                    : "text-muted hover:text-foreground",
+                )}
+              >
+                {t(`range.${id}`)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

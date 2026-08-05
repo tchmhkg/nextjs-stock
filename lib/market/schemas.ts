@@ -26,6 +26,7 @@ export const chartIntervalSchema = z.enum(["1m", "5m", "15m", "1h", "1d"]);
 export const chartRangeSchema = z.enum([
   "1D",
   "5D",
+  "15D",
   "1M",
   "3M",
   "1Y",

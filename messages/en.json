@@ -33,13 +33,27 @@
     "watchlistRemove": "Remove from watchlist",
     "backToMarket": "Market",
     "chart": "Chart",
+    "chartStyle": {
+      "area": "Line",
+      "candle": "Candle"
+    },
     "range": {
       "1D": "1D",
       "5D": "5D",
+      "15D": "15D",
       "1M": "1M",
       "3M": "3M",
       "1Y": "1Y",
       "5Y": "5Y"
+    },
+    "rangeHint": {
+      "1D": "1-minute bars",
+      "5D": "5-minute bars",
+      "15D": "15-minute bars",
+      "1M": "1-hour bars",
+      "3M": "Daily bars",
+      "1Y": "Daily bars",
+      "5Y": "Daily bars"
     },
     "interval": {
       "1m": "Intraday",
