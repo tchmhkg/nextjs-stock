@@ -32,7 +32,7 @@ export function NewsList({ symbol }: Props) {
       )}
       {data && data.length > 0 && (
         <ul className="mt-3 divide-y divide-border border-t border-border">
-          {data.map((item) => (
+          {data.slice(0, 5).map((item) => (
             <li key={item.id} className="py-3">
               <a
                 href={item.link}

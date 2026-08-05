@@ -69,6 +69,29 @@ export type NewsItemDto = {
   publishedAt: string; // ISO
 };
 
+export type SymbolCalendarDto = {
+  earningsDate: string | null;
+  earningsDateEstimate: boolean;
+  exDividendDate: string | null;
+  dividendDate: string | null;
+  earningsAverage: number | null;
+};
+
+export type RecommendationPeriodDto = {
+  period: string;
+  strongBuy: number;
+  buy: number;
+  hold: number;
+  sell: number;
+  strongSell: number;
+};
+
+export type SymbolInsightsDto = {
+  symbol: string;
+  calendar: SymbolCalendarDto;
+  recommendations: RecommendationPeriodDto[];
+};
+
 export type MarketRegion = "US" | "HK";
 
 export const REGION_INDICES: Record<MarketRegion, string[]> = {

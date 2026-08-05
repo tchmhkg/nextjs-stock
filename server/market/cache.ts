@@ -28,4 +28,5 @@ export const TTL = {
   search: 60_000,
   news: 5 * 60_000,
   screener: 60_000,
+  insights: 60 * 60_000,
 } as const;
