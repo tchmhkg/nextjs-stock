@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { RegionToggle } from "@/components/market/region-toggle";
 import { IndicesStrip } from "@/components/market/indices-strip";
+import { MoversPanel } from "@/components/market/movers-panel";
 import { WatchlistPanel } from "@/components/market/watchlist-panel";
 import type { MarketRegion } from "@/lib/market/types";
 
@@ -26,6 +27,8 @@ export function MarketBoard() {
         </h2>
         <IndicesStrip region={region} />
       </section>
+
+      <MoversPanel />
 
       <section className="space-y-3">
         <h2 className="text-sm font-medium tracking-wide text-muted uppercase">

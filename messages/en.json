@@ -26,6 +26,14 @@
       "HK": "HK"
     },
     "indices": "Indices",
+    "movers": "Movers",
+    "moversRegion": "US · Yahoo",
+    "screener": {
+      "day_gainers": "Gainers",
+      "day_losers": "Losers",
+      "most_actives": "Most active"
+    },
+    "screenerEmpty": "No results right now.",
     "watchlist": "Watchlist",
     "watchlistEmpty": "No symbols yet. Open a stock and tap Save, or search from the header.",
     "watchlistSave": "Save",

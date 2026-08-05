@@ -4,6 +4,7 @@ import type {
   ProfileDto,
   QuoteDto,
 } from "@/lib/market/types";
+import type { ScreenerListId } from "@/lib/market/screener";
 
 type ApiOk<T> = { success: true; data: T };
 type ApiErr = { success: false; error: string };
@@ -51,5 +52,9 @@ export const marketApi = {
   indices: (region: "US" | "HK") =>
     getJson<QuoteDto[]>(
       `/api/market/indices?region=${encodeURIComponent(region)}`,
+    ),
+  screener: (list: ScreenerListId) =>
+    getJson<QuoteDto[]>(
+      `/api/market/screener?list=${encodeURIComponent(list)}`,
     ),
 };

@@ -26,6 +26,14 @@
       "HK": "港股"
     },
     "indices": "指數",
+    "movers": "熱門異動",
+    "moversRegion": "美股 · Yahoo",
+    "screener": {
+      "day_gainers": "漲幅",
+      "day_losers": "跌幅",
+      "most_actives": "成交量"
+    },
+    "screenerEmpty": "目前沒有結果。",
     "watchlist": "自選",
     "watchlistEmpty": "尚無自選。開啟個股後點「收藏」，或使用上方搜尋。",
     "watchlistSave": "收藏",
