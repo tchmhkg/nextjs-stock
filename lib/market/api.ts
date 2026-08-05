@@ -20,6 +20,10 @@ async function getJson<T>(url: string): Promise<T> {
 export const marketApi = {
   quote: (symbol: string) =>
     getJson<QuoteDto>(`/api/market/quote?symbol=${encodeURIComponent(symbol)}`),
+  quotes: (symbols: string[]) =>
+    getJson<QuoteDto[]>(
+      `/api/market/quotes?symbols=${encodeURIComponent(symbols.join(","))}`,
+    ),
   profile: (symbol: string) =>
     getJson<ProfileDto>(
       `/api/market/profile?symbol=${encodeURIComponent(symbol)}`,

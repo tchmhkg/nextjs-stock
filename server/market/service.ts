@@ -30,11 +30,27 @@ function mapQuote(raw: Record<string, unknown>): QuoteDto {
     marketState: str("marketState"),
     regularMarketPrice: num("regularMarketPrice"),
     regularMarketPreviousClose: num("regularMarketPreviousClose"),
+    regularMarketOpen: num("regularMarketOpen"),
     regularMarketChange: num("regularMarketChange"),
     regularMarketChangePercent: num("regularMarketChangePercent"),
     regularMarketDayHigh: num("regularMarketDayHigh"),
     regularMarketDayLow: num("regularMarketDayLow"),
     regularMarketVolume: num("regularMarketVolume"),
+    averageDailyVolume3Month: num("averageDailyVolume3Month"),
+    fiftyTwoWeekHigh: num("fiftyTwoWeekHigh"),
+    fiftyTwoWeekLow: num("fiftyTwoWeekLow"),
+    marketCap: num("marketCap"),
+    trailingPE: num("trailingPE"),
+    dividendYield:
+      num("trailingAnnualDividendYield") ?? num("dividendYield"),
+    bid: num("bid"),
+    ask: num("ask"),
+    preMarketPrice: num("preMarketPrice"),
+    preMarketChange: num("preMarketChange"),
+    preMarketChangePercent: num("preMarketChangePercent"),
+    postMarketPrice: num("postMarketPrice"),
+    postMarketChange: num("postMarketChange"),
+    postMarketChangePercent: num("postMarketChangePercent"),
   };
 }
 

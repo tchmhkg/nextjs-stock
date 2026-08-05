@@ -10,6 +10,7 @@ import {
   formatPrice,
 } from "@/lib/market/format";
 import type { MarketRegion, QuoteDto } from "@/lib/market/types";
+import { quotesRefreshMs } from "@/lib/market/session";
 import clsx from "clsx";
 
 type Props = Readonly<{
@@ -20,7 +21,10 @@ export function IndicesStrip({ region }: Props) {
   const { data, error, isLoading } = useSWR(
     ["indices", region],
     () => marketApi.indices(region),
-    { refreshInterval: 30_000, revalidateOnFocus: false },
+    {
+      refreshInterval: (latest) => quotesRefreshMs(latest),
+      revalidateOnFocus: false,
+    },
   );
 
   if (error) {
