@@ -9,9 +9,8 @@ import type {
   MarketRegion,
 } from "@/lib/market/types";
 import { REGION_INDICES } from "@/lib/market/types";
-import {
-  CHART_RANGES,
-  type ChartRangeId,
+import type {
+  ChartIntervalId,
 } from "@/lib/market/chart-ranges";
 import { TTL, withCache } from "@/server/market/cache";
 import yahooFinance from "@/server/market/client";
@@ -58,10 +57,21 @@ function mapQuote(raw: Record<string, unknown>): QuoteDto {
   };
 }
 
-function daysAgoIso(days: number): string {
-  const d = new Date();
+function daysAgoFrom(base: Date, days: number): Date {
+  const d = new Date(base);
   d.setUTCDate(d.getUTCDate() - days);
-  return d.toISOString().slice(0, 10);
+  return d;
+}
+
+function mapChartBars(quotes: ReadonlyArray<Record<string, unknown>>): ChartBarDto[] {
+  return quotes.map((bar) => ({
+    time: Math.floor(new Date(bar.date as Date | string | number).getTime() / 1000),
+    open: typeof bar.open === "number" ? bar.open : null,
+    high: typeof bar.high === "number" ? bar.high : null,
+    low: typeof bar.low === "number" ? bar.low : null,
+    close: typeof bar.close === "number" ? bar.close : null,
+    volume: typeof bar.volume === "number" ? bar.volume : null,
+  }));
 }
 
 export async function getQuote(symbol: string): Promise<QuoteDto> {
@@ -105,31 +115,42 @@ export async function getProfile(symbol: string): Promise<ProfileDto> {
   });
 }
 
+export type GetChartOpts = Readonly<{
+  interval: ChartIntervalId;
+  /** Window length in days (already clamped to interval max by caller). */
+  lookbackDays: number;
+  /**
+   * When set, fetch a chunk ending at this unix second (load older history).
+   * period2 = before, period1 = before - lookbackDays.
+   */
+  before?: number;
+}>;
+
 export async function getChart(
   symbol: string,
-  range: ChartRangeId,
+  opts: GetChartOpts,
 ): Promise<ChartDto> {
-  const { interval, lookbackDays } = CHART_RANGES[range];
-  const key = `chart:${symbol.toUpperCase()}:${range}`;
+  const { interval, lookbackDays, before } = opts;
+  const key = before
+    ? `chart:${symbol.toUpperCase()}:${interval}:${lookbackDays}:before:${before}`
+    : `chart:${symbol.toUpperCase()}:${interval}:${lookbackDays}`;
+
   return withCache(key, TTL.chart, async () => {
+    const period2 = before ? new Date(before * 1000) : new Date();
+    const period1 = daysAgoFrom(period2, lookbackDays);
+
     const result = await yahooFinance.chart(symbol, {
-      period1: daysAgoIso(lookbackDays),
+      period1,
+      period2,
       interval,
     });
-
-    const bars: ChartBarDto[] = (result.quotes ?? []).map((bar) => ({
-      time: Math.floor(new Date(bar.date).getTime() / 1000),
-      open: bar.open ?? null,
-      high: bar.high ?? null,
-      low: bar.low ?? null,
-      close: bar.close ?? null,
-      volume: bar.volume ?? null,
-    }));
 
     return {
       symbol: symbol.toUpperCase(),
       currency: result.meta?.currency ?? null,
-      bars,
+      bars: mapChartBars(
+        (result.quotes ?? []) as unknown as ReadonlyArray<Record<string, unknown>>,
+      ),
     };
   });
 }

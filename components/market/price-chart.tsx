@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import {
   createChart,
@@ -10,15 +10,22 @@ import {
   ColorType,
   type IChartApi,
   type ISeriesApi,
+  type LogicalRange,
   type Time,
 } from "lightweight-charts";
 import { useTranslations } from "next-intl";
 import { marketApi } from "@/lib/market/api";
 import {
-  CHART_RANGE_IDS,
-  CHART_RANGES,
-  DEFAULT_CHART_RANGE,
-  type ChartRangeId,
+  CHART_LOOKBACK_IDS,
+  coerceInterval,
+  DEFAULT_INTERVAL,
+  DEFAULT_LOOKBACK,
+  intervalsForLookback,
+  isIntradayInterval,
+  preferredStyle,
+  refreshMs,
+  type ChartIntervalId,
+  type ChartLookbackId,
   type ChartStyle,
 } from "@/lib/market/chart-ranges";
 import {
@@ -47,14 +54,9 @@ type CandlePoint = {
 };
 
 type AreaPoint = { time: Time; value: number };
-
 type VolumePoint = { time: Time; value: number; color: string };
 
-type AppliedMeta = {
-  key: string;
-  time: Time;
-  len: number;
-};
+type AppliedMeta = { key: string; time: Time; len: number };
 
 function themeColors(isDark: boolean) {
   return {
@@ -68,8 +70,7 @@ function timeEquals(a: Time, b: Time) {
 }
 
 function timeNewer(a: Time, b: Time) {
-  if (typeof a === "number" && typeof b === "number") return a > b;
-  return false;
+  return typeof a === "number" && typeof b === "number" && a > b;
 }
 
 function syncSeries<T extends { time: Time }>(
@@ -123,7 +124,6 @@ function toArea(bars: ChartBarDto[]): AreaPoint[] {
     .map((b) => ({ time: b.time as Time, value: b.close! }));
 }
 
-/** One volume point per price bar so the pane stays aligned (null vol → 0). */
 function toVolume(bars: ChartBarDto[]): VolumePoint[] {
   const out: VolumePoint[] = [];
   let prevClose: number | null = null;
@@ -138,6 +138,14 @@ function toVolume(bars: ChartBarDto[]): VolumePoint[] {
     prevClose = b.close;
   }
   return out;
+}
+
+function mergeBars(a: ChartBarDto[], b: ChartBarDto[]): ChartBarDto[] {
+  const map = new Map<number, ChartBarDto>();
+  for (const bar of [...a, ...b]) {
+    if (Number.isFinite(bar.time)) map.set(bar.time, bar);
+  }
+  return [...map.values()].sort((x, y) => x.time - y.time);
 }
 
 function formatLegend(
@@ -165,11 +173,13 @@ function formatLegend(
 export function PriceChart({ symbol }: Props) {
   const t = useTranslations("Market");
   const { theme, mounted } = useTheme();
-  const [range, setRange] = useState<ChartRangeId>(DEFAULT_CHART_RANGE);
-  const [style, setStyle] = useState<ChartStyle>(
-    CHART_RANGES[DEFAULT_CHART_RANGE].preferredStyle,
-  );
+  const [lookback, setLookback] = useState<ChartLookbackId>(DEFAULT_LOOKBACK);
+  const [interval, setInterval] = useState<ChartIntervalId>(DEFAULT_INTERVAL);
+  const [style, setStyle] = useState<ChartStyle>(preferredStyle(DEFAULT_INTERVAL));
   const [legend, setLegend] = useState<string | null>(null);
+  const [bars, setBars] = useState<ChartBarDto[]>([]);
+  const [historyExhausted, setHistoryExhausted] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const priceSeriesRef = useRef<
@@ -177,22 +187,192 @@ export function PriceChart({ symbol }: Props) {
   >(null);
   const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
   const priceStyleRef = useRef<ChartStyle | null>(null);
+  const barsRef = useRef<ChartBarDto[]>([]);
   const barsByTimeRef = useRef<Map<number, ChartBarDto>>(new Map());
-  const rangeConfigRef = useRef(CHART_RANGES[range]);
+  const intradayRef = useRef(true);
   const priceAppliedRef = useRef<AppliedMeta | null>(null);
   const volumeAppliedRef = useRef<AppliedMeta | null>(null);
+  const loadingHistoryRef = useRef(false);
+  const lookbackRef = useRef(lookback);
+  const intervalRef = useRef(interval);
+  const symbolRef = useRef(symbol);
+  const styleRef = useRef(style);
 
-  const config = CHART_RANGES[range];
-  rangeConfigRef.current = config;
+  const allowedIntervals = useMemo(
+    () => intervalsForLookback(lookback),
+    [lookback],
+  );
+  const intraday = isIntradayInterval(interval);
+  intradayRef.current = intraday;
+  lookbackRef.current = lookback;
+  intervalRef.current = interval;
+  symbolRef.current = symbol;
+  styleRef.current = style;
 
   const { data, error, isLoading } = useSWR(
-    ["chart", symbol, range],
-    () => marketApi.chart(symbol, range),
+    ["chart", symbol, lookback, interval],
+    () => marketApi.chart(symbol, { lookback, interval }),
     {
-      refreshInterval: config.refreshMs,
+      refreshInterval: refreshMs(interval),
       revalidateOnFocus: false,
     },
   );
+
+  useEffect(() => {
+    setHistoryExhausted(false);
+    setBars([]);
+    barsRef.current = [];
+    priceAppliedRef.current = null;
+    volumeAppliedRef.current = null;
+  }, [symbol, lookback, interval]);
+
+  useEffect(() => {
+    if (!data) return;
+    setBars(data.bars);
+    barsRef.current = data.bars;
+  }, [data]);
+
+  const applyBarsToChart = useCallback(
+    (nextBars: ChartBarDto[], opts: { fit?: boolean; preserve?: LogicalRange | null }) => {
+      const chart = chartRef.current;
+      if (!chart) return;
+
+      const filtered = nextBars.filter(
+        (b) => b.close != null && Number.isFinite(b.time),
+      );
+      barsByTimeRef.current = new Map(filtered.map((b) => [b.time, b]));
+
+      const key = `${symbolRef.current}:${lookbackRef.current}:${intervalRef.current}:${styleRef.current}`;
+      let didFull = false;
+      const markFull = () => {
+        didFull = true;
+      };
+
+      if (priceStyleRef.current !== styleRef.current || !priceSeriesRef.current) {
+        if (priceSeriesRef.current) {
+          chart.removeSeries(priceSeriesRef.current);
+          priceSeriesRef.current = null;
+        }
+        priceAppliedRef.current = null;
+        if (styleRef.current === "candle") {
+          priceSeriesRef.current = chart.addSeries(CandlestickSeries, {
+            upColor: "#059669",
+            downColor: "#e11d48",
+            borderUpColor: "#059669",
+            borderDownColor: "#e11d48",
+            wickUpColor: "#059669",
+            wickDownColor: "#e11d48",
+          });
+        } else {
+          priceSeriesRef.current = chart.addSeries(AreaSeries, {
+            lineColor: "#0d9488",
+            topColor: "rgba(13, 148, 136, 0.35)",
+            bottomColor: "rgba(13, 148, 136, 0.02)",
+            lineWidth: 2,
+          });
+        }
+        priceStyleRef.current = styleRef.current;
+      }
+
+      if (!volumeSeriesRef.current) {
+        volumeSeriesRef.current = chart.addSeries(
+          HistogramSeries,
+          {
+            priceFormat: { type: "volume" },
+            priceScaleId: "volume",
+            lastValueVisible: false,
+            priceLineVisible: false,
+          },
+          1,
+        );
+        chart.priceScale("volume", 1).applyOptions({
+          scaleMargins: { top: 0.1, bottom: 0 },
+          borderVisible: false,
+        });
+        const panes = chart.panes();
+        if (panes[1]) panes[1].setHeight(72);
+      }
+
+      if (styleRef.current === "candle") {
+        syncSeries(
+          priceSeriesRef.current as ISeriesApi<"Candlestick">,
+          toCandles(filtered),
+          key,
+          priceAppliedRef,
+          markFull,
+        );
+      } else {
+        syncSeries(
+          priceSeriesRef.current as ISeriesApi<"Area">,
+          toArea(filtered),
+          key,
+          priceAppliedRef,
+          markFull,
+        );
+      }
+      syncSeries(
+        volumeSeriesRef.current,
+        toVolume(filtered),
+        key,
+        volumeAppliedRef,
+        markFull,
+      );
+
+      if (opts.preserve) {
+        chart.timeScale().setVisibleLogicalRange(opts.preserve);
+      } else if (opts.fit || didFull) {
+        chart.timeScale().fitContent();
+      }
+    },
+    [],
+  );
+
+  const loadOlderHistory = useCallback(async () => {
+    if (loadingHistoryRef.current || historyExhausted) return;
+    const oldest = barsRef.current[0];
+    if (!oldest) return;
+
+    const chart = chartRef.current;
+    const logical = chart?.timeScale().getVisibleLogicalRange() ?? null;
+    loadingHistoryRef.current = true;
+    try {
+      const page = await marketApi.chart(symbolRef.current, {
+        lookback: lookbackRef.current,
+        interval: intervalRef.current,
+        before: oldest.time,
+      });
+      if (!page.bars.length) {
+        setHistoryExhausted(true);
+        return;
+      }
+      const prevLen = barsRef.current.length;
+      const merged = mergeBars(page.bars, barsRef.current);
+      if (merged.length <= prevLen) {
+        setHistoryExhausted(true);
+        return;
+      }
+      const added = merged.length - prevLen;
+      barsRef.current = merged;
+      setBars(merged);
+      priceAppliedRef.current = null;
+      volumeAppliedRef.current = null;
+      applyBarsToChart(merged, {
+        preserve: logical
+          ? ({
+              from: logical.from + added,
+              to: logical.to + added,
+            } as LogicalRange)
+          : null,
+      });
+    } catch {
+      // leave chart as-is; user can scroll again
+    } finally {
+      loadingHistoryRef.current = false;
+    }
+  }, [applyBarsToChart, historyExhausted]);
+
+  const loadOlderHistoryRef = useRef(loadOlderHistory);
+  loadOlderHistoryRef.current = loadOlderHistory;
 
   useEffect(() => {
     if (!containerRef.current || chartRef.current) return;
@@ -213,7 +393,7 @@ export function PriceChart({ symbol }: Props) {
         borderVisible: false,
         timeVisible: true,
         secondsVisible: false,
-        fixLeftEdge: true,
+        fixLeftEdge: false,
         fixRightEdge: true,
         lockVisibleTimeRangeOnResize: true,
       },
@@ -237,8 +417,15 @@ export function PriceChart({ symbol }: Props) {
             ? Date.parse(param.time) / 1000
             : Date.UTC(param.time.year, param.time.month - 1, param.time.day) /
               1000;
-      const bar = barsByTimeRef.current.get(tKey);
-      setLegend(formatLegend(bar, rangeConfigRef.current.intraday));
+      setLegend(
+        formatLegend(barsByTimeRef.current.get(tKey), intradayRef.current),
+      );
+    });
+
+    chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
+      if (range && range.from < 8) {
+        void loadOlderHistoryRef.current();
+      }
     });
 
     return () => {
@@ -247,10 +434,8 @@ export function PriceChart({ symbol }: Props) {
       priceSeriesRef.current = null;
       volumeSeriesRef.current = null;
       priceStyleRef.current = null;
-      priceAppliedRef.current = null;
-      volumeAppliedRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- create once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- create once
   }, []);
 
   useEffect(() => {
@@ -270,112 +455,35 @@ export function PriceChart({ symbol }: Props) {
 
   useEffect(() => {
     const chart = chartRef.current;
-    if (!chart || !data) return;
-
-    const bars = data.bars.filter(
-      (b) => b.close != null && Number.isFinite(b.time),
-    );
-    barsByTimeRef.current = new Map(bars.map((b) => [b.time, b]));
+    if (!chart || !bars.length) return;
 
     chart.applyOptions({
       localization: {
-        timeFormatter: config.intraday
-          ? intradayCrosshairLabel
-          : dailyCrosshairLabel,
+        timeFormatter: intraday ? intradayCrosshairLabel : dailyCrosshairLabel,
       },
       timeScale: {
         borderVisible: false,
-        timeVisible: config.intraday,
+        timeVisible: intraday,
         secondsVisible: false,
-        fixLeftEdge: true,
+        fixLeftEdge: false,
         fixRightEdge: true,
-        tickMarkFormatter: config.intraday ? intradayTickMark : undefined,
+        tickMarkFormatter: intraday ? intradayTickMark : undefined,
       },
     });
 
-    const key = `${symbol}:${range}:${style}`;
-    let fit = false;
-    const markFit = () => {
-      fit = true;
-    };
+    applyBarsToChart(bars, { fit: true });
+  }, [bars, style, intraday, applyBarsToChart]);
 
-    if (priceStyleRef.current !== style || !priceSeriesRef.current) {
-      if (priceSeriesRef.current) {
-        chart.removeSeries(priceSeriesRef.current);
-        priceSeriesRef.current = null;
-      }
-      priceAppliedRef.current = null;
-      if (style === "candle") {
-        priceSeriesRef.current = chart.addSeries(CandlestickSeries, {
-          upColor: "#059669",
-          downColor: "#e11d48",
-          borderUpColor: "#059669",
-          borderDownColor: "#e11d48",
-          wickUpColor: "#059669",
-          wickDownColor: "#e11d48",
-        });
-      } else {
-        priceSeriesRef.current = chart.addSeries(AreaSeries, {
-          lineColor: "#0d9488",
-          topColor: "rgba(13, 148, 136, 0.35)",
-          bottomColor: "rgba(13, 148, 136, 0.02)",
-          lineWidth: 2,
-        });
-      }
-      priceStyleRef.current = style;
-    }
+  function selectLookback(id: ChartLookbackId) {
+    const nextInterval = coerceInterval(id, interval);
+    setLookback(id);
+    setInterval(nextInterval);
+    setStyle(preferredStyle(nextInterval));
+  }
 
-    if (!volumeSeriesRef.current) {
-      volumeSeriesRef.current = chart.addSeries(
-        HistogramSeries,
-        {
-          priceFormat: { type: "volume" },
-          priceScaleId: "volume",
-          lastValueVisible: false,
-          priceLineVisible: false,
-        },
-        1,
-      );
-      chart.priceScale("volume", 1).applyOptions({
-        scaleMargins: { top: 0.1, bottom: 0 },
-        borderVisible: false,
-      });
-      const panes = chart.panes();
-      if (panes[1]) panes[1].setHeight(72);
-    }
-
-    if (style === "candle") {
-      syncSeries(
-        priceSeriesRef.current as ISeriesApi<"Candlestick">,
-        toCandles(bars),
-        key,
-        priceAppliedRef,
-        markFit,
-      );
-    } else {
-      syncSeries(
-        priceSeriesRef.current as ISeriesApi<"Area">,
-        toArea(bars),
-        key,
-        priceAppliedRef,
-        markFit,
-      );
-    }
-
-    syncSeries(
-      volumeSeriesRef.current,
-      toVolume(bars),
-      key,
-      volumeAppliedRef,
-      markFit,
-    );
-
-    if (fit) chart.timeScale().fitContent();
-  }, [data, range, symbol, style, config]);
-
-  function selectRange(id: ChartRangeId) {
-    setRange(id);
-    setStyle(CHART_RANGES[id].preferredStyle);
+  function selectInterval(id: ChartIntervalId) {
+    setInterval(id);
+    setStyle(preferredStyle(id));
   }
 
   return (
@@ -401,29 +509,46 @@ export function PriceChart({ symbol }: Props) {
             ))}
           </div>
           <div className="inline-flex h-9 flex-wrap items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
-            {CHART_RANGE_IDS.map((id) => (
+            {allowedIntervals.map((id) => (
               <button
                 key={id}
                 type="button"
-                onClick={() => selectRange(id)}
-                title={t(`rangeHint.${id}`)}
+                onClick={() => selectInterval(id)}
                 className={clsx(
                   "rounded px-2.5 font-mono text-xs uppercase transition-colors",
-                  range === id
+                  interval === id
                     ? "bg-accent text-white dark:text-foreground"
                     : "text-muted hover:text-foreground",
                 )}
               >
-                {t(`range.${id}`)}
+                {t(`barInterval.${id}`)}
+              </button>
+            ))}
+          </div>
+          <div className="inline-flex h-9 flex-wrap items-stretch gap-0.5 rounded-md border border-border bg-surface p-0.5">
+            {CHART_LOOKBACK_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => selectLookback(id)}
+                className={clsx(
+                  "rounded px-2.5 font-mono text-xs uppercase transition-colors",
+                  lookback === id
+                    ? "bg-accent text-white dark:text-foreground"
+                    : "text-muted hover:text-foreground",
+                )}
+              >
+                {t(`lookback.${id}`)}
               </button>
             ))}
           </div>
         </div>
       </div>
+      <p className="mb-2 text-xs text-muted">{t("chartHint")}</p>
 
       {error && <p className="mb-2 text-sm text-danger">{t("loadError")}</p>}
       <div className="relative">
-        {isLoading && !data && (
+        {isLoading && !bars.length && (
           <div className="absolute inset-0 z-10 animate-pulse rounded-md border border-border bg-surface" />
         )}
         {legend ? (

@@ -33,27 +33,27 @@
     "watchlistRemove": "Remove from watchlist",
     "backToMarket": "Market",
     "chart": "Chart",
+    "chartHint": "Bar size and lookback are independent. Scroll left to load older history. Future is empty (no data yet). Yahoo has no 3m bars — use 2m or 5m.",
     "chartStyle": {
       "area": "Line",
       "candle": "Candle"
     },
-    "range": {
+    "lookback": {
       "1D": "1D",
       "5D": "5D",
-      "15D": "15D",
       "1M": "1M",
       "3M": "3M",
       "1Y": "1Y",
       "5Y": "5Y"
     },
-    "rangeHint": {
-      "1D": "1-minute bars",
-      "5D": "5-minute bars",
-      "15D": "15-minute bars",
-      "1M": "1-hour bars",
-      "3M": "Daily bars",
-      "1Y": "Daily bars",
-      "5Y": "Daily bars"
+    "barInterval": {
+      "1m": "1m",
+      "2m": "2m",
+      "5m": "5m",
+      "15m": "15m",
+      "30m": "30m",
+      "1h": "1h",
+      "1d": "1d"
     },
     "interval": {
       "1m": "Intraday",

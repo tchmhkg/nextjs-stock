@@ -1,88 +1,100 @@
 import { z } from "zod";
-import { chartIntervalSchema } from "@/lib/market/schemas";
 
-/** Presets: short ones use minute/hour bars; long ones use daily. */
-export const CHART_RANGE_IDS = [
+/** How much history to request (window size). */
+export const CHART_LOOKBACK_IDS = [
   "1D",
   "5D",
-  "15D",
   "1M",
   "3M",
   "1Y",
   "5Y",
 ] as const;
 
-export type ChartRangeId = (typeof CHART_RANGE_IDS)[number];
+export type ChartLookbackId = (typeof CHART_LOOKBACK_IDS)[number];
 
-export type ChartInterval = z.infer<typeof chartIntervalSchema>;
+/** Yahoo chart intervals we expose (no 3m — Yahoo does not offer it). */
+export const CHART_INTERVAL_IDS = [
+  "1m",
+  "2m",
+  "5m",
+  "15m",
+  "30m",
+  "1h",
+  "1d",
+] as const;
+
+export type ChartIntervalId = (typeof CHART_INTERVAL_IDS)[number];
 
 export type ChartStyle = "area" | "candle";
 
-export type ChartRangeConfig = Readonly<{
-  interval: ChartInterval;
-  lookbackDays: number;
-  /** Default series style when the range is selected (user can override). */
-  preferredStyle: ChartStyle;
-  /** Show clock on time axis. */
-  intraday: boolean;
-  refreshMs: number;
-}>;
-
-/** Single source of truth for UI toggles + Yahoo chart fetch. */
-export const CHART_RANGES: Record<ChartRangeId, ChartRangeConfig> = {
-  "1D": {
-    interval: "1m",
-    lookbackDays: 1,
-    preferredStyle: "area",
-    intraday: true,
-    refreshMs: 30_000,
-  },
-  "5D": {
-    interval: "5m",
-    lookbackDays: 5,
-    preferredStyle: "candle",
-    intraday: true,
-    refreshMs: 60_000,
-  },
-  "15D": {
-    interval: "15m",
-    lookbackDays: 15,
-    preferredStyle: "candle",
-    intraday: true,
-    refreshMs: 60_000,
-  },
-  "1M": {
-    interval: "1h",
-    lookbackDays: 30,
-    preferredStyle: "candle",
-    intraday: false,
-    refreshMs: 120_000,
-  },
-  "3M": {
-    interval: "1d",
-    lookbackDays: 90,
-    preferredStyle: "candle",
-    intraday: false,
-    refreshMs: 120_000,
-  },
-  "1Y": {
-    interval: "1d",
-    lookbackDays: 365,
-    preferredStyle: "candle",
-    intraday: false,
-    refreshMs: 300_000,
-  },
-  "5Y": {
-    interval: "1d",
-    lookbackDays: 365 * 5,
-    preferredStyle: "candle",
-    intraday: false,
-    refreshMs: 300_000,
-  },
+export const LOOKBACK_DAYS: Record<ChartLookbackId, number> = {
+  "1D": 1,
+  "5D": 5,
+  "1M": 30,
+  "3M": 90,
+  "1Y": 365,
+  "5Y": 365 * 5,
 };
 
-export const DEFAULT_CHART_RANGE: ChartRangeId = "1D";
+/** Yahoo caps intraday history; keep requests inside these ceilings. */
+export const INTERVAL_MAX_DAYS: Record<ChartIntervalId, number> = {
+  "1m": 7,
+  "2m": 60,
+  "5m": 60,
+  "15m": 60,
+  "30m": 60,
+  "1h": 60,
+  "1d": 3650,
+};
 
-export function isChartRangeId(value: string): value is ChartRangeId {
-  return (CHART_RANGE_IDS as readonly string[]).includes(value);
+export const DEFAULT_LOOKBACK: ChartLookbackId = "1D";
+export const DEFAULT_INTERVAL: ChartIntervalId = "1m";
+
+export function lookbackDays(id: ChartLookbackId): number {
+  return LOOKBACK_DAYS[id];
 }
+
+export function isIntradayInterval(interval: ChartIntervalId): boolean {
+  return interval !== "1d";
+}
+
+export function preferredStyle(interval: ChartIntervalId): ChartStyle {
+  return interval === "1m" ? "area" : "candle";
+}
+
+export function refreshMs(interval: ChartIntervalId): number {
+  if (interval === "1m" || interval === "2m") return 30_000;
+  if (interval === "5m" || interval === "15m" || interval === "30m") {
+    return 60_000;
+  }
+  if (interval === "1h") return 120_000;
+  return 300_000;
+}
+
+/** Intervals that can cover this lookback window. */
+export function intervalsForLookback(
+  lookback: ChartLookbackId,
+): ChartIntervalId[] {
+  const days = LOOKBACK_DAYS[lookback];
+  return CHART_INTERVAL_IDS.filter((id) => INTERVAL_MAX_DAYS[id] >= days);
+}
+
+/** Clamp / pick a valid interval when lookback changes. */
+export function coerceInterval(
+  lookback: ChartLookbackId,
+  interval: ChartIntervalId,
+): ChartIntervalId {
+  const allowed = intervalsForLookback(lookback);
+  if (allowed.includes(interval)) return interval;
+  return allowed[allowed.length - 1] ?? "1d";
+}
+
+export function effectiveLookbackDays(
+  lookback: ChartLookbackId,
+  interval: ChartIntervalId,
+): number {
+  return Math.min(LOOKBACK_DAYS[lookback], INTERVAL_MAX_DAYS[interval]);
+}
+
+export const chartLookbackSchema = z.enum(CHART_LOOKBACK_IDS);
+export const chartBarIntervalSchema = z.enum(CHART_INTERVAL_IDS);
